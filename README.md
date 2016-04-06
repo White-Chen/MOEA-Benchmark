@@ -1,17 +1,17 @@
 # MOEA-Benchmark
-MOEA-Benchmark is a benchmark utils for test Multi-Objective Optimization Alogrithm in Matlab\<br>
+MOEA-Benchmark is a benchmark utils for test Multi-Objective Optimization Alogrithm in Matlab
 ## list of Benchmark
-Stationary Multi-Objective Optimization Problems(Include Many-Objective Optimization Problems)\<br>
-\<br>
+Stationary Multi-Objective Optimization Problems(Include Many-Objective Optimization Problems)   
+   
+
 *   ZDT Benchmark - ZDT1, ZDT2, ZDT3, ZDT5, ZDT6
 *   DTLZ Benchmark - DTLZ1, DTLZ2, DTLZ3, DTLZ4, DTLZ5, DTLZ6, DTLZ7
 *   WFG Benchmark - WFG1, WGF2, WFG3, WFG4, WFG5, WFG6, WFG7, WFG8, WFG9, WFG10
 *   CEC09 Benchmark without constraints(UF Benchmark) - UF1, UF2, UF3, UF4, UF5, UF6, UF7, UF8, UF9, UF10
-*   CEC09 Benchmark with constraints(CF Benchmark) - CF1, CF2, CF3, CF4, CF5, CF6, CF7, CF8, CF9 ,CF10
-\<br>
-\<br>
-Dynamic Multi-Objective Optimzation Problems\<br>
-\<br>
+*   CEC09 Benchmark with constraints(CF Benchmark) - CF1, CF2, CF3, CF4, CF5, CF6, CF7, CF8, CF9 ,CF10   
+   
+
+Dynamic Multi-Objective Optimzation Problems
 *   FDA Benchmark - FDA1, FDA2, FDA3, FDA4, FDA5
 *   CEC2014 Benchmark without constraints(UD) - UD1, UD2, UD3, UD4, UD5, UD6, UD7, UD8, UD9, UD10, UD11, UD12, UD13, UD14
 *   CEC2015 Benchmark with constraints(CD) - CD1, CD2
