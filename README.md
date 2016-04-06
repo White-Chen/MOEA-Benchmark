@@ -34,19 +34,20 @@ Dynamic Multi-Objective Optimzation Problems
 	results = mop.func(population)     % population is the evolutionary pop, results is a matrix, the column is popsize, row is objetive value
 </code></pre>
 *   If use WFG function   
-
+<pre><code>
 	global M k l                     % global variables M k l
 	M = 2;
 	k = 2;
 	l = 4;                           % k and l are both control parms, dimension = k + l
         mop = benchmark('wfg11111111111',6)		 % for wfg1 k = 2 and l = 4, dim = 4 + 2 = 6
 	results = mop.func(population)   % like above
-   
+</code></pre>
 *   If use dynamic problem   
-
+<pre><code>
 	global step window itrCounter    % global variables step window and iteration counter
 	step = 10                        % number of dynamic steps
 	window = 200                     % number of stationary iterations between two dynamic
 	itrCounter                       % init iteration counter, in algorithm loop this should be +1
 	mop = benchmark('fda1',30)       % this decision number can be modify by the second input
 	results = mop.func(population)   % like above
+</code></pre>
