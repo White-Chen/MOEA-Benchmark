@@ -63,7 +63,7 @@
 %                     pd     - decision dimension
 %                     domain - decision boundary constraints
 %                     func   - ref to objective function
-function mop = testmop(testname, dimension)
+function mop = benchmark(testname, dimension)
 
 mop         =   struct('name',[],'od',[],'pd',[],'domain',[],'func',[]);
 eval(['mop=',testname,'(mop,',num2str(dimension),');']); 
