@@ -23,7 +23,8 @@ Dynamic Multi-Objective Optimzation Problems
 6. Biswas, S., Das, S., Suganthan, P., & Coello Coello, C. (2014, July). Evolutionary multiobjective optimization in dynamic environments: A set of novel benchmark functions. In Evolutionary Computation (CEC), 2014 IEEE Congress on (pp. 3192-3199). IEEE.
 
 ## DEMO
-*   If use DTLZ function
+*   If use DTLZ function   
+
 	global M k                       % global variables M k
 	M = 3;                           % M is the number of Objective demension
 	k = 5                            % k is control params to control the number of demension, dimension = M + k -1
@@ -32,7 +33,8 @@ Dynamic Multi-Objective Optimzation Problems
 	% mop = benchmark('DTLZ7',22);     % for dtlz7 = 20
 	results = mop.func(population)   % population is the evolutionary pop, results is a matrix, the column is popsize, row is objetive value
    
-*   If use WFG function
+*   If use WFG function   
+
 	global M k l                     % global variables M k l
 	M = 2;
 	k = 2;
@@ -40,7 +42,8 @@ Dynamic Multi-Objective Optimzation Problems
         mop = benchmark('wfg11111111111',6)		 % for wfg1 k = 2 and l = 4, dim = 4 + 2 = 6
 	results = mop.func(population)   % like above
    
-*   If use dynamic problem
+*   If use dynamic problem   
+
 	global step window itrCounter    % global variables step window and iteration counter
 	step = 10                        % number of dynamic steps
 	window = 200                     % number of stationary iterations between two dynamic
