@@ -21,3 +21,29 @@ Dynamic Multi-Objective Optimzation Problems
 2. Zitzler, E., Deb, K., & Thiele, L. (2000). Comparison of multiobjective evolutionary algorithms: Empirical results. Evolutionary computation, 8(2), 173-195. 3. Deb, K., Thiele, L., Laumanns, M., & Zitzler, E. (2005). Scalable test problems for evolutionary multiobjective optimization (pp. 105-145). Springer London.
 4. Zhang, Q., Zhou, A., Zhao, S., Suganthan, P. N., Liu, W., & Tiwari, S. (2008). Multiobjective optimization test instances for the CEC 2009 special session and competition. University of Essex, Colchester, UK and Nanyang technological University, Singapore, special session on performance assessment of multi-objective optimization algorithms, technical report, 264. 5. Farina, M., Deb, K., & Amato, P. (2004). Dynamic multiobjective optimization problems: test cases, approximations, and applications. Evolutionary Computation, IEEE Transactions on, 8(5), 425-442.
 6. Biswas, S., Das, S., Suganthan, P., & Coello Coello, C. (2014, July). Evolutionary multiobjective optimization in dynamic environments: A set of novel benchmark functions. In Evolutionary Computation (CEC), 2014 IEEE Congress on (pp. 3192-3199). IEEE.
+
+## DEMO
+*   If use DTLZ function
+	global M k                       % global variables M k
+	M = 3;                           % M is the number of Objective demension
+	k = 5                            % k is control params to control the number of demension, dimension = M + k -1
+	mop = benchmark('DTLZ1',7);        % for dtlz1 k = 1
+	% mop = benchmark('DTLZ2',12);     % for dtlz1-6 k = 10
+	% mop = benchmark('DTLZ7',22);     % for dtlz7 = 20
+	results = mop.func(population)   % population is the evolutionary pop, results is a matrix, the column is popsize, row is objetive value
+   
+*   If use WFG function
+	global M k l                     % global variables M k l
+	M = 2;
+	k = 2;
+	l = 4;                           % k and l are both control parms, dimension = k + l
+        mop = benchmark('wfg11111111111',6)		 % for wfg1 k = 2 and l = 4, dim = 4 + 2 = 6
+	results = mop.func(population)   % like above
+   
+*   If use dynamic problem
+	global step window itrCounter    % global variables step window and iteration counter
+	step = 10                        % number of dynamic steps
+	window = 200                     % number of stationary iterations between two dynamic
+	itrCounter                       % init iteration counter, in algorithm loop this should be +1
+	mop = benchmark('fda1',30)       % this decision number can be modify by the second input
+	results = mop.func(population)   % like above
