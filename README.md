@@ -39,7 +39,7 @@ Dynamic Multi-Objective Optimzation Problems
 	M = 2;
 	k = 2;
 	l = 4;                           % k and l are both control parms, dimension = k + l
-        mop = benchmark('wfg1',6)	 % for wfg1 k = 2 and l = 4, dim = 4 + 2 = 6
+	mop = benchmark('wfg1',6)	 % for wfg1 k = 2 and l = 4, dim = 4 + 2 = 6
 	results = mop.func(population)   % like above
 </code></pre>
 *   If use dynamic problem   
