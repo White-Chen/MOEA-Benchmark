@@ -25,14 +25,13 @@ Dynamic Multi-Objective Optimzation Problems
 ## DEMO
 *   If use DTLZ function   
 
-	global M k                       % global variables M k
-	M = 3;                           % M is the number of Objective demension
-	k = 5                            % k is control params to control the number of demension, dimension = M + k -1
-	mop = benchmark('DTLZ1',7);        % for dtlz1 k = 1
-	% mop = benchmark('DTLZ2',12);     % for dtlz1-6 k = 10
-	% mop = benchmark('DTLZ7',22);     % for dtlz7 = 20
-	results = mop.func(population)   % population is the evolutionary pop, results is a matrix, the column is popsize, row is objetive value
-   
+`	global M k                       % global variables M k   
+	M = 3;                           % M is the number of Objective demension   
+	k = 5                            % k is control params to control the number of demension, dimension = M + k -1   
+	mop = benchmark('DTLZ1',7);        % for dtlz1 k = 1   
+	% mop = benchmark('DTLZ2',12);     % for dtlz1-6 k = 10   
+	% mop = benchmark('DTLZ7',22);     % for dtlz7 = 20   
+	results = mop.func(population)   % population is the evolutionary pop, results is a matrix, the column is popsize, row is objetive value`
 *   If use WFG function   
 
 	global M k l                     % global variables M k l
