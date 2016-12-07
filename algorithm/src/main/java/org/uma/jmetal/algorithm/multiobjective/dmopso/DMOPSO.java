@@ -515,7 +515,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
 
     @Override
     public String getName() {
-        return "pdMOPSO";
+        return "dMOPSO";
     }
 
     @Override

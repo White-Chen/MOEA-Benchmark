@@ -321,13 +321,13 @@ public class DMOPSOStudy {
                         .setMaxAge(5)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
-                                + "/DMOPSO/data/pdMOPSO/"
+                                + "/DMOPSO/data/dMOPSO/"
                                 + problemList.get(i).getName()
                                 + "/INPROCESSDATA"
                                 + run
                                 + "/")
                         .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "pdMOPSO", problemList.get(i), run));
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "dMOPSO", problemList.get(i), run));
             }
         }
         return algorithms;
