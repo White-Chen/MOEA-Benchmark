@@ -367,11 +367,12 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void saveDataInProcess() {
-        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+//        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+        if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
-                    .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + evaluations / (10 * populationSize) + ".tsv"))
-                    .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + evaluations / (10 * populationSize) + ".tsv"))
+                    .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + evaluations / (populationSize) + ".tsv"))
+                    .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + evaluations / (populationSize) + ".tsv"))
                     .print();
         }
 

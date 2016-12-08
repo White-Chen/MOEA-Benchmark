@@ -79,7 +79,7 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
                 .setNeighborSize(20)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("")
+                .setInProcessDataPath("F:\\百度云同步盘\\科研\\out")
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

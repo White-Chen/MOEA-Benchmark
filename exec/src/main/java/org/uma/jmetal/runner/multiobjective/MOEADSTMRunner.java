@@ -55,7 +55,7 @@ public class MOEADSTMRunner extends AbstractAlgorithmRunner {
             referenceParetoFront = args[1];
         } else {
             problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
-            referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/LZ09_F2.pf";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/LZ09_F2.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -79,6 +79,7 @@ public class MOEADSTMRunner extends AbstractAlgorithmRunner {
                 .setNeighborSize(20)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
+                .setInProcessDataPath("F:\\百度云同步盘\\科研\\out")
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
