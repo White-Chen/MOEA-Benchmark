@@ -97,7 +97,7 @@ public class MOEADSTM extends AbstractMOEAD<DoubleSolution> {
 
                 updateIdealPoint(child);
                 updateNadirPoint(child);
-                //updateNeighborhood(child, subProblemId, neighborType);
+                updateNeighborhood(child, subProblemId, neighborType);
 
                 offspringPopulation.add(child);
             }

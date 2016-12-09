@@ -94,6 +94,11 @@ public class DefaultBinarySolution
     }
 
     @Override
+    public double[] getObjectiveValue() {
+        return new double[0];
+    }
+
+    @Override
     public String getVariableValueString(int index) {
         String result = "";
         for (int i = 0; i < getVariableValue(index).getBinarySetLength(); i++) {

@@ -81,6 +81,11 @@ public class DefaultIntegerDoubleSolution
     }
 
     @Override
+    public double[] getObjectiveValue() {
+        return new double[0];
+    }
+
+    @Override
     public String getVariableValueString(int index) {
         return getVariableValue(index).toString();
     }
