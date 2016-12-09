@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -77,6 +78,11 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected CrossoverOperator<S> crossoverOperator;
     protected MutationOperator<S> mutationOperator;
     protected String inProcessDataPath;
+    /**
+     * km in dyy
+     */
+    protected double alphe = 2;
+    double[] minAngle;
 
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
@@ -154,14 +160,22 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected void initializeNeighborhood() {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
+        minAngle = new double[populationSize];
+        Arrays.fill(minAngle,360);
+        double[][] anglematrix = new double[populationSize][populationSize];
 
         for (int i = 0; i < populationSize; i++) {
             // calculate the distances based on weight vectors
             for (int j = 0; j < populationSize; j++) {
                 x[j] = MOEADUtils.distVector(lambda[i], lambda[j]);
                 idx[j] = j;
+                //求最小角度
+                if (i==j)
+                    anglematrix[i][j] = 360;
+                else
+                    anglematrix[i][j] = MOEADUtils.angle(lambda[i],lambda[j]);
             }
-
+            minAngle[i] = MOEADUtils.min(anglematrix[i]);
             // find 'niche' nearest neighboring subproblems
             MOEADUtils.minFastSort(x, idx, populationSize, neighborSize);
 
@@ -360,10 +374,41 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             d2 = Math.sqrt(d2);
 
             fitness = (d1 + theta * d2);
+        }else if (MOEAD.FunctionType.APD.equals(functionType))
+        {
+            double apdValue = 0.0;
+            double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+            if(scalingFactor < 0.0)
+                scalingFactor = 0.0;
+            else if(scalingFactor >1.0)
+                scalingFactor = 1.0;
+            double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                    *MOEADUtils.acosine(lambda,individual.getObjectiveValue())/minAngle[getWeightIndex(lambda)];
+            apdValue = (1+penalty)*MOEADUtils.normalize(individual.getObjectiveValue(),idealPoint);
+            return apdValue;
+
         } else {
             throw new JMetalException(" MOEAD.fitnessFunction: unknown type " + functionType);
         }
         return fitness;
+    }
+
+    /**
+     * 获取weight的序号
+     * @param weight 权重
+     * @return 序号
+     */
+    public int getWeightIndex(double[] weight){
+        int index = 0;
+        for (int i=0;i<populationSize;i++)
+        {
+            if(lambda[i] == weight)
+            {
+                index = i;
+                return index;
+            }
+        }
+        return index;
     }
 
     protected void saveDataInProcess() {
@@ -386,7 +431,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected enum NeighborType {NEIGHBOR, POPULATION}
 
-    public enum FunctionType {TCHE, PBI, AGG}
+    public enum FunctionType {TCHE, PBI, AGG,APD}
 
 
 }

@@ -80,6 +80,11 @@ public class PointSolution implements Solution<Double> {
     }
 
     @Override
+    public double[] getObjectiveValue() {
+        return objectives;
+    }
+
+    @Override
     public Double getVariableValue(int index) {
         return null;
     }

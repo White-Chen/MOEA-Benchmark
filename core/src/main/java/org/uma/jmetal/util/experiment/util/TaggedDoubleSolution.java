@@ -35,6 +35,16 @@ public class TaggedDoubleSolution implements TaggedSolution<Double> {
     }
 
     @Override
+    public double[] getObjectiveValue() {
+        double[] objectiveValue = new double[objectives.size()];
+        for (int i=0;i<objectives.size();i++)
+        {
+            objectiveValue[i] = objectives.get(i);
+        }
+        return objectiveValue;
+    }
+
+    @Override
     public Double getVariableValue(int index) {
         return variables.get(index);
     }

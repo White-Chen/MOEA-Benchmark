@@ -47,11 +47,11 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
-      <module name="algorithm" target="1.7" />
+      <module name="algorithm" target="1.8" />
       <module name="core" target="1.8" />
-      <module name="exec" target="1.7" />
-      <module name="MOEA-Benchmark" target="1.7" />
-      <module name="problem" target="1.7" />
+      <module name="exec" target="1.8" />
+      <module name="jmetal" target="1.8" />
+      <module name="problem" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

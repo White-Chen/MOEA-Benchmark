@@ -72,6 +72,8 @@ public abstract class AbstractGenericSolution<T, P extends Problem<?>> implement
         return objectives[index];
     }
 
+
+
     @Override
     public T getVariableValue(int index) {
         return variables.get(index);

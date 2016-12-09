@@ -26,6 +26,8 @@ public interface Solution<T> extends Serializable {
 
     double getObjective(int index);
 
+    double[] getObjectiveValue();
+
     T getVariableValue(int index);
 
     void setVariableValue(int index, T value);
