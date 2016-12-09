@@ -54,8 +54,8 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F5";
-            referenceParetoFront = "problem/src/test/resources/pareto_fronts/LZ09_F2.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/DTLZ1.3D.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -77,9 +77,9 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
                 .setNeighborhoodSelectionProbability(0.9)
                 .setMaximumNumberOfReplacedSolutions(2)
                 .setNeighborSize(20)
-                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("F:\\百度云同步盘\\科研\\out")
+                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEAD\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

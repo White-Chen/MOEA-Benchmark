@@ -120,10 +120,6 @@ public class DefaultDoubleBinarySolution
         return new DefaultDoubleBinarySolution(this);
     }
 
-    @Override
-    public double[] getObjectiveValue() {
-        return new double[0];
-    }
 
     @Override
     public String getVariableValueString(int index) {

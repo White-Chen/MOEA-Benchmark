@@ -55,7 +55,7 @@ import java.util.List;
  */
 public class MOEADStudy {
     private static final int INDEPENDENT_RUNS = 30;   //每个算法跑30次实验
-    public static final String experimentBaseDirectory = "F:/JavaProject/Experiment DATA/";
+    public static final String experimentBaseDirectory = "F:/Experiment Data/";
 
     public static void main(String[] args) throws IOException {
         /*
@@ -95,6 +95,8 @@ public class MOEADStudy {
         new GenerateWilcoxonTestTablesWithR<>(experiment).run();
         new GenerateFriedmanTestTables<>(experiment).run();
         new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
+
+        System.out.println("------------All Experiments Completed!!!!!!!!----------");
     }
 
     /**
@@ -155,7 +157,31 @@ public class MOEADStudy {
                                 + run
                                 + "/")
                         .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEAD", problemList.get(i), run));
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADSTM", problemList.get(i), run));
+            }
+
+
+            //MOEA/D-KM初始化
+            for (int i = 0; i < problemList.size(); i++) {
+                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKM)
+                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
+                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+                        .setNeighborhoodSelectionProbability(0.9)
+                        .setMaximumNumberOfReplacedSolutions(2)
+                        .setNeighborSize(20)
+                        .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                        .setDataDirectory("MOEAD_Weights")
+                        .setInProcessDataPath(experimentBaseDirectory
+                                + "/MOEAD/data/MOEAD-KM/"
+                                + problemList.get(i).getName()
+                                + "/INPROCESSDATA"
+                                + run
+                                + "/")
+                        .build();
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADKM", problemList.get(i), run));
             }
 
 

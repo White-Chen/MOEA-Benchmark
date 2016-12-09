@@ -18,13 +18,16 @@ import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -376,16 +379,20 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             fitness = (d1 + theta * d2);
         }else if (MOEAD.FunctionType.APD.equals(functionType))
         {
-            double apdValue = 0.0;
             double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
             if(scalingFactor < 0.0)
                 scalingFactor = 0.0;
             else if(scalingFactor >1.0)
                 scalingFactor = 1.0;
+            double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+            for (int i=0;i<individual.getNumberOfObjectives();i++)
+            {
+                objectiveValue[i] = individual.getObjective(i);
+            }
             double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
-                    *MOEADUtils.acosine(lambda,individual.getObjectiveValue())/minAngle[getWeightIndex(lambda)];
-            apdValue = (1+penalty)*MOEADUtils.normalize(individual.getObjectiveValue(),idealPoint);
-            return apdValue;
+                    *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+            fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+            return fitness;
 
         } else {
             throw new JMetalException(" MOEAD.fitnessFunction: unknown type " + functionType);
@@ -412,6 +419,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void saveDataInProcess() {
+        File file = new File(inProcessDataPath);
+        file.mkdirs();
 //        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
@@ -420,7 +429,6 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                     .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + evaluations / (populationSize) + ".tsv"))
                     .print();
         }
-
     }
 
     @Override

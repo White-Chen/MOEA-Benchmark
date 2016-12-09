@@ -122,7 +122,7 @@ public class KMmatching {
             {
                double temp = lx[u]+ly[v]-kMweights[u][v];
                 //double temp = decimalSubtract(decimalAdd(lx[u],ly[v]),kMweights[u][v]);     //高精度计算
-                if (temp < 1E-9)
+                if (temp <1E-10)
                 {
                     visitY[v]=true;
                     if (match[v]==-1 || findPath(match[v]))

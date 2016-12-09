@@ -64,7 +64,7 @@ import java.util.List;
  */
 public class DMOPSOStudy {
 
-    public static final String experimentBaseDirectory = "F:/Experiment DATA/";
+    public static final String experimentBaseDirectory = "F:/Experiment Data/";
     private static final int INDEPENDENT_RUNS = 30;
 
     public static void main(String[] args) throws IOException {

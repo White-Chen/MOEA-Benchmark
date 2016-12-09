@@ -93,10 +93,6 @@ public class DefaultBinarySolution
         return sum;
     }
 
-    @Override
-    public double[] getObjectiveValue() {
-        return new double[0];
-    }
 
     @Override
     public String getVariableValueString(int index) {

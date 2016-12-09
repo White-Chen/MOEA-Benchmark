@@ -80,7 +80,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
-                frequency[subProblemId]++;
+                //frequency[subProblemId]++;
 
                 NeighborType neighborType = chooseNeighborType();
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
@@ -95,7 +95,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
                 evaluations++;
 
                 updateIdealPoint(child);
-                updateNadirPoint(child);
+               // updateNadirPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
 
                 offspringPopulation.add(child);
@@ -103,17 +103,19 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
             // Combine the parent and the current offspring populations
             jointPopulation.clear();
-            jointPopulation.addAll(population);
+
             jointPopulation.addAll(offspringPopulation);
+            jointPopulation.addAll(population);
 
             // selection process---KM匹配------
             KMSelection();
 
             generation++;
-            if (generation % 30 == 0) {
-                utilityFunction();
-            }
+//            if (generation % 30 == 0) {
+//                utilityFunction();
+//            }
             saveDataInProcess();
+            System.out.println("-------generation"+generation+"---------");
 
         } while (evaluations < maxEvaluations);
 
@@ -194,14 +196,14 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
      * @return
      */
     public double[][] initKMWeights(){
-        double[][] weights_init = new double[offspringPopulation.size()][lambda.length];
+        double[][] weights_init = new double[jointPopulation.size()][lambda.length];
 
-        for (int i=0;i< offspringPopulation.size();i++)
+        for (int i=0;i< jointPopulation.size();i++)
         {
             for (int j=0;j< lambda.length;j++)
             {
                 weights_init[i][j] = 0;
-                double ws = -1*fitnessFunction(offspringPopulation.get(i),lambda[j]);
+                double ws = -1*fitnessFunction(jointPopulation.get(i),lambda[j]);
                 //weights_init[i][j] = Double.parseDouble(String.format("%.4f", ws));
                 weights_init[i][j] = ws;
             }
@@ -225,11 +227,11 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
     @Override
     public String getName() {
-        return "MOEADSTM";
+        return "MOEADKM";
     }
 
     @Override
     public String getDescription() {
-        return "Multi-Objective Evolutionary Algorithm based on Decomposition. Version with Stable Matching Model";
+        return "Multi-Objective Evolutionary Algorithm based on Decomposition. Version with KM Matching Model";
     }
 }
