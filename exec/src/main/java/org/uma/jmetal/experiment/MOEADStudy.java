@@ -19,6 +19,9 @@ import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.cec2009Competition.*;
+import org.uma.jmetal.problem.multiobjective.dtlz.*;
+import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
@@ -66,11 +69,18 @@ public class MOEADStudy {
         */
 
         List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(new ZDT1(), new ZDT2(),
-                new ZDT3(), new ZDT4(), new ZDT6());
+                new ZDT3(), new ZDT4(), new ZDT6(),
+                new DTLZ1(), new DTLZ2(), new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7(),
+                new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),
+                new UF7(),new UF8(30),new UF9(),new UF10(),
+                new WFG2(2, 4, 2));
 
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);
 
-        List<String> referenceFrontFileNames = Arrays.asList("ZDT1.pf", "ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf");
+        List<String> referenceFrontFileNames = Arrays.asList("ZDT1.pf", "ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf",
+                "DTLZ1.3D.pf","DTLZ2.3D.pf","DTLZ3.3D.pf","DTLZ4.3D.pf","DTLZ5.3D.pf","DTLZ6.3D.pf","DTLZ7.3D.pf",
+                "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf","UF9.pf","UF10.pf",
+                "WFG2.2D.pf");
 
         Experiment<DoubleSolution, List<DoubleSolution>> experiment =
                 new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("MOEADStudy")
