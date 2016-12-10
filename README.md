@@ -51,3 +51,6 @@ Dynamic Multi-Objective Optimzation Problems
 	mop = benchmark('fda1',30)       % this decision number can be modify by the second input
 	results = mop.func(population)   % like above
 </code></pre>
+
+## Visualization
+*   ExperimentData.m script in root directory can automatically help visualize all results from [JAVA program](https://github.com/White-Chen/MOEA-Benchmark/tree/master/exec/src/main/java/org/uma/jmetal/experiment)
