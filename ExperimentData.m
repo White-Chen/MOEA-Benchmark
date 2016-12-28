@@ -1,4 +1,5 @@
 % Create 5/3
+% Author ChenZhe
 
 % FUN:				Objective value
 % VAR:				Decision Value
@@ -23,21 +24,21 @@
 % 			|	InProcessEvaluations:arrays
 % 			|   .......
 % 			|	.......
-% 			|   testproblem n-------+------------------------------------------------------------------------
+% 			|   testproblem n->>->>-+------------------------------------------------------------------------
 % 	    				  			|	name: 					'testproblem n'										
 %                					|	date: 					'xx:xx:xx'											
 %               					|	bytes: 					0													
 %               					|	isdir: 					1													
 %     								|	datenum: 				xx													
 %                					|	Path: 					'..\Experiment Data\xx\data\xx\testproblem n'		
-%      	        					|	EP: 					[runtimex1 struct]----------------------------------+-------------------------------------------------------------------------
+%      	        					|	EP: 					[runtimex1 struct]>>-->>-->>-->>-->>-->>-->>-->>-->>+-------------------------------------------------------------------------
 %     	         					|	ER: 					[runtimex1 struct]									|	name: 					'testproblem n'								 
 %      	        					|	GD: 					[runtimex1x1 struct]								|	date: 					'xx:xx:xx'									
 %       	       					|	HV: 					[runtimex1x1 struct]								|	bytes: 					0											
 %      		       					|	IGD: 					[runtimex1x1 struct]								|	isdir: 					1											
 %       	  						|	IGDPlus: 				[runtimex1x1 struct]								|	datenum: 				xx											
 %       	   						|	SPREAD: 				[runtimex1x1 struct]								|	Path: 					'..\Experiment Data\xx\data\xx\testproblem\INPROCESSDATAN\ n'
-%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPathï¼?	
+%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPath：		
 %     		 						|	Median: 				[numOfIndicatorsx2x1 struct]						|	CIPDFigOutPutPath:		
 % 	 								|	InprocessDataPathList: 	[runtimex1x1 struct]								|	AllInCIPDFigOutPutPath:	
 %   								|	IndicatorList: 			{Indicatorsx1 cell}									|	Path:					
@@ -50,44 +51,52 @@
 %% ExperimentData: Main function
 function algorithms = ExperimentData(INPUTexperimentRootDirectory, INPUTexperimentDataTag)
 
-	
 
 	global algorithms experimentRootDirectory experimentDataTag numOfAlgorithms numOfProblems numOfIndicators...
-		numOfIPCD;
-	load('b.mat');
+		numOfIPCD selectMatrix titleMatrix IndicatorMatrix;
+
 	experimentRootDirectory = INPUTexperimentRootDirectory;
 	experimentDataTag 		= INPUTexperimentDataTag;
 	numOfAlgorithms 		= 8;
 	numOfProblems  			= 16;
-	numOfIndicators 		= 7;
 	numOfIPCD 				= 30;
+	selectMatrix 			= {	'ZDT1',	'ZDT2', 'ZDT3',...
+					   			'ZDT4', 'ZDT6', 'UF2' ,...
+					   			'UF7',	'DTLZ1','DTLZ2',...
+					   			 };
+	titleMatrix				= {	'( a )','( b )','( c )','( d )','( e )','( f )',...
+    							'( g )','( h )','( i )','( j )','( k )','( l )'};
+    % 'EP','ER','GD','HV','IGD','IGDPlus','SPREAD'
+    IndicatorMatrix 		= {'ER','IGD','SPREAD'};
+	numOfIndicators 		= length(IndicatorMatrix);
 
-	% disp('Step1 : getAlgorithmList');
-	% getAlgorithmList();
 
-	% disp('Step2 : getTestProblemList');
-	% getTestProblemList();
+	disp('Step1 : getAlgorithmList');
+	getAlgorithmList();
 
-	% disp('Step3 : getIndicatorAndInProcessList');
-	% getIndicatorAndInProcessList();
+	disp('Step2 : getTestProblemList');
+	getTestProblemList();
 
-	% disp('Step4 : setPictureTag');
-	% setPictureTag();
+	disp('Step3 : getIndicatorAndInProcessList');
+	getIndicatorAndInProcessList();
 
-	% disp('Step5 : setPictureColor');
-	% setPictureColor();
+	disp('Step4 : setPictureTag');
+	setPictureTag();
 
-	% disp('Step6 : setPictureOutPath');
-	% setPictureOutPath();
+	disp('Step5 : setPictureColor');
+	setPictureColor();
 
-	% disp('Step7 : setInProcessEvaluations');
-	% setInProcessEvaluations();
+	disp('Step6 : setPictureOutPath');
+	setPictureOutPath();
 
-	% disp('Step8 : inProcessDataVisualize');
-	% % inProcessDataVisualize();
+	disp('Step7 : setInProcessEvaluations');
+	setInProcessEvaluations();
 
-	% disp('Step9 : resultDataVisualize');
-	% resultDataVisualize();
+	disp('Step8 : inProcessDataVisualize');
+	% inProcessDataVisualize();
+
+	disp('Step9 : resultDataVisualize');
+	resultDataVisualize();
 
 	disp('Step10 : combineDataVisualize');
 	combineDataVisualize();
@@ -172,7 +181,7 @@ end
 %% getInProcessDataPath:
 function getIndicatorAndInProcessList()
 
-	global algorithms numOfAlgorithms numOfProblems;
+	global algorithms numOfAlgorithms numOfProblems IndicatorMatrix;
 
 	% get number of algorithms in this experiment
 
@@ -204,14 +213,14 @@ function getIndicatorAndInProcessList()
                     
 				% If file name does not endwith '.tsv', it will be named as an indicator
 				% this name will be add to the tempIndicatorList
-				elseif (length(tempProblemDirOutput(k).name) < 4 ...
-					|| ~strcmp(tempProblemDirOutput(k).name(end-3:end), '.tsv'))
+				elseif length(tempProblemDirOutput(k).name) < 4 ...
+					|| ~strcmp(tempProblemDirOutput(k).name(end-3:end), '.tsv')
+					
                     tempIndicatorName = tempProblemDirOutput(k).name;
 
                     % the IGD+ name may occur some error in matlab
                     % IGD+ is repalced by IGDPlus now
-                    if strcmp(tempIndicatorName, 'IGD+')
-                    	delete(fullfile(tempProblems(j).Path,tempIndicatorName));
+                    if isempty(IndicatorMatrix(strcmp(IndicatorMatrix, tempIndicatorName)))
                     	continue;
                 	end
 					tempIndicatorList = [tempIndicatorList ; cellstr(tempIndicatorName)];
@@ -491,29 +500,29 @@ end
 %% resultDataVisualize: 
 function resultDataVisualize()
 
-	% disp('Step 9.1: checkIndicator');
-	% isSuccess = checkIndicator();
+	disp('Step 9.1: checkIndicator');
+	isSuccess = checkIndicator();
+	if (~isSuccess);
+		error('check indicator file input and ouput path error');
+	else
+		disp('check indicator file input and ouput path successfully');
+	end
+
+	% disp('Step 9.2: resultData2Boxplot');
+	% isSuccess = resultData2BoxPLot();
 	% if (~isSuccess);
-	% 	error('check indicator file input and ouput path error');
+	% 	error('function resultData2Boxplot error');
 	% else
-	% 	disp('check indicator file input and ouput path successfully');
+	% 	disp('resultData2Boxplot successfully');
 	% end
 
-	disp('Step 9.2: resultData2Boxplot');
-	isSuccess = resultData2BoxPLot();
-	if (~isSuccess);
-		error('function resultData2Boxplot error');
-	else
-		disp('resultData2Boxplot successfully');
-	end
-
-	disp('Step 9.3: boxplot2One');
-	isSuccess = boxplot2One();
-	if (~isSuccess);
-		error('function boxplot2One error');
-	else
-		disp('boxplot2One successfully');
-	end
+	% disp('Step 9.3: boxplot2One');
+	% isSuccess = boxplot2One();
+	% if (~isSuccess);
+	% 	error('function boxplot2One error');
+	% else
+	% 	disp('boxplot2One successfully');
+	% end
 
 	clear i isSuccess;
 end
@@ -522,13 +531,13 @@ end
 function combineDataVisualize()
 
 	
-	% disp('Step 10.1: inProcessDataToTrendPic');
-	% isSuccess = inProcessDataToTrendPic();
-	% if (~isSuccess);
-	% 	error('inProcessDataToTrendPic file input and ouput path error');
-	% else
-	% 	disp('inProcessDataToTrendPic file input and ouput path successfully');
-	% end
+	disp('Step 10.1: inProcessDataToTrendPic');
+	isSuccess = inProcessDataToTrendPic();
+	if (~isSuccess);
+		error('inProcessDataToTrendPic file input and ouput path error');
+	else
+		disp('inProcessDataToTrendPic file input and ouput path successfully');
+	end
 
 	disp('disp 10.2: trendPics2One');
 	isSuccess = trendPics2One();
@@ -653,9 +662,10 @@ function isSuccess = checkIndicator()
     isClearCache    = false;
 
     % maybe removed in genral use
-    % load('a.mat');
+    % load('matlab.mat');
     % isSuccess = true;
     % algorithms = algs;
+    % setInProcessEvaluations();
     % clear algs;
     % return;
 
@@ -801,14 +811,13 @@ function isSuccess = checkIndicator()
 	end
 
 	isSuccess = true;
-	save('b.mat');
 	clear i isClearCache;
 end
 
 %% inProcessDataToTrendPic:
 function isSuccess = inProcessDataToTrendPic()
 	
-	global algorithms numOfAlgorithms numOfIndicators numOfProblems numOfIPCD;
+	global algorithms numOfAlgorithms numOfIndicators numOfProblems numOfIPCD IndicatorMatrix;
     
 	isSuccess		= false;
 	figPosition		= [0 0 20 20];
@@ -818,10 +827,6 @@ function isSuccess = inProcessDataToTrendPic()
 	for i = 1:numOfProblems
 		for j = 1: numOfIndicators
 			for k = 1:numOfIPCD
-
-				if(k ~= 0 && j ~= 2)
-					continue;
-				end;
 
 				eval(['CIPDFigOutPutPath = algorithms(1).',...
 					char(algorithms(1).ProblemNameList(i)),...
@@ -854,7 +859,7 @@ function isSuccess = inProcessDataToTrendPic()
 					popNumber 			= getPopNumber(char(algorithms(v).ProblemNameList(i)));
 					plot((algorithms(v).InProcessEvaluations(1:size(data,1)))*popNumber,...
 						data(:,2),['k',algorithms(v).PictureTag,'-'],...
-						'MarkerFace', 'none','MarkerSize',4);
+						'MarkerSize',2);
 					hold on;
 
 					clear data ttempData index CIPDInputPath;
@@ -894,45 +899,20 @@ end
 %% trendPics2One:
 % subplot size is [4,3], so the max problem length is 12 in one pic
 function isSuccess = trendPics2One()
-	global  numOfIndicators numOfIPCD algorithms;
+	global  numOfIndicators numOfIPCD algorithms titleMatrix selectMatrix IndicatorMatrix;
 
-	selectMatrix 	= {	'ZDT1',	'ZDT2', 'ZDT3',...
-					   	'ZDT4', 'ZDT6', 'UF2' ,...
-					   	 'UF7',	'DTLZ1','DTLZ2',...
-					   	 };
-
-	titleMatrix		= {	'(a)','(b)','(c)','(d)','(e)','(f)',...
-    					'(g)','(h)','(i)','(j)','(k)','(l)',...
-    					'(m)','(n)','(o)','(p)','(p)','(q)',...
-    					'(r)','(s)','(t)','(u)','(v)','(w)',...
-    					'(x)','(y)','(z)','(I)'};
 	fontSize 		= '5';
-	fontName 		= 'TimesNewRoman';
-	
+	fontName 		= 'Times New Roman';
 
 	for k = 1:numOfIPCD
-		if (k ~= 1)
-			continue;
-		end
-		clc;
-		figOut = figure('visible','off');
-		set(gcf, 'position', [0 0 1080 2500]);
-		counter 		= 0;
+
 		for j = 1:numOfIndicators
 
-			if (j ~= 2 && j ~= 5 && j ~= 7)
-				continue;
-			end
-
-			
-			
+			clc;
+			figOut = figure('visible','off');
 
 			for i = 1:length(selectMatrix)
 
-				counter 	= counter + 1;
-				if counter <= 15
-					continue;
-				end
 				problemName = char(selectMatrix(i));
 				eval(['indicatorName = char(algorithms(1).',problemName,'.IndicatorPathList(',num2str(j),').name);'])
 				eval(['CIPD = algorithms(1).',problemName,'.',indicatorName,'(',num2str(k),');']);
@@ -945,14 +925,14 @@ function isSuccess = trendPics2One()
 				disp(['openfig from ',CIPDFigOutPutPath]);
 				eval([problemName,'FigHandle = openfig(''',CIPDFigOutPutPath,''',''invisible'',''reuse'');']);
 				% eval([problemName,'LegendHandle = legend;']);
-				% eval([problemName,'LegendHandle.FontSize = ',fontSize,';']);
+				% eval([problemName,'LegendHandle.FontSize = 4;']);
 				% eval([problemName,'LegendHandle.FontName = ''',fontName,''';']);
 				% eval([problemName,'LegendHandle.Color = ''none'';']);
 				eval([problemName,'AxeHandle = gca;']);
 				eval([problemName,'AxeHandle.Color = ''none'';']);
 				eval([problemName,'FigHandle.Color = ''none'';']);
 				eval([problemName,'FigHandle.InvertHardcopy = ''off'';']);
-				eval([problemName,'AxeHandle.XLabel.String = {''FEAS 10^{4}'',''',char(titleMatrix(counter)),' ',...
+				eval([problemName,'AxeHandle.XLabel.String = {''FEAS 10^{4}'',''',char(titleMatrix(i)),' ',...
 									indicatorName ,' for ',problemName,'''};']);
 				eval([problemName,'AxeHandle.YLabel.String = ''',indicatorName,''';']);
 				eval([problemName,'AxeHandle.FontSize = ',fontSize,';']);
@@ -964,9 +944,7 @@ function isSuccess = trendPics2One()
 				eval([problemName,'AxeHandle.YLim = ',mat2str(YLim),';']);
 				eval([problemName,'Copy = copyobj(',...
 						problemName,'AxeHandle,figOut);']);
-				% eval([problemName,'Copy = copyobj([',...
-				% 		problemName,'AxeHandle,',problemName,'LegendHandle],figOut);']);
-				eval(['subplot(4,4,',num2str(counter-15),',',problemName,'Copy(1));']);
+				eval(['subplot(4,3,',num2str(i),',',problemName,'Copy(1));']);
 
 				eval(['close(',problemName,'FigHandle);']);
 				eval(['clear ',problemName,'FigHandle ',problemName,'AxeHandle ',...
@@ -975,31 +953,30 @@ function isSuccess = trendPics2One()
 
 			end
 
-		end
-		disp(['start generating C:\Users\ChenZhePC\Desktop\Allin3.fig']);
+			disp(['start generating ',AllInCIPDFigOutPutPath]);
 
-		set(gcf,'Color','none');
-		set(gcf,'InvertHardcopy','off');
-		set(gca,'Color','none');
-		% set(gcf,'Position', get(0,'ScreenSize'));
-		set(gcf, 'position', [0 0 1080 2500]);
-		saveas(gcf,'C:\Users\ChenZhePC\Desktop\Allin.fig');
-		disp(['save C:\Users\ChenZhePC\Desktop\Allin.fig successfully']);
-		print(gcf,'-deps','-opengl','-r600','C:\Users\ChenZhePC\Desktop\Allin.eps');
-		disp(['save ','C:\Users\ChenZhePC\Desktop\Allin.eps','.eps successfully']);
-		close('all');
-		clear i figOut gcf AllInCIPDFigOutPutPath;
+			set(gcf,'Color','none');
+			set(gca,'Color','none');
+			set(gcf,'InvertHardcopy','off');
+			set(gcf,'Position', get(0,'ScreenSize'));
+			saveas(gcf,AllInCIPDFigOutPutPath);
+			disp(['save ',AllInCIPDFigOutPutPath,' successfully']);
+			print(gcf,'-deps','-r600',[AllInCIPDFigOutPutPath(1:end-4),'.eps']);
+			disp(['save ',AllInCIPDFigOutPutPath,'.eps successfully']);
+			close('all');
+			clear i figOut gcf AllInCIPDFigOutPutPath;
+		end
 
 		clear j;
 	end
 	isSuccess = true;
-	clear k fontSize selectMatrix titleMatrix;
+	clear k fontSize;
 end
 
 %% resultData2Boxplot: function description
 function isSuccess = resultData2BoxPLot()
 
-	global algorithms numOfAlgorithms numOfIndicators numOfIPCD numOfProblems;
+	global algorithms numOfAlgorithms numOfIndicators numOfIPCD numOfProblems IndicatorMatrix;
 	isSuccess		= false;
 	FontSize 		= 7;
 	figPosition		= [0 0 20 20];
@@ -1007,16 +984,11 @@ function isSuccess = resultData2BoxPLot()
 	for i = 1:numOfProblems
 		for j = 1:numOfIndicators
 
-			if j ~= 2 && j ~= 5 && j ~= 7
-				continue;
-				isSuccess = true;
-			end
-
-			% figOut = figure('visible','off');
-			% set(gcf,'units','centimeters');
-   %  		set(gcf,'position',figPosition);
-			% RD = zeros(numOfIPCD,numOfAlgorithms);
-			% XTickLabel = cell(1,numOfAlgorithms);
+			figOut = figure('visible','off');
+			set(gcf,'units','centimeters');
+    		set(gcf,'position',figPosition);
+			RD = zeros(numOfIPCD,numOfAlgorithms);
+			XTickLabel = cell(1,numOfAlgorithms);
 			clc;
 			for k = 1:numOfAlgorithms
 				eval(['RDFigOutPath = algorithms(',num2str(k),...
@@ -1033,23 +1005,23 @@ function isSuccess = resultData2BoxPLot()
 					'.IndicatorPathList(',num2str(j),').name;']);
 
 				disp(['importdata from',RDInputPath]);
-				% RD(:,k) 			= importdata(RDInputPath);
-				% XTickLabel(k) 		= {algorithms(k).name};
+				RD(:,k) 			= importdata(RDInputPath);
+				XTickLabel(k) 		= {algorithms(k).name};
 
 				clear RDInputPath;
 			end
 
 			disp(['start generating ',RDFigOutPath]);
-			% boxplot(RD);
-			% set(gcf,'color','w');
-			% set(gca,'XTickLabel',XTickLabel);
-			% set(gca,'FontSize',FontSize);
-			% saveas(gcf,[RDFigOutPath]);
+			boxplot(RD);
+			set(gcf,'color','w');
+			set(gca,'XTickLabel',XTickLabel);
+			set(gca,'FontSize',FontSize);
+			saveas(gcf,[RDFigOutPath]);
 			disp(['save ',RDFigOutPath,' successfully']);
-			% xlabel('algorithm Name');
-			% ylabel(indicatorName);
-			% title(['boxplot for ',indicatorName]);
-			% saveas(gcf,[RDFigOutPath_SingleOut]);
+			xlabel('algorithm Name');
+			ylabel(indicatorName);
+			title(['boxplot for ',indicatorName]);
+			saveas(gcf,[RDFigOutPath_SingleOut]);
 			disp(['save ',RDFigOutPath_SingleOut,' successfully']);
 			clear k figOut RDFigOutPath RD RDFigOutPath_SingleOut indicatorName;
 		end
@@ -1064,43 +1036,30 @@ end
 %% boxplot2One:
 function isSuccess = boxplot2One()
 
-	global algorithms numOfIndicators;
-
-	selectMatrix 	= {	'ZDT1',	'ZDT2', 'ZDT3',...
-					   	'ZDT4', 'ZDT6', 'UF2' ,...
-					   	'UF7',	'DTLZ1','DTLZ2',...
-					   	 };
-
-    titleMatrix		= {	'(a)','(b)','(c)','(d)','(e)','(f)',...
-    					'(g)','(h)','(i)','(j)','(k)','(l)',...
-    					'(m)','(n)','(o)','(p)','(p)','(q)',...
-    					'(r)','(s)','(t)','(u)','(v)','(w)',...
-    					'(x)','(y)','(z)','(I)'};
+	global algorithms numOfIndicators selectMatrix titleMatrix IndicatorMatrix;
 
 	fontSize 		= '5';
 	isSuccess 		= false;
-	fontName 		= 'TimesNewRoman';
-	counter			= 0;
+	fontName 		= 'Times New Roman';
 
-	clc;
-	disp(['start generating C:\Users\ChenZhePC\Desktop\Allin.fig']);
-	figOut = figure('visible','off');
-	set(gcf, 'position', [0 0 1080 2500]);
-	eval(['indicatorList = algorithms(1).',char(algorithms(1).ProblemNameList(1)),...
-			'.IndicatorPathList;']);
 	for j = 1:numOfIndicators
 
-		if j ~= 2 && j ~= 5 && j ~= 7
-			continue;
-		end
-		
+		eval(['indicatorList = algorithms(1).',char(algorithms(1).ProblemNameList(1)),...
+			'.IndicatorPathList;']);
+		ALLInRDFigOutPath 	= indicatorList(j).ALLInRDFigOutPath;
 		indicatorName 		= char(indicatorList(j).name);
-		
+		counter 			= 1;
+
+		if ~isempty(dir(ALLInRDFigOutPath))
+			delete(ALLInRDFigOutPath);
+			disp([ALLInRDFigOutPath,'is deleted successfully']);
+		end
+
+		clc;
+		disp(['start generating ', ALLInRDFigOutPath]);
+		figOut = figure('visible','off');
 		for i = 1:length(selectMatrix)
-			counter			= counter + 1;
-			if counter <= 16
-				continue;
-			end
+
 			problemName 	= char(selectMatrix(i));
 			eval(['RDFigOutPath = algorithms(1).',problemName,...
 				'.IndicatorPathList(',num2str(j),').RDFigOutPath;']);
@@ -1111,7 +1070,7 @@ function isSuccess = boxplot2One()
 			eval([problemName,'AxeHandle.Color = ''none'';']);
 			eval([problemName,'FigHandle.Color = ''none'';']);
 			eval([problemName,'FigHandle.InvertHardcopy = ''off'';']);
-			eval([problemName,'AxeHandle.XLabel.String = ''',char(titleMatrix(counter)),' ',...
+			eval([problemName,'AxeHandle.XLabel.String = ''',char(titleMatrix(i)),' ',...
 								indicatorName ,' Boxplot for ',problemName,''';']);
 			eval([problemName,'AxeHandle.YLabel.String = ''',indicatorName,''';']);
 			eval([problemName,'AxeHandle.XTickLabelRotation = 40;']);
@@ -1119,29 +1078,29 @@ function isSuccess = boxplot2One()
 			eval([problemName,'AxeHandle.FontName = ''',fontName,''';']);
 			eval([problemName,'Copy = copyobj(',...
 					problemName,'AxeHandle,figOut);']);
-			eval(['subplot(4,4,',num2str(counter-16),',',problemName,'Copy(1));']);
+			eval(['subplot(4,3,',num2str(i),',',problemName,'Copy(1));']);
 
 			eval(['close(',problemName,'FigHandle);']);
 			eval(['clear ',problemName,'FigHandle ',problemName,'AxeHandle ',...
 					problemName,'LegendHandle ',problemName,'Copy;'])
 			clear problemName RDFigOutPath;
 		end
-		clear i indicatorName;
-	end
+
 		set(gcf,'Color','none');
-		set(gcf,'InvertHardcopy','off');
 		set(gca,'Color','none');
-		% set(gcf,'Position', get(0,'ScreenSize'));
-		set(gcf, 'position', [0 0 1080 2500]);
-		saveas(gcf,'C:\Users\ChenZhePC\Desktop\Allin3.fig');
-		disp(['save C:\Users\ChenZhePC\Desktop\Allin.fig successfully']);
-		print(gcf,'-deps','-r600',['C:\Users\ChenZhePC\Desktop\Allin3.eps']);
-		disp(['save ','C:\Users\ChenZhePC\Desktop\Allin.eps successfully']);
+		set(gcf,'InvertHardcopy','off');
+		set(gcf,'Position', get(0,'ScreenSize'));
+		saveas(gcf,ALLInRDFigOutPath);
+		disp(['save ',ALLInRDFigOutPath,' successfully']);
+		print(gcf,'-deps','-r600',[ALLInRDFigOutPath(1:end-4),'.eps']);
+		disp(['save ',ALLInRDFigOutPath(1:end-4),'.eps successfully']);
 		close('all');
-	
+
+		clear i ALLInRDFigOutPath indicatorName indicatorList gcf;
+	end
 
 	isSuccess = true;
-	clear j selectMatrix titleMatrix;
+	clear j;
 end
 
 %% resultDataMean:
