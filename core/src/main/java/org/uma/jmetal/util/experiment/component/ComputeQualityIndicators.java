@@ -76,6 +76,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                 algorithmDirectory = experiment.getExperimentBaseDirectory() + "/data/" +
                         algorithm.getTag();
 
+
                 for (int problemId = 0; problemId < experiment.getProblemList().size(); problemId++) {
                     String problemDirectory = algorithmDirectory + "/" + experiment.getProblemList().get(problemId).getName();
 
@@ -97,7 +98,9 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                     for (int i = 0; i < experiment.getIndependentRuns(); i++) {
                         String frontFileName = problemDirectory + "/" +
                                 experiment.getOutputParetoFrontFileName() + i + ".tsv";
-
+                        File file = new File(frontFileName);
+                        if (!file.exists())
+                            continue;
                         Front front = new ArrayFront(frontFileName);
                         Front normalizedFront = frontNormalizer.normalize(front);
                         List<PointSolution> normalizedPopulation = FrontUtils.convertFrontToSolutionList(front);
@@ -154,6 +157,8 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                             }
 
                             Front front = new ArrayFront(f.getAbsolutePath() + "/" + tsvFileName);
+                            if(front.getNumberOfPoints() == 0)
+                                continue;
                             Front normalizedFront = frontNormalizer.normalize(front);
                             List<PointSolution> normalizedPopulation = FrontUtils.convertFrontToSolutionList(front);
                             Double indicatorValue = indicator.evaluate((List<S>) normalizedPopulation);
@@ -233,9 +238,12 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                 for (Problem<?> problem : experiment.getProblemList()) {
                     String indicatorFileName =
                             algorithmDirectory + "/" + problem.getName() + "/" + indicator.getName();
+                    File file = new File(indicatorFileName);
                     Path indicatorFile = Paths.get(indicatorFileName);
-                    if (indicatorFile == null) {
+                    if (indicatorFile == null || !file.exists()) {
+
                         throw new JMetalException("Indicator file " + indicator.getName() + " doesn't exist");
+
                     }
 
                     List<String> fileArray;

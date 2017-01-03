@@ -27,5 +27,8 @@
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.4" level="project" />
     <orderEntry type="library" name="Maven: org.hamcrest:hamcrest-all:1.3" level="project" />
     <orderEntry type="module" module-name="problem" scope="TEST" />
+    <orderEntry type="module" module-name="exec" />
+    <orderEntry type="module" module-name="jmetal" />
+    <orderEntry type="library" name="jdk1.8" level="application" />
   </component>
 </module>

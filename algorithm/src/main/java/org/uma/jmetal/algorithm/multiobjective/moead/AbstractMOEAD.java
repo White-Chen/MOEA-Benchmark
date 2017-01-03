@@ -86,6 +86,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
      */
     protected double alphe = 2;
     double[] minAngle;
+    protected int updateAbility;
 
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
@@ -313,8 +314,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             }
             double f1, f2;
 
-            f1 = fitnessFunction(population.get(k), lambda[k]);
-            f2 = fitnessFunction(individual, lambda[k]);
+            f1 = fitnessFunction(population.get(k), lambda[k]); //邻域内其他个体
+            f2 = fitnessFunction(individual, lambda[k]); //当前个体
 
             if (f2 < f1) {
                 population.set(k, (S) individual.copy());
@@ -324,6 +325,10 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             if (time >= maximumNumberOfReplacedSolutions) {
                 return;
             }
+        }
+
+        if (time >= populationSize/size){
+            updateAbility++;
         }
     }
 
@@ -421,8 +426,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected void saveDataInProcess() {
         File file = new File(inProcessDataPath);
         file.mkdirs();
-//        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
-        if (!inProcessDataPath.isEmpty()) {
+       if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+//         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
                     .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + evaluations / (populationSize) + ".tsv"))

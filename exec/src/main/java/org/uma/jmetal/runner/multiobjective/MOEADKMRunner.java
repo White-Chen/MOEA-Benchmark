@@ -75,7 +75,7 @@ public class MOEADKMRunner extends AbstractAlgorithmRunner {
                 .setPopulationSize(100)
                 .setResultPopulationSize(100)
                 .setNeighborhoodSelectionProbability(0.9)
-                .setMaximumNumberOfReplacedSolutions(2)
+                .setMaximumNumberOfReplacedSolutions(20)
                 .setNeighborSize(20)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")

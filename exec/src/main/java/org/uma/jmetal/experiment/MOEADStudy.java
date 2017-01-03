@@ -21,7 +21,8 @@ import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.cec2009Competition.*;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
+import org.uma.jmetal.problem.multiobjective.lz09.*;
+import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
@@ -57,10 +58,10 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOEADStudy {
-    private static final int INDEPENDENT_RUNS = 30;   //每个算法跑30次实验
-    public static final String experimentBaseDirectory = "F:/Experiment Data/";
+    private static final int INDEPENDENT_RUNS =30;   //每个算法跑30次实验
+    public static final String experimentBaseDirectory = "F:/Experiment Data1";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*
         if (args.length != 1) {
             throw new JMetalException("Missing argument: experiment base directory");
@@ -68,19 +69,27 @@ public class MOEADStudy {
         String experimentBaseDirectory = args[0];
         */
 
-        List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(new ZDT1(), new ZDT2(),
-                new ZDT3(), new ZDT4(), new ZDT6(),
-                new DTLZ1(), new DTLZ2(), new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7(),
-                new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),
-                new UF7(),new UF8(30),new UF9(),new UF10(),
-                new WFG2(2, 4, 2));
+        List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(//new ZDT1(),
+               // new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6(),
+               // new DTLZ1(), new DTLZ2(), new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7(),
+               // new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),new UF7(),new UF8(30),
+               // new UF9(),new UF10(),
+                new WFG1(2,4,2),new WFG2(2,4,2),new WFG3(2,4,2),new WFG4(2,4,2),new WFG5(2,4,2),new WFG6(2,4,2),new WFG7(2,4,2),new WFG8(2,4,2),new WFG9(2,4,2),
+                new LZ09F1(),new LZ09F2(),new LZ09F3(),new LZ09F4(),new LZ09F5(),
+                new LZ09F6(),new LZ09F7(),new LZ09F8(),new LZ09F9()
+                );
 
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);
 
-        List<String> referenceFrontFileNames = Arrays.asList("ZDT1.pf", "ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf",
-                "DTLZ1.3D.pf","DTLZ2.3D.pf","DTLZ3.3D.pf","DTLZ4.3D.pf","DTLZ5.3D.pf","DTLZ6.3D.pf","DTLZ7.3D.pf",
-                "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf","UF9.pf","UF10.pf",
-                "WFG2.2D.pf");
+        List<String> referenceFrontFileNames = Arrays.asList(//"ZDT1.pf",
+                //"ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf",
+               // "DTLZ1.3D.pf","DTLZ2.3D.pf","DTLZ3.3D.pf","DTLZ4.3D.pf","DTLZ5.3D.pf","DTLZ6.3D.pf","DTLZ7.3D.pf",
+                //"UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf",
+               //  "UF9.pf","UF10.pf",
+               "WFG1.2D.pf","WFG2.2D.pf","WFG3.2D.pf","WFG4.2D.pf","WFG5.2D.pf","WFG6.2D.pf","WFG7.2D.pf","WFG8.2D.pf","WFG9.2D.pf",
+                "LZ09_F1.pf","LZ09_F2.pf","LZ09_F3.pf","LZ09_F4.pf","LZ09_F5.pf",
+                "LZ09_F6.pf","LZ09_F7.pf","LZ09_F8.pf","LZ09_F9.pf"
+                );
 
         Experiment<DoubleSolution, List<DoubleSolution>> experiment =
                 new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("MOEADStudy")
@@ -98,8 +107,8 @@ public class MOEADStudy {
                         .setIndependentRuns(INDEPENDENT_RUNS)
                         .setNumberOfCores(8)
                         .build();
+       // new ExecuteAlgorithms<>(experiment).run();
 
-        new ExecuteAlgorithms<>(experiment).run();
         new ComputeQualityIndicators<>(experiment).run();
         new GenerateLatexTablesWithStatistics(experiment).run();
         new GenerateWilcoxonTestTablesWithR<>(experiment).run();
@@ -129,16 +138,16 @@ public class MOEADStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEAD)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
                         .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(2)
+                        .setMaximumNumberOfReplacedSolutions(20)
                         .setNeighborSize(20)
                         .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEAD/data/MOEAD-original/"
+                                + "/MOEADStudy/data/MOEAD/"
                                 + problemList.get(i).getName()
                                 + "/INPROCESSDATA"
                                 + run
@@ -152,16 +161,16 @@ public class MOEADStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADSTM)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
                         .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(2)
+                        .setMaximumNumberOfReplacedSolutions(20)
                         .setNeighborSize(20)
                         .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEAD/data/MOEAD-STM/"
+                                + "/MOEADStudy/data/MOEADSTM/"
                                 + problemList.get(i).getName()
                                 + "/INPROCESSDATA"
                                 + run
@@ -176,16 +185,16 @@ public class MOEADStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKM)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
                         .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(2)
+                        .setMaximumNumberOfReplacedSolutions(20)
                         .setNeighborSize(20)
                         .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEAD/data/MOEAD-KM/"
+                                + "/MOEADStudy/data/MOEADKM/"
                                 + problemList.get(i).getName()
                                 + "/INPROCESSDATA"
                                 + run

@@ -20,8 +20,10 @@ import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.fileoutput.FileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,8 +74,10 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
         initializeNadirPoint();
 
         int generation = 0;
+
         evaluations = populationSize;
         do {
+            updateAbility = 0;
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             offspringPopulation.clear();
@@ -100,16 +104,33 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
                 offspringPopulation.add(child);
             }
+            try
+            {
+                String path="F:\\Experiment Data\\MOEADKM\\"+problem.getName()+"updateAbility.txt";
+                File file=new File(path);
+                if(!file.exists())
+                    file.createNewFile();
+                FileOutputStream out=new FileOutputStream(file,true); //如果追加方式用true
+                StringBuffer sb=new StringBuffer();
+                sb.append("-----------"+problem.getName()+"------------");
+                sb.append(updateAbility+"\r\n");
+                out.write(sb.toString().getBytes("utf-8"));//注意需要转换对应的字符集
+                out.close();
+            }
+            catch(IOException ex)
+            {
+                System.out.println(ex.getStackTrace());
+            }
+            if (updateAbility>populationSize/neighborSize){
+                // Combine the parent and the current offspring populations
+                jointPopulation.clear();
 
-            // Combine the parent and the current offspring populations
-            jointPopulation.clear();
+                jointPopulation.addAll(offspringPopulation);
+                jointPopulation.addAll(population);
 
-            jointPopulation.addAll(offspringPopulation);
-            jointPopulation.addAll(population);
-
-            // selection process---KM匹配------
-            KMSelection();
-
+                // selection process---KM匹配------
+                KMSelection();
+            }
             generation++;
 //            if (generation % 30 == 0) {
 //                utilityFunction();
