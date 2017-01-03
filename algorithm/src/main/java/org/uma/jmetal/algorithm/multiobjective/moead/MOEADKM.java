@@ -224,7 +224,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             for (int j=0;j< lambda.length;j++)
             {
                 weights_init[i][j] = 0;
-                double ws = -1*fitnessFunction(jointPopulation.get(i),lambda[j]);
+                double ws = -1*KMfitness(jointPopulation.get(i),lambda[j]);          //修改KM算法的权重为APD
                 //weights_init[i][j] = Double.parseDouble(String.format("%.4f", ws));
                 weights_init[i][j] = ws;
             }

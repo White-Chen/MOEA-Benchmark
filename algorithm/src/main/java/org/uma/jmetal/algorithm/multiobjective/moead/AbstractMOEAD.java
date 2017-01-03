@@ -405,6 +405,25 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         return fitness;
     }
 
+    //KM算法的权值---APD
+    double KMfitness(S individual, double[] lambda) throws JMetalException{
+        double fitness;
+        double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+        if(scalingFactor < 0.0)
+            scalingFactor = 0.0;
+        else if(scalingFactor >1.0)
+            scalingFactor = 1.0;
+        double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+        for (int i=0;i<individual.getNumberOfObjectives();i++)
+        {
+            objectiveValue[i] = individual.getObjective(i);
+        }
+        double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+        fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+        return fitness;
+    }
+
     /**
      * 获取weight的序号
      * @param weight 权重
