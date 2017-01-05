@@ -53,6 +53,9 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
     protected Variant moeadVariant;
     protected String inProcessDataPath;
 
+
+    protected int run;
+
     /**
      * Constructor
      */
@@ -70,6 +73,12 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
         neighborSize = 20;
         numberOfThreads = 1;
         moeadVariant = variant;
+    }
+
+    public MOEADBuilder setRun(int run) {
+        this.run = run;
+
+        return this;
     }
 
     /* Getters/Setters */
@@ -213,11 +222,15 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
         }else if (moeadVariant.equals(Variant.MOEADKM)) {
             algorithm = new MOEADKM(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
                     crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
-                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath);
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath ,run);
+        }else if (moeadVariant.equals(Variant.MOEADKMC)) {
+            algorithm = new MOEADKMC(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
+                    crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath ,run);
         }
 
         return algorithm;
     }
 
-    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM,MOEADKM}
+    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM,MOEADKM,MOEADKMC}
 }

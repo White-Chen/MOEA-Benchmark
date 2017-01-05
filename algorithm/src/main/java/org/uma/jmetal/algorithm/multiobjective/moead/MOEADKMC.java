@@ -36,7 +36,7 @@ import java.util.List;
  * @author dyy
  * @version 1.0
  */
-public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
+public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
     private static final long serialVersionUID = 2515198940774839154L;
     JMetalRandom randomGenerator;
     private DifferentialEvolutionCrossover differentialEvolutionCrossover;
@@ -45,10 +45,10 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
     private int[] frequency;
     String Method;
 
-    public MOEADKM(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
-                   MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
-                   FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
-                   int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh,int run) {
+    public MOEADKMC(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
+                    MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
+                    FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
+                    int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh, int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborSize
                 , inProcessDataPathh);
@@ -107,7 +107,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             }
             try
             {
-                String path="F:\\ExperimentData PBI(km2)\\UpdateAbility\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
+                String path="F:\\ExperimentData PBI(km2)\\UpdateAbility\\MOEADKMC\\"+problem.getName()+"\\updateAbility"+run+".txt";
                 File file=new File(path);
                 if(!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
@@ -124,16 +124,16 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             {
                 System.out.println(ex.getStackTrace());
             }
-            // if (updateAbility>populationSize/neighborSize){
-            // Combine the parent and the current offspring populations
-            jointPopulation.clear();
+            if (updateAbility>populationSize/neighborSize){
+                // Combine the parent and the current offspring populations
+                jointPopulation.clear();
 
-            jointPopulation.addAll(offspringPopulation);
-            jointPopulation.addAll(population);
+                jointPopulation.addAll(offspringPopulation);
+                jointPopulation.addAll(population);
 
-            // selection process---KM匹配------
-            KMSelection();
-            //   }
+                // selection process---KM匹配------
+                KMSelection();
+            }
             generation++;
 //            if (generation % 30 == 0) {
 //                utilityFunction();
@@ -251,11 +251,11 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
     @Override
     public String getName() {
-        return "MOEADKM";
+        return "MOEADKMC";
     }
 
     @Override
     public String getDescription() {
-        return "Multi-Objective Evolutionary Algorithm based on Decomposition. Version with KM Matching Model";
+        return "Multi-Objective Evolutionary Algorithm based on Decomposition. Version with KMC Matching Model";
     }
 }

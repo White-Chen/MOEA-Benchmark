@@ -18,9 +18,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
@@ -87,6 +85,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected double alphe = 2;
     double[] minAngle;
     protected int updateAbility;
+    protected int run;
 
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
@@ -445,7 +444,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected void saveDataInProcess() {
         File file = new File(inProcessDataPath);
         file.mkdirs();
-       if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
 //         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
