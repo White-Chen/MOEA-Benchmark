@@ -10,27 +10,27 @@
 %   mop, by passing the <problem name> and <optional dimension parameters>.
 % 
 %   Ref.
-% 	[1]:Huband S, Hingston P, Barone L, While L, 2006, A review
+%   [1]:Huband S, Hingston P, Barone L, While L, 2006, A review
 %       of multiobjective test problems and a scalable test problem
 %       toolkit. IEEE Transactions on Evolutionary Computation,
 %       10(5), pp477-506.
-% 	[2]:Zitzler, E., Deb, K., & Thiele, L. (2000). Comparison 
+%   [2]:Zitzler, E., Deb, K., & Thiele, L. (2000). Comparison 
 %       of multiobjective evolutionary algorithms: Empirical 
 %       results. Evolutionary computation, 8(2), 173-195.
-% 	[3]:Deb, K., Thiele, L., Laumanns, M., & Zitzler, E. (2005). 
+%   [3]:Deb, K., Thiele, L., Laumanns, M., & Zitzler, E. (2005). 
 %       Scalable test problems for evolutionary multiobjective 
 %       optimization (pp. 105-145). Springer London.
-%	[4]:Zhang, Q., Zhou, A., Zhao, S., Suganthan, P. N., Liu, W., &
+%   [4]:Zhang, Q., Zhou, A., Zhao, S., Suganthan, P. N., Liu, W., &
 %       Tiwari, S. (2008). Multiobjective optimization test instances
 %       for the CEC 2009 special session and competition. University 
 %       of Essex, Colchester, UK and Nanyang technological University,
 %       Singapore, special session on performance assessment of 
 %       multi-objective optimization algorithms, technical report, 264.
-%	[5]:Farina, M., Deb, K., & Amato, P. (2004). Dynamic multiobjective 
+%   [5]:Farina, M., Deb, K., & Amato, P. (2004). Dynamic multiobjective 
 %       optimization problems: test cases, approximations, and 
 %       applications. Evolutionary Computation, IEEE Transactions on, 
 %       8(5), 425-442.
-%	[6]:Biswas, S., Das, S., Suganthan, P., & Coello Coello, C. (2014, 
+%   [6]:Biswas, S., Das, S., Suganthan, P., & Coello Coello, C. (2014, 
 %       July). Evolutionary multiobjective optimization in dynamic 
 %       environments: A set of novel benchmark functions. In Evolutionary
 %       Computation (CEC), 2014 IEEE Congress on (pp. 3192-3199). IEEE.
@@ -84,11 +84,11 @@ function p=kno1(p,dimension)
     %KNO1 evaluation function.
     function y = evaluate(x)
       y=zeros(2,1);
-	  c = x(1)+x(2);
-	  f = 9-(3*sin(2.5*c^0.5) + 3*sin(4*c) + 5 *sin(2*c+2));
-	  g = (pi/2.0)*(x(1)-x(2)+3.0)/6.0;
-	  y(1)= 20-(f*cos(g));
-	  y(2)= 20-(f*sin(g)); 
+      c = x(1)+x(2);
+      f = 9-(3*sin(2.5*c^0.5) + 3*sin(4*c) + 5 *sin(2*c+2));
+      g = (pi/2.0)*(x(1)-x(2)+3.0)/6.0;
+      y(1)= 20-(f*cos(g));
+      y(2)= 20-(f*sin(g)); 
     end
 end
 
@@ -105,9 +105,9 @@ function p=zdt1(p,dim)
     function y=evaluate(x)
         y=zeros(2,1);
         y(1) = x(1);
-    	su = sum(x)-x(1);    
-		g = 1 + 9 * su / (dim - 1);
-		y(2) =g*(1 - sqrt(x(1) / g));
+        su = sum(x)-x(1);    
+        g = 1 + 9 * su / (dim - 1);
+        y(2) =g*(1 - sqrt(x(1) / g));
     end
 end
 
@@ -1569,7 +1569,7 @@ p.domain(1,1) = 0;
 p.func   = @evaluate;
 
     function y=evaluate(x)
-    	global itrCounter params step window;
+        global itrCounter params step window;
         n            =length(x);
         f1           =x(1);
         t            =(floor(itrCounter/window))/step;
