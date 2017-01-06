@@ -124,7 +124,7 @@ public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
             {
                 System.out.println(ex.getStackTrace());
             }
-            if (updateAbility>populationSize/neighborSize){
+            if (updateAbility>populationSize/neighborSize || generation%50==0){
                 // Combine the parent and the current offspring populations
                 jointPopulation.clear();
 
