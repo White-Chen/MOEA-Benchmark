@@ -107,7 +107,7 @@ public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
             }
             try
             {
-                String path="F:\\ExperimentData PBI(km2)\\UpdateAbility\\MOEADKMC\\"+problem.getName()+"\\updateAbility"+run+".txt";
+                String path="F:\\Experiment Data\\UpdateAbility\\MOEADKMC\\"+problem.getName()+"\\updateAbility"+run+".txt";
                 File file=new File(path);
                 if(!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
@@ -228,6 +228,7 @@ public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
             {
                 weights_init[i][j] = 0;
                 double ws = -1*fitnessFunction(jointPopulation.get(i),lambda[j]);
+               //double ws = -1*Kmfitness(kmFitnessType,jointPopulation.get(i),lambda[j]);
                 //weights_init[i][j] = Double.parseDouble(String.format("%.4f", ws));
                 weights_init[i][j] = ws;
             }

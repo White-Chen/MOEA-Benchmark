@@ -107,7 +107,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             }
             try
             {
-                String path="F:\\ExperimentData PBI(km2)\\UpdateAbility\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
+                String path="\\\\Dy-pc\\f\\Experiment Data\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
                 File file=new File(path);
                 if(!file.getParentFile().exists())
                     file.getParentFile().mkdirs();
@@ -124,7 +124,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             {
                 System.out.println(ex.getStackTrace());
             }
-            // if (updateAbility>populationSize/neighborSize){
+            //if (updateAbility>populationSize/neighborSize || generation%50==0){
             // Combine the parent and the current offspring populations
             jointPopulation.clear();
 
@@ -133,7 +133,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
             // selection process---KM匹配------
             KMSelection();
-            //   }
+            //}
             generation++;
 //            if (generation % 30 == 0) {
 //                utilityFunction();
@@ -227,7 +227,8 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             for (int j=0;j< lambda.length;j++)
             {
                 weights_init[i][j] = 0;
-                double ws = -1*fitnessFunction(jointPopulation.get(i),lambda[j]);
+               double ws = -1*fitnessFunction(jointPopulation.get(i),lambda[j]);
+               //double ws = -1*Kmfitness("APBI",jointPopulation.get(i),lambda[j]);
                 //weights_init[i][j] = Double.parseDouble(String.format("%.4f", ws));
                 weights_init[i][j] = ws;
             }

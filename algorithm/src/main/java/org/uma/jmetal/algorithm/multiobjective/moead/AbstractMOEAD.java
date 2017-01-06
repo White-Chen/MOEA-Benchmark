@@ -84,7 +84,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
      */
     protected double alphe = 2;
     double[] minAngle;
-    protected int updateAbility;
+    protected int updateAbility=0;
     protected int run;
 
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
@@ -422,6 +422,54 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
         return fitness;
     }
+
+    double Kmfitness(String fitnessType,S individual, double[] lambda) throws JMetalException{
+        double fitness;
+       switch (fitnessType)
+       {
+           case ("APBI"):
+           {
+               double d1, d2, nl;
+               double theta = maxEvaluations/this.evaluations*this.populationSize/neighborSize;
+
+               d1 = d2 = nl = 0.0;
+
+               for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                   d1 += (individual.getObjective(i) - idealPoint[i]) * lambda[i];
+                   nl += Math.pow(lambda[i], 2.0);
+               }
+               nl = Math.sqrt(nl);
+               d1 = Math.abs(d1) / nl;
+               for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                   d2 += Math.pow((individual.getObjective(i) - idealPoint[i]) - d1 * (lambda[i] / nl), 2.0);
+               }
+               d2 = Math.sqrt(d2);
+
+               fitness = (d1 + theta * d2);
+           }
+           case ("APD"):
+           {
+               double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+               if(scalingFactor < 0.0)
+                   scalingFactor = 0.0;
+               else if(scalingFactor >1.0)
+                   scalingFactor = 1.0;
+               double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+               for (int i=0;i<individual.getNumberOfObjectives();i++)
+               {
+                   objectiveValue[i] = individual.getObjective(i);
+               }
+               double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                       *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+               fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+               break;
+           }
+           default:fitness =0;
+
+       }
+        return fitness;
+    }
+
 
     /**
      * 获取weight的序号
