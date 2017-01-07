@@ -82,7 +82,8 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             offspringPopulation.clear();
-
+            populationKM.clear();
+            populationKM.addAll(population);
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
                 //frequency[subProblemId]++;
@@ -105,41 +106,24 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
                 offspringPopulation.add(child);
             }
-            try
-            {
-                String path="\\\\Dy-pc\\f\\Experiment Data\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
-                File file=new File(path);
-                if(!file.getParentFile().exists())
-                    file.getParentFile().mkdirs();
-                if(!file.exists())
-                    file.createNewFile();
-                FileOutputStream out=new FileOutputStream(file,true); //如果追加方式用true
-                StringBuffer sb=new StringBuffer();
-                sb.append(generation+"-----------"+problem.getName()+"------------");
-                sb.append(updateAbility+"\r\n");
-                out.write(sb.toString().getBytes("utf-8"));//注意需要转换对应的字符集
-                out.close();
-            }
-            catch(IOException ex)
-            {
-                System.out.println(ex.getStackTrace());
-            }
-            //if (updateAbility>populationSize/neighborSize || generation%50==0){
+            String path="F:\\Experiment Data\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            appendToFile(path,generation+"-----------"+problem.getName()+"------------");
+            appendToFile(path,updateAbility+"\r\n");
+
+            if (updateAbility>populationSize/neighborSize || generation%50==0){
             // Combine the parent and the current offspring populations
             jointPopulation.clear();
-
             jointPopulation.addAll(offspringPopulation);
-            jointPopulation.addAll(population);
-
+            jointPopulation.addAll(populationKM);
             // selection process---KM匹配------
             KMSelection();
-            //}
+            }
             generation++;
 //            if (generation % 30 == 0) {
 //                utilityFunction();
 //            }
             saveDataInProcess();
-            // System.out.println("-------generation"+generation+"---------");
+            System.out.println("-------generation"+generation+"---------");
 
         } while (evaluations < maxEvaluations);
 
@@ -149,6 +133,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
         population = new ArrayList<>(populationSize);
         offspringPopulation = new ArrayList<>(populationSize);
         jointPopulation = new ArrayList<>(populationSize);
+        populationKM = new ArrayList<>(populationSize);
 
         for (int i = 0; i < populationSize; i++) {
             DoubleSolution newSolution = problem.createSolution();
@@ -247,6 +232,29 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
         population.clear();
         for (int i = 0; i < matchResults.length/2; i++) {
             population.add(i, jointPopulation.get(matchResults[i]));
+        }
+    }
+
+    /**
+    * 向文件写字符串
+    */
+    public static void appendToFile(String path,String word){
+        try
+        {
+            File file=new File(path);
+            if(!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            if(!file.exists())
+                file.createNewFile();
+            FileOutputStream out=new FileOutputStream(file,true); //如果追加方式用true
+            StringBuffer sb=new StringBuffer();
+            sb.append(word);
+            out.write(sb.toString().getBytes("utf-8"));//注意需要转换对应的字符集
+            out.close();
+        }
+        catch(IOException ex)
+        {
+            System.out.println(ex.getStackTrace());
         }
     }
 

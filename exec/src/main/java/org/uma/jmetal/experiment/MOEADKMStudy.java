@@ -20,7 +20,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ3;
+import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1;
 import org.uma.jmetal.problem.multiobjective.dtlz.DTLZ7;
 import org.uma.jmetal.problem.multiobjective.zdt.ZDT3;
 import org.uma.jmetal.qualityindicator.impl.*;
@@ -29,6 +29,7 @@ import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentBuilder;
 import org.uma.jmetal.util.experiment.component.ComputeQualityIndicators;
+import org.uma.jmetal.util.experiment.component.ExecuteAlgorithms;
 import org.uma.jmetal.util.experiment.component.GenerateLatexTablesWithStatistics;
 import org.uma.jmetal.util.experiment.util.TaggedAlgorithm;
 
@@ -58,8 +59,8 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOEADKMStudy {
-    private static final int INDEPENDENT_RUNS =2;   //每个算法跑20次实验
-    public static final String experimentBaseDirectory = "\\\\Dy-pc\\f\\Experiment Data";
+    private static final int INDEPENDENT_RUNS =5;   //每个算法跑20次实验
+    public static final String experimentBaseDirectory = "F:\\Experiment Data";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*
@@ -73,7 +74,7 @@ public class MOEADKMStudy {
                // new ZDT1(), new ZDT2(),
                 new ZDT3(), //new ZDT4(), new ZDT6(),
                 //new DTLZ1(), new DTLZ2(),
-                new DTLZ3(),
+                new DTLZ1(),
                 //new DTLZ4(), new DTLZ5(), new DTLZ6(),
                 new DTLZ7()
                 //new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),new UF7(),new UF8(30),
@@ -89,7 +90,7 @@ public class MOEADKMStudy {
                 //"ZDT1.pf", "ZDT2.pf",
                 "ZDT3.pf",// "ZDT4.pf", "ZDT6.pf",
                // "DTLZ1.3D.pf","DTLZ2.3D.pf",
-                "DTLZ3.3D.pf",
+                "DTLZ1.3D.pf",
                 //,"DTLZ4.3D.pf","DTLZ5.3D.pf","DTLZ6.3D.pf",
                 "DTLZ7.3D.pf"
                // "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf",
@@ -115,7 +116,7 @@ public class MOEADKMStudy {
                         .setIndependentRuns(INDEPENDENT_RUNS)
                         .setNumberOfCores(8)
                         .build();
-       // new ExecuteAlgorithms<>(experiment).run();
+        new ExecuteAlgorithms<>(experiment).run();
 
         new ComputeQualityIndicators<>(experiment).run();
         new GenerateLatexTablesWithStatistics(experiment).run();
@@ -139,7 +140,7 @@ public class MOEADKMStudy {
             List<Problem<DoubleSolution>> problemList, int independentRuns) {
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithms = new ArrayList<>();
 
-        MOEAD.FunctionType functionType = AbstractMOEAD.FunctionType.PBI;
+        MOEAD.FunctionType functionType = AbstractMOEAD.FunctionType.TCHE;
 
         for (int run = 0; run < independentRuns; run++) {
 

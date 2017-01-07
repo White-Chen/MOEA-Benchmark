@@ -69,6 +69,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected FunctionType functionType;
     protected String dataDirectory;
     protected List<S> population;
+    protected List<S> populationKM;
     protected List<S> offspringPopulation;
     protected List<S> jointPopulation;
     protected int populationSize;
@@ -325,11 +326,10 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                 return;
             }
         }
-
-        if (time >= populationSize/size){
+        if(time>=populationSize/size)
             updateAbility++;
-        }
     }
+
 
     double fitnessFunction(S individual, double[] lambda) throws JMetalException {
         double fitness;

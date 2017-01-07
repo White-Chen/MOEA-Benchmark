@@ -23,6 +23,10 @@ package org.uma.jmetal.algorithm.multiobjective.moead.util;
 
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Utilities methods to used by MOEA/D
  */
@@ -252,4 +256,6 @@ public class MOEADUtils {
         double[] normalObjectiveValue = subtract(u,idealPoint);
         return magnitude(normalObjectiveValue);
     }
+
+
 }
