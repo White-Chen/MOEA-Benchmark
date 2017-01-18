@@ -240,9 +240,6 @@ public class AdMOPSO extends AbstractParticleSwarmOptimization<DoubleSolution, L
     protected void perturbation(List<DoubleSolution> swarm) {
 
         int flag;
-        /**
-         * referrecn:Yarpiz (www.yarpiz.com)
-         */
         double pm = Math.pow(1 - ((double) (evaluations / maxEvaluations - 1) / (double) (maxEvaluations / swarmSize - 1)), 5 / mutationRate);
         for (int i = 0; i < swarm.size(); i++) {
             if (randomGenerator.nextDouble() < pm) {
