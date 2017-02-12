@@ -37,40 +37,40 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     /**
      *
      */
-    double[] z;
-    double[][] lambda;
-    DoubleSolution[] indArray;
-    String dataDirectory;
-    String functionType = "_PBI";//"_PBI";//"_TCHE";//"_AGG";
-    private DoubleProblem problem;
-    private List<DoubleSolution> swarm;
-    private double c1Max;
-    private double c1Min;
-    private double c2Max;
-    private double c2Min;
-    private double r1Max;
-    private double r1Min;
-    private double r2Max;
-    private double r2Min;
-    private double weightMax;
-    private double weightMin;
-    private double changeVelocity1;
-    private double changeVelocity2;
-    private int swarmSize;
-    private int maxIterations;
-    private int iterations;
-    private int maxAge;
-    private DoubleSolution[] localBest;
-    private DoubleSolution[] globalBest;
-    private int[] shfGBest;
-    private double[][] speed;
-    private int[] age;
-    private double deltaMax[];
-    private double deltaMin[];
-    private JMetalRandom randomGenerator;
-    private SolutionListEvaluator<DoubleSolution> evaluator;
-    private String inProcessDataPath;
-    private List<GenericIndicator> indicatorList;
+    protected double[] z;
+    protected double[][] lambda;
+    protected DoubleSolution[] indArray;
+    protected String dataDirectory;
+    protected String functionType = "_PBI";//"_PBI";//"_TCHE";//"_AGG";
+    protected DoubleProblem problem;
+    protected List<DoubleSolution> swarm;
+    protected double c1Max;
+    protected double c1Min;
+    protected double c2Max;
+    protected double c2Min;
+    protected double r1Max;
+    protected double r1Min;
+    protected double r2Max;
+    protected double r2Min;
+    protected double weightMax;
+    protected double weightMin;
+    protected double changeVelocity1;
+    protected double changeVelocity2;
+    protected int swarmSize;
+    protected int maxIterations;
+    protected int iterations;
+    protected int maxAge;
+    protected DoubleSolution[] localBest;
+    protected DoubleSolution[] globalBest;
+    protected int[] shfGBest;
+    protected double[][] speed;
+    protected int[] age;
+    protected double deltaMax[];
+    protected double deltaMin[];
+    protected JMetalRandom randomGenerator;
+    protected SolutionListEvaluator<DoubleSolution> evaluator;
+    protected String inProcessDataPath;
+    protected List<GenericIndicator> indicatorList;
 
     public DMOPSO(DoubleProblem problem, int swarmSize,
                   int maxIterations, double r1Min, double r1Max,
@@ -206,7 +206,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void computeNewPositions(int i) {
+    protected void computeNewPositions(int i) {
         DoubleSolution particle = getSwarm().get(i);
         for (int var = 0; var < particle.getNumberOfVariables(); var++) {
             particle.setVariableValue(var, particle.getVariableValue(var) + speed[i][var]);
@@ -216,7 +216,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     /**
      * initUniformWeight
      */
-    private void initUniformWeight() {
+    protected void initUniformWeight() {
         if ((problem.getNumberOfObjectives() == 2) && (swarmSize <= 300)) {
             for (int n = 0; n < swarmSize; n++) {
                 double a = 1.0 * n / (swarmSize - 1);
@@ -256,7 +256,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
     }
 
 
-    private void initIdealPoint() {
+    protected void initIdealPoint() {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             z[i] = 1.0e+30;
             indArray[i] = problem.createSolution();
@@ -268,7 +268,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void updateReference(DoubleSolution individual) {
+    protected void updateReference(DoubleSolution individual) {
         for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
             if (individual.getObjective(n) < z[n]) {
                 z[n] = individual.getObjective(n);
@@ -278,7 +278,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void updateGlobalBest() {
+    protected void updateGlobalBest() {
 
         double gBestFitness;
 
@@ -296,7 +296,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void updateLocalBest(int part) {
+    protected void updateLocalBest(int part) {
 
         double f1, f2;
         DoubleSolution indiv = (DoubleSolution) getSwarm().get(part).copy();
@@ -312,7 +312,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private double fitnessFunction(DoubleSolution sol, double[] lambda) {
+    protected double fitnessFunction(DoubleSolution sol, double[] lambda) {
         double fitness = 0.0;
 
         if (functionType.equals("_TCHE")) {
@@ -369,7 +369,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         return fitness;
     }
 
-    private void shuffleGlobalBest() {
+    protected void shuffleGlobalBest() {
         int[] aux = new int[swarmSize];
         int rnd;
         int tmp;
@@ -386,7 +386,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void repairBounds(int part) {
+    protected void repairBounds(int part) {
 
         DoubleSolution particle = getSwarm().get(part);
 
@@ -402,7 +402,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void resetParticle(int i) {
+    protected void resetParticle(int i) {
         DoubleSolution particle = getSwarm().get(i);
         double mean, sigma, N;
 
@@ -424,7 +424,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private double velocityConstriction(double v, double[] deltaMax, double[] deltaMin,
+    protected double velocityConstriction(double v, double[] deltaMax, double[] deltaMin,
                                         int variableIndex, int particleIndex) {
 
         double result;
@@ -445,7 +445,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         return result;
     }
 
-    private double constrictionCoefficient(double c1, double c2) {
+    protected double constrictionCoefficient(double c1, double c2) {
         double rho = c1 + c2;
         if (rho <= 4) {
             return 1.0;
@@ -454,7 +454,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private double inertiaWeight(int iter, int miter, double wma, double wmin) {
+    protected double inertiaWeight(int iter, int miter, double wma, double wmin) {
         return wma;
     }
 
@@ -496,7 +496,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    private void saveDataInProcess() {
+    protected void saveDataInProcess() {
         if (!inProcessDataPath.isEmpty() && ((iterations % 20 == 0) || iterations == 2)) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")

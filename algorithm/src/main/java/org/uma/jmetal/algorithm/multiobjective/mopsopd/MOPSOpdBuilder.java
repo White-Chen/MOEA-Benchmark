@@ -1,14 +1,10 @@
-package org.uma.jmetal.algorithm.multiobjective.MOPSOpd;
+package org.uma.jmetal.algorithm.multiobjective.mopsopd;
 
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveII;
 
-/**
- * Created by ChenZhe on 4/28/2015.
- * @author Chenzhe <q953387601@163.com>
- */
 public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
 
     protected DoubleProblem problem;
@@ -56,6 +52,7 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
         this.selectionPressure = 4;
         this.divisionNumber = 30;
         this.dataDirectory = "MOEAD_Weights";
+        leadersArchive = new AdaptiveGridArchiveII<>(this.swarmSize, this.divisionNumber, this.problem.getNumberOfObjectives());
         this.leadersArchive.getGrid()
                 .setDivisionNumber(divisionNumber)
                 .setEliminatePressure(eliminatePressure)

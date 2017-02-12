@@ -14,7 +14,7 @@
 package org.uma.jmetal.runner.multiobjective;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.MOPSOpd.MOPSOpdBuilder;
+import org.uma.jmetal.algorithm.multiobjective.mopsopd.MOPSOpdBuilder;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -58,6 +58,9 @@ public class MOPSOpdRunner extends AbstractAlgorithmRunner {
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
         algorithm = new MOPSOpdBuilder(problem)
+                .setMaxIterations(300)
+                .setSwarmSize(100)
+                .setInProcessDataPath("")
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
