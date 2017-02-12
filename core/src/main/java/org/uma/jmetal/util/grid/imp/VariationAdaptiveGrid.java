@@ -9,7 +9,7 @@ import org.uma.jmetal.solution.Solution;
 public class VariationAdaptiveGrid<S extends Solution<?>>
         extends AdaptiveGrid<S>{
 
-    private int divisionNumber;
+    protected int divisionNumber;
 
     public VariationAdaptiveGrid() {
         this.setBisections(1)
@@ -29,6 +29,7 @@ public class VariationAdaptiveGrid<S extends Solution<?>>
 
         for (int i = 0; i < hypercubes.length; i++) {
             hypercubes[i] = 0;
+            densityMemory[i] = 0;
         }
     }
 
@@ -79,7 +80,7 @@ public class VariationAdaptiveGrid<S extends Solution<?>>
      */
     @Override
     public int getLocationDensity(int location) {
-        return hypercubes[location];
+        return densityMemory[location];
     }
 
 

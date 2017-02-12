@@ -363,7 +363,7 @@ public class DMOPSO implements Algorithm<List<DoubleSolution>> {
             fitness = (d1 + theta * d2);
 
         } else {
-            System.out.println("dMOPSO.fitnessFunction: unknown type " + functionType);
+            System.out.println("fitnessFunction: unknown type " + functionType);
             System.exit(-1);
         }
         return fitness;

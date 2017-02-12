@@ -9,10 +9,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 /**
- * Created by Lenovo on 2015/11/5.
- * implementation of archive in adMOPSO
+ * Created by ChenZhe on 2015/11/5.
+ * implementation of archive in MOPSOpd
  *
- * @author chenzhe
+ * @author chenzhe <q953387601@163.com>
  */
 public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBoundedArchive<S> {
 

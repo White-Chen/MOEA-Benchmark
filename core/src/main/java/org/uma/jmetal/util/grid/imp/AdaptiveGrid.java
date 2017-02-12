@@ -30,6 +30,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     protected int bisections;
     protected int numberOfObjectives;
     protected int[] hypercubes;
+    protected int[] densityMemory;
 
     protected double[] gridLowerLimits;
     protected double[] gridUpperLimits;
@@ -49,23 +50,34 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public AdaptiveGrid() {
     }
 
+    public int[] getDensityMemory() {
+        return densityMemory;
+    }
+
+    public void setDensityMemory(int[] densityMemory) {
+        this.densityMemory = densityMemory;
+    }
+
     /**
      * Constructor.
      * Creates an instance of AdaptiveGrid.
      *
      * @param bisections Number of bi-divisions of the objective space.
-     * @param objetives  Number of numberOfObjectives of the problem.
+     * @param objectives  Number of numberOfObjectives of the problem.
      */
-    public AdaptiveGrid(int bisections, int objetives) {
+    public AdaptiveGrid(int bisections, int objectives) {
         this.setBisections(bisections)
-                .setNumberOfObjectives(objetives)
+                .setNumberOfObjectives(objectives)
                 .setGridUpperLimits(new double[numberOfObjectives])
                 .setGridLowerLimits(new double[numberOfObjectives])
                 .setDivisionSize(new double[numberOfObjectives])
-                .setHypercubes(new int[(int) Math.pow(2.0, this.bisections * numberOfObjectives)]);
+                .setHypercubes(new int[(int) Math.pow(2.0, this.bisections * numberOfObjectives)])
+                .setDensityMemory(new int[(int) Math.pow(2.0, this.bisections * numberOfObjectives)]);
+
 
         for (int i = 0; i < hypercubes.length; i++) {
             hypercubes[i] = 0;
+            densityMemory[i] = 0;
         }
     }
 
@@ -81,7 +93,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
             gridUpperLimits[obj] = Double.MIN_VALUE;
         }
 
-        //Find the max and min limits of objetives into the population
+        //Find the max and min limits of objectives into the population
         for (int ind = 0; ind < solutionList.size(); ind++) {
             Solution<?> tmpIndividual = solutionList.get(ind);
             for (int obj = 0; obj < numberOfObjectives; obj++) {
@@ -110,13 +122,18 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
         for (int ind = 0; ind < solutionList.size(); ind++) {
             location = location(solutionList.get(ind));
             hypercubes[location]++;
-            if (hypercubes[location] > hypercubes[mostPopulatedHypercube]) {
+            updateLocationDensity(location);
+            if (getLocationDensity(location) > getLocationDensity(mostPopulatedHypercube)) {
                 mostPopulatedHypercube = location;
             }
         }
 
         //The grid has been updated, so also update ocuppied's hypercubes
         calculateOccupied();
+    }
+
+    private void updateLocationDensity(int location) {
+        densityMemory[location] = hypercubes[location];
     }
 
     /**
@@ -137,6 +154,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
         //Clean the hypercubes
         for (int i = 0; i < hypercubes.length; i++) {
             hypercubes[i] = 0;
+            updateLocationDensity(i);
         }
 
         //Add the population
@@ -179,6 +197,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
             //Clean the hypercube
             for (int i = 0; i < hypercubes.length; i++) {
                 hypercubes[i] = 0;
+                updateLocationDensity(i);
             }
 
             //add the population
@@ -249,7 +268,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
      * @return The number of solutions into a specific hypercube.
      */
     public int getLocationDensity(int location) {
-        return hypercubes[location];
+        return densityMemory[location];
     }
 
     /**
@@ -260,11 +279,12 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public void removeSolution(int location) {
         //Decrease the solutions in the location specified.
         hypercubes[location]--;
+        updateLocationDensity(location);
 
         //Update the most populated hypercube
         if (location == mostPopulatedHypercube) {
             for (int i = 0; i < hypercubes.length; i++) {
-                if (hypercubes[i] > hypercubes[mostPopulatedHypercube]) {
+                if (getLocationDensity(i) > getLocationDensity(mostPopulatedHypercube)) {
                     mostPopulatedHypercube = i;
                 }
             }
@@ -284,9 +304,10 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public void addSolution(int location) {
         //Increase the solutions in the location specified.
         hypercubes[location]++;
+        updateLocationDensity(location);
 
         //Update the most poblated hypercube
-        if (hypercubes[location] > hypercubes[mostPopulatedHypercube]) {
+        if (getLocationDensity(location) > getLocationDensity(mostPopulatedHypercube)) {
             mostPopulatedHypercube = location;
         }
 
@@ -319,10 +340,10 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public int rouletteWheel4Selection() {
         //Calculate the inverse sum
         double inverseSum = 0.0;
-        for (int hypercube : hypercubes) {
-            if (hypercube > 0) {
+        for (int i = 0; i < hypercubes.length; i++) {
+            if (getLocationDensity(i) > 0) {
                 //inverseSum += 1.0 / Math.pow((double) hypercube, selectionPressure);
-                inverseSum += Math.exp(-1.0 * (double) hypercube * selectionPressure);
+                inverseSum += Math.exp(-1.0 * (double) getLocationDensity(i)  * selectionPressure);
             }
         }
 
@@ -336,7 +357,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
             hypercube = tempList.get(i);
             if (hypercubes[hypercube] > 0) {
                 //accumulatedSum += 1.0 / Math.pow((double) hypercubes[hypercube], selectionPressure);
-                accumulatedSum += Math.exp(-1.0 * (double) hypercube * selectionPressure);
+                accumulatedSum += Math.exp(-1.0 * (double) getLocationDensity(hypercube) * selectionPressure);
             }
 
             if (accumulatedSum >= random) {
@@ -356,10 +377,10 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public int rouletteWheel4Prune() {
         //Calculate the inverse sum
         double sum = 0.0;
-        for (int hypercube : hypercubes) {
-            if (hypercube > 0) {
+        for (int i = 0; i < hypercubes.length; i++) {
+            if (getLocationDensity(i) > 0) {
                 //sum += Math.pow((double) hypercube, eliminatePressure);
-                sum += Math.exp((double) hypercube * eliminatePressure);
+                sum += Math.exp((double) getLocationDensity(i)* eliminatePressure);
             }
         }
 
@@ -373,7 +394,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
             hypercube = tempList.get(i);
             if (hypercubes[hypercube] > 0) {
                 //accumulatedSum += 1.0 / Math.pow((double) hypercubes[hypercube], selectionPressure);
-                accumulatedSum += Math.exp((double) hypercube * eliminatePressure);
+                accumulatedSum += Math.exp((double) getLocationDensity(hypercube) * eliminatePressure);
             }
 
             if (accumulatedSum >= random) {

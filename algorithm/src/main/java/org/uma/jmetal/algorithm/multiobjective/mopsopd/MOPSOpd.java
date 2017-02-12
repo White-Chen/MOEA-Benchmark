@@ -53,30 +53,6 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
     }
 
     @Override
-    protected void updateVelocity(int i) {
-
-        DoubleSolution particle = getSwarm().get(i);
-        DoubleSolution bestParticle = localBest[i];
-        DoubleSolution bestGlobal = globalBest[shfGBest[i]];
-
-        double r1 = randomGenerator.nextDouble(r1Min, r1Max);
-        double r2 = randomGenerator.nextDouble(r2Min, r2Max);
-        double C1 = randomGenerator.nextDouble(c1Min, c1Max);
-        double C2 = randomGenerator.nextDouble(c2Min, c2Max);
-
-        for (int var = 0; var < particle.getNumberOfVariables(); var++) {
-            //Computing the velocity of this particle
-            speed[i][var] = velocityConstriction(constrictionCoefficient(C1, C2) *
-                    (inertiaWeight(iterations, maxIterations, this.weightMax, this.weightMin) * speed[i][var] +
-                            C1 * r1 * (bestParticle.getVariableValue(var) -
-                                    particle.getVariableValue(var)) +
-                            C2 * r2 * (bestGlobal.getVariableValue(var) -
-                                    particle.getVariableValue(var))), deltaMax, deltaMin, var, i);
-
-        }
-    }
-
-    @Override
     protected void updateGlobalBest() {
 
         double gBestFitness;
@@ -101,63 +77,6 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
-    @Override
-    protected double fitnessFunction(DoubleSolution sol, double[] lambda) {
-        double fitness = 0.0;
-
-        if (functionType.equals("_TCHE")) {
-            double maxFun = -1.0e+30;
-
-            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
-                double diff = Math.abs(sol.getObjective(n) - z[n]);
-
-                double feval;
-                if (lambda[n] == 0) {
-                    feval = 0.0001 * diff;
-                } else {
-                    feval = diff * lambda[n];
-                }
-                if (feval > maxFun) {
-                    maxFun = feval;
-                }
-            }
-
-            fitness = maxFun;
-
-        } else if (functionType.equals("_AGG")) {
-            double sum = 0.0;
-            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
-                sum += (lambda[n]) * sol.getObjective(n);
-            }
-
-            fitness = sum;
-
-        } else if (functionType.equals("_PBI")) {
-            double d1, d2, nl;
-            double theta = 5.0;
-
-            d1 = d2 = nl = 0.0;
-
-            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-                d1 += (sol.getObjective(i) - z[i]) * lambda[i];
-                nl += Math.pow(lambda[i], 2.0);
-            }
-            nl = Math.sqrt(nl);
-            d1 = Math.abs(d1) / nl;
-
-            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
-                d2 += Math.pow((sol.getObjective(i) - z[i]) - d1 * (lambda[i] / nl), 2.0);
-            }
-            d2 = Math.sqrt(d2);
-
-            fitness = (d1 + theta * d2);
-
-        } else {
-            System.out.println("dMOPSO.fitnessFunction: unknown type " + functionType);
-            System.exit(-1);
-        }
-        return fitness;
-    }
 
     @Override
     public void run() {
