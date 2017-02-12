@@ -30,7 +30,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     protected int bisections;
     protected int numberOfObjectives;
     protected int[] hypercubes;
-    protected int[] densityMemory;
+    protected double[] densityMemory;
 
     protected double[] gridLowerLimits;
     protected double[] gridUpperLimits;
@@ -50,11 +50,11 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
     public AdaptiveGrid() {
     }
 
-    public int[] getDensityMemory() {
+    public double[] getDensityMemory() {
         return densityMemory;
     }
 
-    public void setDensityMemory(int[] densityMemory) {
+    public void setDensityMemory(double[] densityMemory) {
         this.densityMemory = densityMemory;
     }
 
@@ -72,7 +72,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
                 .setGridLowerLimits(new double[numberOfObjectives])
                 .setDivisionSize(new double[numberOfObjectives])
                 .setHypercubes(new int[(int) Math.pow(2.0, this.bisections * numberOfObjectives)])
-                .setDensityMemory(new int[(int) Math.pow(2.0, this.bisections * numberOfObjectives)]);
+                .setDensityMemory(new double[(int) Math.pow(2.0, this.bisections * numberOfObjectives)]);
 
 
         for (int i = 0; i < hypercubes.length; i++) {
@@ -211,6 +211,21 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
      * @param solution The <code>Solution</code>.
      */
     public int location(S solution) {
+
+
+        //Calculate the location into the hypercubes
+        int[] position = positions(solution);
+        int location = 0;
+        for (int obj = 0; obj < numberOfObjectives; obj++) {
+            location += position[obj] * Math.pow(2.0, obj * bisections);
+        }
+        return location;
+    }
+
+    /**
+     * Cacalate solution postions
+     */
+    public int[] positions(S solution){
         //Create a int [] to store the range of each objective
         int[] position = new int[numberOfObjectives];
 
@@ -218,7 +233,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
         for (int obj = 0; obj < numberOfObjectives; obj++) {
             if ((solution.getObjective(obj) > gridUpperLimits[obj])
                     || (solution.getObjective(obj) < gridLowerLimits[obj])) {
-                return -1;
+                return null;
             } else if (solution.getObjective(obj) == gridLowerLimits[obj]) {
                 position[obj] = 0;
             } else if (solution.getObjective(obj) == gridUpperLimits[obj]) {
@@ -238,13 +253,7 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
                 }
             }
         }
-
-        //Calculate the location into the hypercubes
-        int location = 0;
-        for (int obj = 0; obj < numberOfObjectives; obj++) {
-            location += position[obj] * Math.pow(2.0, obj * bisections);
-        }
-        return location;
+        return position;
     }
 
     /**
@@ -267,8 +276,12 @@ public class AdaptiveGrid<S extends Solution<?>> implements AbstractGrid<S> {
      * @param location Number of the hypercube.
      * @return The number of solutions into a specific hypercube.
      */
-    public int getLocationDensity(int location) {
+    public double getLocationDensity(int location) {
         return densityMemory[location];
+    }
+
+    public void setLocationDensity(int location, double density){
+        densityMemory[location] = density;
     }
 
     /**

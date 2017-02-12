@@ -14,7 +14,7 @@ import java.util.Iterator;
  *
  * @author chenzhe <q953387601@163.com>
  */
-public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBoundedArchive<S> {
+public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBoundedArchive<S> {
 
     private static final long serialVersionUID = -3423726064916214261L;
     private VariationAdaptiveGrid<S> grid;
@@ -29,7 +29,7 @@ public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBounde
      *                   grid.
      * @param objectives The number of objectives.
      */
-    public AdaptiveGridArchiveII(int maxSize, int divisionNumber, int objectives) {
+    public AdaptiveGridArchiveIII(int maxSize, int divisionNumber, int objectives) {
         super(maxSize);
         dominanceComparator = new DominanceComparator<S>();
         grid = new VariationAdaptiveGrid<S>(1, objectives,divisionNumber);
@@ -87,18 +87,22 @@ public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBounde
 
         // At this point, the solution has to be inserted and the setArchive is full
         grid.updateGrid(solution, getSolutionList());
+        grid.addSolution(grid.location(solution));
+        getSolutionList().add(solution);
         int location = grid.location(solution);
-        if (location == grid.getMostPopulatedHypercube()) { // The solution is in the
-            // most populated hypercube
-            return false; // Not inserted
-        } else {
-            // Remove an solution from most populated area
-            prune();
-            // A solution from most populated hypercube has been removed,
-            // insert now the solution
-            grid.addSolution(location);
-            getSolutionList().add(solution);
+        double[] density = new double[size()];
+        double max = Double.MIN_VALUE;
+        int maxIndex = 0;
+        for (int i = 0; i < getSolutionList().size(); i++) {
+            density[i] = computeDensity(getSolutionList().get(i));
+            if(max < density[i]){
+                maxIndex = i;
+                max = density[i];
+            }
         }
+        location = grid.location(solution);
+        grid.removeSolution(location);
+        getSolutionList().remove(maxIndex);
         return true;
     }
 
@@ -119,6 +123,46 @@ public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBounde
         }
     }
 
+
+    public double computeDensity(S solution){
+        //1. find near solutions
+        //Iterator of individuals over the list
+        boolean[] isNear = new boolean[this.size()];
+        double[] diff = new double[this.size()];
+        int[] position_A = grid.positions(solution);
+        for (int i = 0; i < getSolutionList().size(); i++) {
+            diff[i] = 0;
+            int[] position_B = grid.positions(getSolutionList().get(i));
+            for (int j = 0; j < solution.getNumberOfObjectives(); j++) {
+                diff[i] = Math.abs(position_A[j] - position_B[j]);
+            }
+            isNear[i] = diff[i] < solution.getNumberOfObjectives();
+        }
+
+        //2. compute density itself
+        double density = 0;
+
+        for (int i = 0; i < isNear.length; i++) {
+            if(!isNear[i]) continue;
+            density += solution.getNumberOfObjectives() - diff[i];
+        }
+
+        //3. compute convergence itself
+        double convergence_1 = 0;
+        for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
+            convergence_1 += position_A[i];
+        }
+
+        //4. compute convergence itself
+        double convergence_2 = 0;
+        for (int i = 0; i < solution.getNumberOfObjectives(); i++) {
+            convergence_2 += Math.pow((solution.getObjective(i) - ((grid.getGridLowerLimits())[i] + position_A[i])*(grid.getDivisionSize())[i])/(grid.getDivisionSize())[i], 2);
+        }
+        convergence_2 = Math.pow(convergence_2, 0.5);
+        return density+convergence_1+convergence_2;
+    }
+
+
     @Override
     public Comparator<S> getComparator() {
         return null;
@@ -126,5 +170,7 @@ public class AdaptiveGridArchiveII<S extends Solution<?>> extends AbstractBounde
 
     @Override
     public void computeDensityEstimator() {
+
+        
     }
 }

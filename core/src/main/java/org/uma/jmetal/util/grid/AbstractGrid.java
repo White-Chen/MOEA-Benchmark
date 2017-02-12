@@ -66,7 +66,7 @@ public interface AbstractGrid<S extends Solution<?>> extends Serializable {
      * @param location Number of the hypercube.
      * @return The number of solutions into a specific hypercube.
      */
-    int getLocationDensity(int location);
+    double getLocationDensity(int location);
 
     /**
      * Decreases the number of solutions into a specific hypercube.

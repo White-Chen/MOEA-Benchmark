@@ -28,12 +28,7 @@ public class MOPSOAdaptiveGrid <S extends Solution<?>>
      * @return The number of solutions into a specific hypercube.
      */
     @Override
-    public int getLocationDensity(int location) {
+    public double getLocationDensity(int location) {
         return densityMemory[location];
-    }
-
-    public int computeLocationDensity(int location){
-
-        return location;
     }
 }
