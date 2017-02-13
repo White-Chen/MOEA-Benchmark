@@ -508,21 +508,21 @@ function resultDataVisualize()
 		disp('check indicator file input and ouput path successfully');
 	end
 
-	% disp('Step 9.2: resultData2Boxplot');
-	% isSuccess = resultData2BoxPLot();
-	% if (~isSuccess);
-	% 	error('function resultData2Boxplot error');
-	% else
-	% 	disp('resultData2Boxplot successfully');
-	% end
+	disp('Step 9.2: resultData2Boxplot');
+	isSuccess = resultData2BoxPLot();
+	if (~isSuccess);
+		error('function resultData2Boxplot error');
+	else
+		disp('resultData2Boxplot successfully');
+	end
 
-	% disp('Step 9.3: boxplot2One');
-	% isSuccess = boxplot2One();
-	% if (~isSuccess);
-	% 	error('function boxplot2One error');
-	% else
-	% 	disp('boxplot2One successfully');
-	% end
+	disp('Step 9.3: boxplot2One');
+	isSuccess = boxplot2One();
+	if (~isSuccess);
+		error('function boxplot2One error');
+	else
+		disp('boxplot2One successfully');
+	end
 
 	clear i isSuccess;
 end
