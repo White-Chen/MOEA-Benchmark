@@ -17,16 +17,28 @@ import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.dmopso.DMOPSO;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
-import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveII;
+import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveIII;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.grid.util.ShuffleListBuilder;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
     private static final long serialVersionUID = 7100961861651318429L;
-    private AdaptiveGridArchiveII<DoubleSolution> leadersArchive;
+    private AdaptiveGridArchiveIII<DoubleSolution> leadersArchive;
+    private double[] iqrs;
+    private double[] mids;
+    private double[] entropies;
+    private double[] entropyDiff;
+    private double threshold;
+    private int condition;
+
+    @Override
+    protected void resetParticle(int i) {
+        super.resetParticle(i);
+    }
 
     public MOPSOpd(DoubleProblem problem, int swarmSize,
                    int maxIterations, double r1Min, double r1Max,
@@ -34,12 +46,18 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
                    double weightMin, double weightMax, double changeVelocity1, double changeVelocity2,
                    String functionType, int maxAge,
                    String dataDirectory, String inProcessDataPath,
-                   AdaptiveGridArchiveII<DoubleSolution> leadersArchive,
-                   int eliminatePressure, int selectionPressure, int divisionNumber) {
+                   AdaptiveGridArchiveIII<DoubleSolution> leadersArchive,
+                   int eliminatePressure, int selectionPressure, int divisionNumber, double threshold) {
         super(problem,swarmSize,maxIterations,r1Min,r1Max,r2Min,r2Max,c1Min,c1Max,c2Min,c2Max,
                 weightMin,weightMax,changeVelocity1,changeVelocity2,functionType,maxAge,
                 dataDirectory,inProcessDataPath);
         this.leadersArchive = leadersArchive;
+        iqrs = new double[problem.getNumberOfVariables()];
+        mids = new double[problem.getNumberOfVariables()];
+        entropies = new double[maxIterations];
+        entropyDiff = new double[maxIterations];
+        this.threshold = threshold;
+
     }
 
     @Override
@@ -77,6 +95,70 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
         }
     }
 
+    private void computeEntropy(){
+
+        int archiveSize = leadersArchive.size();
+        double[] position = new double[archiveSize];
+        double midDiff;
+        double iqrValue;
+        double q1, q3;
+        double midValue = 0;
+
+        List<DoubleSolution> solutions = leadersArchive.getSolutionList();
+        for (int i = 0; i < problem.getNumberOfVariables(); i++) {
+            //1. sort
+            for (int j = 0; j < archiveSize; j++) {
+                position[j] = solutions.get(j).getVariableValue(i);
+            }
+            Arrays.sort(position);
+
+            //2. iqr compute
+            q1 = position[(archiveSize/4 - 1) < 0 ? 0 : (archiveSize/4 - 1)] ;
+            q3 = position[(archiveSize*3/4 - 1) < 0 ? 0 : (archiveSize*3/4 -1)];
+            iqrValue = Math.abs(q1-q3);
+            iqrValue = iqrValue/(position[archiveSize-1]-position[0]);
+            // init iterations == 1
+            iqrs[i] = iqrValue;
+
+            //3. mid compute
+            midDiff = iterations > 1 ? Math.abs(position[(archiveSize/2 - 1) < 0 ? 0 : (archiveSize/2 -1)] - mids[i]): 0;
+            mids[i] = position[archiveSize/2 -1];
+
+            //4. compute entropy
+            entropies[iterations - 1] = entropies[iterations - 1]
+                    - iqrs[i] * Math.log(iqrs[i])
+                    - midDiff * Math.log(midDiff);
+        }
+
+        //5. compute entropy diff
+        entropyDiff[iterations - 1] = iterations > 1 ? Math.abs(entropyDiff[iterations - 1] - entropies[iterations - 2]) : 0;
+    }
+
+    // 0:explore
+    // 1:localSearch
+    // 2:convergence
+    private void classifyEvolutionaryCondition(){
+        if (iterations <= 10){
+            condition = 0;
+        }
+        else {
+            double entropyAccumulate = 0;
+            for (int i = iterations - 11; i < (iterations - 1); i++) {
+                entropyAccumulate += entropyDiff[i];
+            }
+            if (entropyAccumulate >= threshold)
+                condition = 0;
+            else if(leadersArchive.size() < leadersArchive.getMaxSize())
+                condition = 1;
+            else if(leadersArchive.size() == leadersArchive.getMaxSize())
+                condition = 2;
+        }
+
+    }
+
+    private void setCondition(){
+        leadersArchive.setCondition(condition);
+    }
 
     @Override
     public void run() {
@@ -94,6 +176,8 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
 
         initProgress();
         while (!isStoppingConditionReached()) {
+            computeEntropy();
+            classifyEvolutionaryCondition();
             shuffleGlobalBest();
 
             for (int i = 0; i < getSwarm().size(); i++) {
@@ -139,4 +223,19 @@ public class MOPSOpd extends DMOPSO implements Algorithm<List<DoubleSolution>> {
     }
 
 
+    public AdaptiveGridArchiveIII<DoubleSolution> getLeadersArchive() {
+        return leadersArchive;
+    }
+
+    public void setLeadersArchive(AdaptiveGridArchiveIII<DoubleSolution> leadersArchive) {
+        this.leadersArchive = leadersArchive;
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
+    }
 }

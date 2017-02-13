@@ -5,8 +5,7 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.grid.imp.VariationAdaptiveGrid;
 
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * Created by ChenZhe on 2015/11/5.
@@ -20,6 +19,8 @@ public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBound
     private VariationAdaptiveGrid<S> grid;
 
     private Comparator<S> dominanceComparator;
+    private int condition;
+    private Random random = new Random();
 
     /**
      * Constructor.
@@ -90,19 +91,81 @@ public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBound
         grid.addSolution(grid.location(solution));
         getSolutionList().add(solution);
         int location = grid.location(solution);
-        double[] density = new double[size()];
-        double max = Double.MIN_VALUE;
-        int maxIndex = 0;
+        double[] min = {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+        double[][] indicators = new double[getSolutionList().size()][3];
         for (int i = 0; i < getSolutionList().size(); i++) {
-            density[i] = computeDensity(getSolutionList().get(i));
-            if(max < density[i]){
-                maxIndex = i;
-                max = density[i];
+            indicators[i] = computeDensity(getSolutionList().get(i));
+            for (int k = 0; k < 3; k++) {
+                if(min[k] > indicators[i][k]){
+                    min[k] = indicators[i][k];
+                }
             }
         }
+
+        int locationIndex = 0;
+        List<Integer> cIndexs = new ArrayList<>();
+        List<Integer> dIndexs = new ArrayList<>();
+        switch (condition){
+            case 0:
+            case 1:
+                for (int i = 0; i < indicators.length; i++) {
+                    if(indicators[i][1] == min[1])
+                        cIndexs.add(i);
+                }
+                double dmin = Double.MAX_VALUE;
+                for (int i = 0; i < cIndexs.size(); i++) {
+                    if(dmin == indicators[i][0])
+                        dIndexs.add(i);
+                    else if(dmin > indicators[i][0]){
+                        dIndexs.clear();
+                        dIndexs.add(i);
+                        dmin = indicators[i][0];
+                    }
+                }
+                if (dIndexs.size() == 1)
+                    locationIndex = dIndexs.get(0);
+                else {
+                    double c2min = Double.MAX_VALUE;
+                    for (int i = 0; i < dIndexs.size(); i++) {
+                        if(c2min > indicators[i][2]){
+                            c2min = indicators[i][2];
+                            locationIndex = dIndexs.get(i);
+                        }
+                    }
+                }
+                break;
+            case 2:
+                for (int i = 0; i < indicators.length; i++) {
+                    if(indicators[i][0] == min[0])
+                        dIndexs.add(i);
+                }
+                double cmin = Double.MAX_VALUE;
+                for (int i = 0; i < dIndexs.size(); i++) {
+                    if(cmin == indicators[i][1])
+                        cIndexs.add(i);
+                    else if(cmin > indicators[i][1]){
+                        cIndexs.clear();
+                        cIndexs.add(i);
+                        cmin = indicators[i][1];
+                    }
+                }
+                if (cIndexs.size() == 1)
+                    locationIndex = cIndexs.get(0);
+                else {
+                    double c2min = Double.MAX_VALUE;
+                    for (int i = 0; i < cIndexs.size(); i++) {
+                        if(c2min > indicators[i][2]){
+                            c2min = indicators[i][2];
+                            locationIndex = cIndexs.get(i);
+                        }
+                    }
+                }
+                break;
+        }
+        solution = getSolutionList().get(locationIndex);
         location = grid.location(solution);
         grid.removeSolution(location);
-        getSolutionList().remove(maxIndex);
+        getSolutionList().remove(locationIndex);
         return true;
     }
 
@@ -123,8 +186,63 @@ public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBound
         }
     }
 
+    public S select(){
 
-    public double computeDensity(S solution){
+        double[] min = {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE};
+        double[][] indicators = new double[getSolutionList().size()][3];
+        for (int i = 0; i < getSolutionList().size(); i++) {
+            indicators[i] = computeDensity(getSolutionList().get(i));
+            for (int k = 0; k < 3; k++) {
+                if(min[k] > indicators[i][k]){
+                    min[k] = indicators[i][k];
+                }
+            }
+        }
+
+        int locationIndex = 0;
+        List<Integer> cIndexs = new ArrayList<>();
+        List<Integer> dIndexs = new ArrayList<>();
+        switch (condition){
+            case 0:
+            case 1:
+                for (int i = 0; i < indicators.length; i++) {
+                    if(indicators[i][1] == min[1])
+                        cIndexs.add(i);
+                }
+                double dmin = Double.MAX_VALUE;
+                for (int i = 0; i < cIndexs.size(); i++) {
+                    if(dmin == indicators[i][0])
+                        dIndexs.add(i);
+                    else if(dmin > indicators[i][0]){
+                        dIndexs.clear();
+                        dIndexs.add(i);
+                        dmin = indicators[i][0];
+                    }
+                }
+                locationIndex = random.nextInt(dIndexs.size());
+                break;
+            case 2:
+                for (int i = 0; i < indicators.length; i++) {
+                    if(indicators[i][0] == min[0])
+                        dIndexs.add(i);
+                }
+                double cmin = Double.MAX_VALUE;
+                for (int i = 0; i < dIndexs.size(); i++) {
+                    if(cmin == indicators[i][1])
+                        cIndexs.add(i);
+                    else if(cmin > indicators[i][1]){
+                        cIndexs.clear();
+                        cIndexs.add(i);
+                        cmin = indicators[i][1];
+                    }
+                }
+                locationIndex = random.nextInt(cIndexs.size());
+                break;
+        }
+        return getSolutionList().get(locationIndex);
+    }
+
+    public double[] computeDensity(S solution){
         //1. find near solutions
         //Iterator of individuals over the list
         boolean[] isNear = new boolean[this.size()];
@@ -159,7 +277,8 @@ public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBound
             convergence_2 += Math.pow((solution.getObjective(i) - ((grid.getGridLowerLimits())[i] + position_A[i])*(grid.getDivisionSize())[i])/(grid.getDivisionSize())[i], 2);
         }
         convergence_2 = Math.pow(convergence_2, 0.5);
-        return density+convergence_1+convergence_2;
+        double[] indicator = {density, convergence_1, convergence_2};
+        return indicator;
     }
 
 
@@ -170,7 +289,13 @@ public class AdaptiveGridArchiveIII<S extends Solution<?>> extends AbstractBound
 
     @Override
     public void computeDensityEstimator() {
+    }
 
-        
+    public int getCondition() {
+        return condition;
+    }
+
+    public void setCondition(int condition) {
+        this.condition = condition;
     }
 }

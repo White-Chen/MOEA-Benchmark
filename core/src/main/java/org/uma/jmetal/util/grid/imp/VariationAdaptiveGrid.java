@@ -25,7 +25,8 @@ public class VariationAdaptiveGrid<S extends Solution<?>>
                 .setSelectionPressure(4)
                 .setEliminatePressure(2)
                 .setBisections(1)
-                .setHypercubes(new int[(int) Math.pow(divisionNumber, bisections * numberOfObjectives)]);
+                .setHypercubes(new int[(int) Math.pow(divisionNumber, bisections * numberOfObjectives)])
+                .setDensityMemory(new double[(int) Math.pow(divisionNumber, this.bisections * numberOfObjectives)]);
 
         for (int i = 0; i < hypercubes.length; i++) {
             hypercubes[i] = 0;

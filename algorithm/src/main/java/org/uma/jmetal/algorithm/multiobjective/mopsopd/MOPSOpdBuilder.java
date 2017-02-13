@@ -3,7 +3,7 @@ package org.uma.jmetal.algorithm.multiobjective.mopsopd;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmBuilder;
-import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveII;
+import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveIII;
 
 public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
 
@@ -26,8 +26,9 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
     protected String dataDirectory;
     protected int maxAge;
     protected String inProcessDataPath;
-    protected AdaptiveGridArchiveII<DoubleSolution> leadersArchive;
+    protected AdaptiveGridArchiveIII<DoubleSolution> leadersArchive;
     protected int eliminatePressure, selectionPressure, divisionNumber;
+    protected double threshold;
 
     public MOPSOpdBuilder(DoubleProblem problem) {
         this.problem = problem;
@@ -51,8 +52,9 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
         this.eliminatePressure = 2;
         this.selectionPressure = 4;
         this.divisionNumber = 30;
+        this.threshold = 0.00001;
         this.dataDirectory = "MOEAD_Weights";
-        leadersArchive = new AdaptiveGridArchiveII<>(this.swarmSize, this.divisionNumber, this.problem.getNumberOfObjectives());
+        leadersArchive = new AdaptiveGridArchiveIII<>(this.swarmSize, this.divisionNumber, this.problem.getNumberOfObjectives());
         this.leadersArchive.getGrid()
                 .setDivisionNumber(divisionNumber)
                 .setEliminatePressure(eliminatePressure)
@@ -68,7 +70,7 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
                 this.functionType, this.maxAge,
                 this.dataDirectory, this.inProcessDataPath,
                 this.leadersArchive,
-                this.eliminatePressure, this.selectionPressure, this.divisionNumber);
+                this.eliminatePressure, this.selectionPressure, this.divisionNumber, this.threshold);
         return algorithm;
     }
 
@@ -184,11 +186,11 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
         return weightMax;
     }
 
-    public AdaptiveGridArchiveII<DoubleSolution> getLeadersArchive() {
+    public AdaptiveGridArchiveIII<DoubleSolution> getLeadersArchive() {
         return leadersArchive;
     }
 
-    public MOPSOpdBuilder setLeadersArchive(AdaptiveGridArchiveII<DoubleSolution> leadersArchive) {
+    public MOPSOpdBuilder setLeadersArchive(AdaptiveGridArchiveIII<DoubleSolution> leadersArchive) {
         this.leadersArchive = leadersArchive;
         return this;
     }
@@ -277,5 +279,13 @@ public class MOPSOpdBuilder implements AlgorithmBuilder<MOPSOpd> {
     public MOPSOpdBuilder setInProcessDataPath(String inProcessDataPath) {
         this.inProcessDataPath = inProcessDataPath;
         return this;
+    }
+
+    public double getThreshold() {
+        return threshold;
+    }
+
+    public void setThreshold(double threshold) {
+        this.threshold = threshold;
     }
 }
