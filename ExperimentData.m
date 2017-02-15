@@ -38,7 +38,7 @@
 %      		       					|	IGD: 					[runtimex1x1 struct]								|	isdir: 					1											
 %       	  						|	IGDPlus: 				[runtimex1x1 struct]								|	datenum: 				xx											
 %       	   						|	SPREAD: 				[runtimex1x1 struct]								|	Path: 					'..\Experiment Data\xx\data\xx\testproblem\INPROCESSDATAN\ n'
-%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPathï¼š		
+%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPathï¼?	
 %     		 						|	Median: 				[numOfIndicatorsx2x1 struct]						|	CIPDFigOutPutPath:		
 % 	 								|	InprocessDataPathList: 	[runtimex1x1 struct]								|	AllInCIPDFigOutPutPath:	
 %   								|	IndicatorList: 			{Indicatorsx1 cell}									|	Path:					
@@ -47,28 +47,41 @@
 % 									|	IPDFigOutPathList:		[numOfRuntimex1 cell]								|
 % 									|	IPDEpsOutPathList:		[numOfRuntimex1 cell]								|
 % ------------------------------------------------------------------------------------------------------------------
+%algorithms:'ZDT1','ZDT2','ZDT3','ZDT4','ZDT6',
+%           'DTLZ1','DTLZ2','DTLZ3','DTLZ4','DTLZ5','DTLZ6','DTLZ7',
+%           'UF1','UF2','UF3','UF4','UF5','UF6','UF7','UF8','UF9','UF10',
+%           'LZ09F1','LZ09F2','LZ09F3','LZ09F4','LZ09F5','LZ09F6','LZ09F7','LZ09F8','LZ09F9',
+%           'WFG1','WFG2','WFG3','WFG4','WFG5','WFG6','WFG7','WFG8','WFG9','WFG10',
 
 %% ExperimentData: Main function
 function algorithms = ExperimentData(INPUTexperimentRootDirectory, INPUTexperimentDataTag)
 
 
 	global algorithms experimentRootDirectory experimentDataTag numOfAlgorithms numOfProblems numOfIndicators...
-		numOfIPCD selectMatrix titleMatrix IndicatorMatrix;
+		numOfIPCD maxGen selectMatrix titleMatrix selectProblemList intervalGen IndicatorMatrix;
 
 	experimentRootDirectory = INPUTexperimentRootDirectory;
 	experimentDataTag 		= INPUTexperimentDataTag;
-	numOfAlgorithms 		= 8;
-	numOfProblems  			= 16;
-	numOfIPCD 				= 30;
-	selectMatrix 			= {	'ZDT1',	'ZDT2', 'ZDT3',...
-					   			'ZDT4', 'ZDT6', 'UF2' ,...
-					   			'UF7',	'DTLZ1','DTLZ2',...
-					   			 };
+	numOfAlgorithms 		= 4;
+	numOfIPCD 				= 2;      %ÊµÑé´ÎÊý
+    maxGen                  = 980;
+    intervalGen             = 10;      %Êä³ö¼ä¸ô´ÎÊý
+    selectProblemList       = {%'ZDT1','ZDT2','ZDT3','ZDT4','ZDT6', ...
+                               %'DTLZ1','DTLZ2','DTLZ3','DTLZ4','DTLZ5','DTLZ6','DTLZ7', ...
+                               %'UF1','UF2','UF3','UF4','UF5','UF6','UF7','UF8', ...
+                               %'LZ09F1','LZ09F2','LZ09F3','LZ09F4','LZ09F5'
+                              % 'WFG1','WFG2','WFG3','WFG4','WFG5','WFG6','WFG7','WFG8','WFG9',...
+                              'ZDT3','DTLZ1','DTLZ7'
+                               };
+	selectMatrix 			= selectProblemList;
+                             %'DTLZ1','DTLZ2','DTLZ3','DTLZ4','DTLZ5','DTLZ6','DTLZ7',
+                             
 	titleMatrix				= {	'( a )','( b )','( c )','( d )','( e )','( f )',...
     							'( g )','( h )','( i )','( j )','( k )','( l )'};
     % 'EP','ER','GD','HV','IGD','IGDPlus','SPREAD'
-    IndicatorMatrix 		= {'ER','IGD','SPREAD'};
-	numOfIndicators 		= length(IndicatorMatrix);
+    IndicatorMatrix 		= {'IGDPlus','IGD','SPREAD','HV'};
+	numOfIndicators 		= length(IndicatorMatrix);    
+	numOfProblems  			= length(selectProblemList);   %selectProblemListµÄ¸öÊý
 
 
 	disp('Step1 : getAlgorithmList');
@@ -153,7 +166,7 @@ end
 %% getTestProblemList: 
 function getTestProblemList()
 	
-	global algorithms numOfAlgorithms;
+	global algorithms numOfAlgorithms selectProblemList;
 
 	% get number of algorithms in this experiment
 
@@ -162,18 +175,25 @@ function getTestProblemList()
 		% remove the . and .. directory
 		testProblemNameList = testProblemDirOutput(3:end);
 		testProblemList = {testProblemNameList.name};
+        removeList = zeros(1,length(testProblemNameList));
 
 		% set path value
 		for j = 1:length(testProblemNameList)
-			testProblemNameList(j).Path = fullfile(algorithms(i).Path, ...
-					char(testProblemNameList(j).name));
-			eval(['[algorithms(', num2str(i) , ').', ...
-							char(testProblemNameList(j).name),...
-							 '] = deal(testProblemNameList(',num2str(j),'));']);
-		end
+            switch  [testProblemNameList(j).name]
+                case selectProblemList
+                    testProblemNameList(j).Path = fullfile(algorithms(i).Path, ...
+                            char(testProblemNameList(j).name));
+                    eval(['[algorithms(', num2str(i) , ').', ...
+                                    char(testProblemNameList(j).name),...
+                                     '] = deal(testProblemNameList(',num2str(j),'));']);
+                otherwise
+                    removeList(j) = 1;
+            end
+        end
+        testProblemList(boolean(removeList)) = [];
 
 		algorithms(i).ProblemNameList = testProblemList';
-		clear testProblemDirOutput testProblemNameList testProblemList;
+		clear testProblemDirOutput testProblemNameList testProblemList removeList;
 	end
 	clear i j;
 end
@@ -317,10 +337,10 @@ end
 %% setInProcessEvaluations
 function setInProcessEvaluations()
 
-	global algorithms numOfAlgorithms;
+	global algorithms numOfAlgorithms maxGen intervalGen;
 	
 	tags = [2];
-	tags = [tags,[10:10:500]];
+	tags = [tags,[10:intervalGen:maxGen]];
 	% get number of algorithms in this experiment
 
 	if length(tags) < numOfAlgorithms
@@ -540,6 +560,7 @@ function combineDataVisualize()
 	end
 
 	disp('disp 10.2: trendPics2One');
+    %¹ý³ÌÊý¾ÝÍ¼ºÏ³É
 	isSuccess = trendPics2One();
 	if (~isSuccess);
 		error('trendPics2One file input and ouput path error');
@@ -817,7 +838,7 @@ end
 %% inProcessDataToTrendPic:
 function isSuccess = inProcessDataToTrendPic()
 	
-	global algorithms numOfAlgorithms numOfIndicators numOfProblems numOfIPCD IndicatorMatrix;
+	global algorithms numOfAlgorithms numOfIndicators numOfProblems numOfIPCD IndicatorMatrix maxGen intervalGen;
     
 	isSuccess		= false;
 	figPosition		= [0 0 20 20];
@@ -857,9 +878,10 @@ function isSuccess = inProcessDataToTrendPic()
 					[~, index]			= sort(data(:,1));
 					data 				= data(index,:);
 					popNumber 			= getPopNumber(char(algorithms(v).ProblemNameList(i)));
-					plot((algorithms(v).InProcessEvaluations(1:size(data,1)))*popNumber,...
-						data(:,2),['k',algorithms(v).PictureTag,'-'],...
-						'MarkerSize',2);
+                   
+					plot((algorithms(v).InProcessEvaluations(1:maxGen/intervalGen))*popNumber,...
+						data(1:maxGen/intervalGen,2),['k',algorithms(v).PictureTag,'-'],...
+						'MarkerSize',6);
 					hold on;
 
 					clear data ttempData index CIPDInputPath;
@@ -944,7 +966,7 @@ function isSuccess = trendPics2One()
 				eval([problemName,'AxeHandle.YLim = ',mat2str(YLim),';']);
 				eval([problemName,'Copy = copyobj(',...
 						problemName,'AxeHandle,figOut);']);
-				eval(['subplot(4,3,',num2str(i),',',problemName,'Copy(1));']);
+				eval(['subplot(3,3,',num2str(i),',',problemName,'Copy(1));']);
 
 				eval(['close(',problemName,'FigHandle);']);
 				eval(['clear ',problemName,'FigHandle ',problemName,'AxeHandle ',...
@@ -973,12 +995,12 @@ function isSuccess = trendPics2One()
 	clear k fontSize;
 end
 
-%% resultData2Boxplot: function description
+%% resultData2Boxplot: µ¥¸öÏäÍ¼µÄÉú³É
 function isSuccess = resultData2BoxPLot()
 
 	global algorithms numOfAlgorithms numOfIndicators numOfIPCD numOfProblems IndicatorMatrix;
 	isSuccess		= false;
-	FontSize 		= 7;
+	FontSize 		= 7;       %Í¼±êµÄ´óÐ¡
 	figPosition		= [0 0 20 20];
 
 	for i = 1:numOfProblems
@@ -1023,6 +1045,7 @@ function isSuccess = resultData2BoxPLot()
 			title(['boxplot for ',indicatorName]);
 			saveas(gcf,[RDFigOutPath_SingleOut]);
 			disp(['save ',RDFigOutPath_SingleOut,' successfully']);
+            print(gcf,'-deps','-r600',[RDFigOutPath(1:end-4),'.eps']);
 			clear k figOut RDFigOutPath RD RDFigOutPath_SingleOut indicatorName;
 		end
 
@@ -1033,7 +1056,7 @@ function isSuccess = resultData2BoxPLot()
 	clear i figPosition;
 end
 
-%% boxplot2One:
+%% boxplot2One: ÏäÍ¼µÄºÏ³É£¬ALLInPic
 function isSuccess = boxplot2One()
 
 	global algorithms numOfIndicators selectMatrix titleMatrix IndicatorMatrix;
@@ -1078,7 +1101,7 @@ function isSuccess = boxplot2One()
 			eval([problemName,'AxeHandle.FontName = ''',fontName,''';']);
 			eval([problemName,'Copy = copyobj(',...
 					problemName,'AxeHandle,figOut);']);
-			eval(['subplot(4,3,',num2str(i),',',problemName,'Copy(1));']);
+			eval(['subplot(3,3,',num2str(i),',',problemName,'Copy(1));']);       %AllInÏäÍ¼µÄ²¼¾Ö
 
 			eval(['close(',problemName,'FigHandle);']);
 			eval(['clear ',problemName,'FigHandle ',problemName,'AxeHandle ',...
@@ -1111,8 +1134,8 @@ end
 function popNumber = getPopNumber(problemName)
 	switch problemName
 		case {'DTLZ1','DTLZ2','DTLZ3','DTLZ4','DTLZ5','DTLZ6','DTLZ7'}
-			popNumber = 150;
+			popNumber = 153;
 		otherwise
-			popNumber = 100;
+			popNumber = 101;
 	end
 end
