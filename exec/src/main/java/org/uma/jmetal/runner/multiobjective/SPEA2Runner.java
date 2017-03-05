@@ -50,8 +50,8 @@ public class SPEA2Runner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-            referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.IEEE_30bus_6gen_UC";
+            //referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf";
         }
 
         problem = ProblemUtils.loadProblem(problemName);
@@ -68,7 +68,8 @@ public class SPEA2Runner extends AbstractAlgorithmRunner {
 
         algorithm = new SPEA2Builder<>(problem, crossover, mutation)
                 .setSelectionOperator(selection)
-                .setMaxIterations(250)
+                .setMaxIterations(10)
+                .setInProcessDataPath("")
                 .setPopulationSize(100)
                 .build();
 

@@ -35,8 +35,8 @@ public class AdMOPSORunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-            referenceParetoFront = "/pareto_fronts/ZDT1.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.IEEE_30bus_6gen_UC";
+            //referenceParetoFront = "/pareto_fronts/ZDT1.pf";
         }
 
 
@@ -44,7 +44,7 @@ public class AdMOPSORunner extends AbstractAlgorithmRunner {
 
         int iterations, maxEvaluations, populationSize, archiveSize;
         if (problem.getNumberOfObjectives() == 2) {
-            maxEvaluations = 30000;
+            maxEvaluations = 1000;
             populationSize = 100;
             archiveSize = 100;
         } else {
@@ -67,6 +67,7 @@ public class AdMOPSORunner extends AbstractAlgorithmRunner {
                 .setSwarmSize(populationSize)
                 .setMaxEvaluations(maxEvaluations)
                 .setMutation(new RandomizeMutation(mutationProbability))
+                .setInProcessDataPath("")
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
