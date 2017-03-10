@@ -29,14 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class implementing the MOEA/D-KM algorithm described in :
+ * Class implementing the MOEA/D-AKM algorithm described in :
  * Create by dyy
  * "Optimal  Matching-Based Selection in Evolutionary Multiobjective Optimization",
- *
+ * 自适应KM选择策略 MOEAD-AKM，在紊乱判断后自适应选择选择策略；
+ *加入ParentPopulation存放差分进化前的种群，避免使用邻域更新后的population
  * @author dyy
- * @version 1.0
+ * @version 1.0     2017 3/10  14:25
  */
-public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
+public class MOEADAKM extends AbstractMOEAD<DoubleSolution> {
     private static final long serialVersionUID = 2515198940774839154L;
     JMetalRandom randomGenerator;
     private DifferentialEvolutionCrossover differentialEvolutionCrossover;
@@ -45,7 +46,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
     private int[] frequency;
     String Method;
 
-    public MOEADKM(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
+    public MOEADAKM(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
                    MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
                    FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
                    int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh,int run) {
@@ -82,11 +83,11 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
             offspringPopulation.clear();
-            populationKM.clear();
-            populationKM.addAll(population);
+            parentPopulation.clear();
+            parentPopulation.addAll(population);
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
-                //frequency[subProblemId]++;
+                frequency[subProblemId]++;
 
                 NeighborType neighborType = chooseNeighborType();
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
@@ -101,12 +102,12 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
                 evaluations++;
 
                 updateIdealPoint(child);
-                // updateNadirPoint(child);
+                updateNadirPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
 
                 offspringPopulation.add(child);
             }
-            String path="F:\\Experiment Data\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            String path="F:\\Experiment Data\\MOEADAKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
             appendToFile(path,generation+"-----------"+problem.getName()+"------------");
             appendToFile(path,updateAbility+"\r\n");
 
@@ -114,14 +115,14 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
             // Combine the parent and the current offspring populations
             jointPopulation.clear();
             jointPopulation.addAll(offspringPopulation);
-            jointPopulation.addAll(populationKM);
+            jointPopulation.addAll(parentPopulation);
             // selection process---KM匹配------
             KMSelection();
             }
             generation++;
-//            if (generation % 30 == 0) {
-//                utilityFunction();
-//            }
+            if (generation % 30 == 0) {
+                utilityFunction();
+            }
             saveDataInProcess();
             System.out.println("-------generation"+generation+"---------");
 
@@ -133,7 +134,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
         population = new ArrayList<>(populationSize);
         offspringPopulation = new ArrayList<>(populationSize);
         jointPopulation = new ArrayList<>(populationSize);
-        populationKM = new ArrayList<>(populationSize);
+        parentPopulation = new ArrayList<>(populationSize);
 
         for (int i = 0; i < populationSize; i++) {
             DoubleSolution newSolution = problem.createSolution();
@@ -260,7 +261,7 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
 
     @Override
     public String getName() {
-        return "MOEADKM";
+        return "MOEADAKM";
     }
 
     @Override

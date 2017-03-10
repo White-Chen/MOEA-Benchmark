@@ -85,7 +85,7 @@ public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
 
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
-                //frequency[subProblemId]++;
+                frequency[subProblemId]++;
 
                 NeighborType neighborType = chooseNeighborType();
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
@@ -100,7 +100,7 @@ public class MOEADKMC extends AbstractMOEAD<DoubleSolution> {
                 evaluations++;
 
                 updateIdealPoint(child);
-                // updateNadirPoint(child);
+                updateNadirPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
 
                 offspringPopulation.add(child);

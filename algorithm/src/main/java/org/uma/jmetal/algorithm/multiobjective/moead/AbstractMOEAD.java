@@ -69,7 +69,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected FunctionType functionType;
     protected String dataDirectory;
     protected List<S> population;
-    protected List<S> populationKM;
+    protected List<S> parentPopulation;
     protected List<S> offspringPopulation;
     protected List<S> jointPopulation;
     protected int populationSize;
