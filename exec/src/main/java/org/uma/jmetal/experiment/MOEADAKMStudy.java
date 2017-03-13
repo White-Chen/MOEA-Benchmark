@@ -19,6 +19,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.MOEAD;
 import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.problem.multiobjective.cec2009Competition.*;
@@ -64,7 +65,7 @@ import java.util.List;
  */
 public class MOEADAKMStudy {
     private static final int INDEPENDENT_RUNS =10;   //每个算法跑20次实验
-    public static final String experimentBaseDirectory = "F:\\Experiment Data(last)";
+    public static final String experimentBaseDirectory = "F://Experiment Data(last)";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*
@@ -157,9 +158,9 @@ public class MOEADAKMStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADAKM)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 80000 : 50000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 100000 : 50000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
+                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(2)
                         .setNeighborSize(2)
@@ -181,9 +182,9 @@ public class MOEADAKMStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEAD)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 80000 : 50000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 100000 : 50000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
+                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(2)
                         .setNeighborSize(2)
@@ -204,9 +205,9 @@ public class MOEADAKMStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADSTM)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 80000 : 50000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 100000 : 50000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
+                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(2)
                         .setNeighborSize(2)
@@ -255,9 +256,9 @@ public class MOEADAKMStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADDRA)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 80000 : 50000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 100000 : 50000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
+                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(20)
                         .setNeighborSize(20)
@@ -275,11 +276,10 @@ public class MOEADAKMStudy {
 
             //NSGA-2初始化
             for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder(problemList.get(i))
-                        .setCrossoverOperator(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
-                        .setMutationOperator(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 80000 : 50000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problemList.get(i), new SBXCrossover(1.0, 20.0),
+                        new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 100000 : 50000)
+                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 300 : 100)
                         .setInProcessDataPath(experimentBaseDirectory
                                 + "/MOEADStudy/data/NSGA2/"
                                 + problemList.get(i).getName()
