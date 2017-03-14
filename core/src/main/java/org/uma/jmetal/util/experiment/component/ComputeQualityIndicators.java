@@ -68,16 +68,16 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
     @Override
     public void run() throws IOException {
         processInProcessData(experiment);
-        for (GenericIndicator<S> indicator : experiment.getIndicatorList()) {
+        for (GenericIndicator<S> indicator : experiment.getIndicatorList()) {               //指标
             JMetalLogger.logger.info("Computing indicator: " + indicator.getName());
 
-            for (TaggedAlgorithm<Result> algorithm : experiment.getAlgorithmList()) {
+            for (TaggedAlgorithm<Result> algorithm : experiment.getAlgorithmList()) {       //算法
                 String algorithmDirectory;
                 algorithmDirectory = experiment.getExperimentBaseDirectory() + "/data/" +
                         algorithm.getTag();
 
 
-                for (int problemId = 0; problemId < experiment.getProblemList().size(); problemId++) {
+                for (int problemId = 0; problemId < experiment.getProblemList().size(); problemId++) {      //测试问题
                     String problemDirectory = algorithmDirectory + "/" + experiment.getProblemList().get(problemId).getName();
 
                     String referenceFrontDirectory = experiment.getReferenceFrontDirectory();
@@ -95,7 +95,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                     resetFile(qualityIndicatorFile);
 
                     indicator.setReferenceParetoFront(referenceFront);
-                    for (int i = 0; i < experiment.getIndependentRuns(); i++) {
+                    for (int i = 0; i < experiment.getIndependentRuns(); i++) {                //运行的第几次实验
                         String frontFileName = problemDirectory + "/" +
                                 experiment.getOutputParetoFrontFileName() + i + ".tsv";
                         File file = new File(frontFileName);
@@ -104,7 +104,7 @@ public class ComputeQualityIndicators<S extends Solution<?>, Result> implements 
                         Front front = new ArrayFront(frontFileName);
                         Front normalizedFront = frontNormalizer.normalize(front);
                         List<PointSolution> normalizedPopulation = FrontUtils.convertFrontToSolutionList(front);
-                        Double indicatorValue = indicator.evaluate((List<S>) normalizedPopulation);
+                        Double indicatorValue = indicator.evaluate((List<S>) normalizedPopulation);         //计算评价指标值
                         JMetalLogger.logger.info(indicator.getName() + ": " + indicatorValue);
 
                         writeQualityIndicatorValueToFile(indicatorValue, qualityIndicatorFile);

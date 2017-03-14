@@ -80,6 +80,7 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
                 .setSelectionOperator(selection)
                 .setMaxEvaluations(25000)
                 .setPopulationSize(100)
+                .setInProcessDataPath("\\\\Dy-pc\\f\\Experiment Data"+"\\NSGA2\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

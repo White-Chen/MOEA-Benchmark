@@ -95,6 +95,7 @@ public class NSGAIIMeasuresRunner extends AbstractAlgorithmRunner {
                 .setMaxEvaluations(maxEvaluations)
                 .setPopulationSize(populationSize)
                 .setVariant(NSGAIIBuilder.NSGAIIVariant.Measures)
+                .setInProcessDataPath("F:\\\\Experiment Data"+"\\NSGA2\\"+problem.getName())
                 .build();
 
     /* Measure management */
