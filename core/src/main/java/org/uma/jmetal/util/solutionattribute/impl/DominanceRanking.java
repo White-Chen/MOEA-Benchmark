@@ -42,6 +42,7 @@ public class DominanceRanking<S extends Solution<?>>
             new OverallConstraintViolationComparator<Solution<?>>();
 
     private List<ArrayList<S>> rankedSubPopulations;
+    private int[] hierarchyIndex;
 
     /**
      * Constructor
@@ -58,6 +59,7 @@ public class DominanceRanking<S extends Solution<?>>
     @Override
     public Ranking<S> computeRanking(List<S> solutionSet) {
         List<S> population = solutionSet;
+        hierarchyIndex = new int[population.size()];
 
         // dominateMe[i] contains the number of solutions dominating i
         int[] dominateMe = new int[population.size()];
@@ -105,6 +107,7 @@ public class DominanceRanking<S extends Solution<?>>
             if (dominateMe[i] == 0) {
                 front.get(0).add(i);
                 solutionSet.get(i).setAttribute(getAttributeID(), 0);
+                hierarchyIndex[i] = 0;
             }
         }
 
@@ -123,6 +126,7 @@ public class DominanceRanking<S extends Solution<?>>
                         front.get(i).add(index);
                         //RankingAndCrowdingAttr.getAttributes(solutionSet.get(index)).setRank(i);
                         solutionSet.get(index).setAttribute(getAttributeID(), i);
+                        hierarchyIndex[index] = i;
                     }
                 }
             }
@@ -139,6 +143,13 @@ public class DominanceRanking<S extends Solution<?>>
         }
 
         return this;
+    }
+
+    public int[] getHierarchyIndex(){
+        if(hierarchyIndex == null){
+            throw new NullPointerException();
+        }
+        return hierarchyIndex;
     }
 
     @Override
