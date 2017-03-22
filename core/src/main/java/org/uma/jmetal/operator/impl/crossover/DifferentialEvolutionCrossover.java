@@ -58,7 +58,8 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
             "current-to-rand/1/bin",
             "current-to-best/1/bin",
             "current-to-rand/1/exp",
-            "current-to-best/1/exp"
+            "current-to-best/1/exp",
+            "best/1/diff"
     };
 
     private double cr;
@@ -66,6 +67,7 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
     private double k;
     // DE variant (rand/1/bin, rand/1/exp, etc.)
     private String variant;
+    private double[] weight;
 
     private DoubleSolution currentSolution;
 
@@ -123,6 +125,11 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
         this.currentSolution = current;
     }
 
+    public void setWeight(double[] w) {
+        this.weight = new double[w.length];
+        System.arraycopy(w, 0, this.weight, 0, w.length);
+    }
+
     /**
      * Execute() method
      */
@@ -160,7 +167,28 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
                     child.setVariableValue(j, value);
                 }
             }
-        } else if ("rand/1/exp".equals(variant) ||
+        } else if ("best/1/diff".equals(variant)){
+            for (int j = 0; j < numberOfVariables; j++) {
+                if (randomGenerator.nextDouble(0, 1) < cr || j == jrand) {
+                    double value;
+                    value = parentSolutions.get(1).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
+                            j) -
+                            parentSolutions.get(0).getVariableValue(j));
+
+                    if (value < child.getLowerBound(j)) {
+                        value = child.getLowerBound(j);
+                    }
+                    if (value > child.getUpperBound(j)) {
+                        value = child.getUpperBound(j);
+                    }
+                    child.setVariableValue(j, value);
+                } else {
+                    double value;
+                    value = currentSolution.getVariableValue(j);
+                    child.setVariableValue(j, value);
+                }
+            }
+        }else if ("rand/1/exp".equals(variant) ||
                 "best/1/exp".equals(variant)) {
             for (int j = 0; j < numberOfVariables; j++) {
                 if (randomGenerator.nextDouble(0, 1) < cr || j == jrand) {
