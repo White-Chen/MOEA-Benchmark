@@ -68,6 +68,8 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
     // DE variant (rand/1/bin, rand/1/exp, etc.)
     private String variant;
     private double[] weight;
+    private int itrCounter;
+    private int iteration;
 
     private DoubleSolution currentSolution;
 
@@ -125,9 +127,11 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
         this.currentSolution = current;
     }
 
-    public void setWeight(double[] w) {
+    public void setWeightAndItrCounter(double[] w, int itr, int ite) {
         this.weight = new double[w.length];
         System.arraycopy(w, 0, this.weight, 0, w.length);
+        this.itrCounter = itr;
+        this.iteration = ite;
     }
 
     /**
@@ -171,10 +175,29 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
             for (int j = 0; j < numberOfVariables; j++) {
                 if (randomGenerator.nextDouble(0, 1) < cr || j == jrand) {
                     double value;
-                    value = parentSolutions.get(1).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
-                            j) -
-                            parentSolutions.get(0).getVariableValue(j));
-
+                    if (itrCounter < 0.5 * iteration) {
+                        value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
+                                j) -
+                                parentSolutions.get(2).getVariableValue(j));
+                    } else if (itrCounter < 1 * iteration){
+                        if (randomGenerator.nextDouble(0, 1) > 0.5){
+                            value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
+                                    j) -
+                                    parentSolutions.get(0).getVariableValue(j));
+                        } else {
+                            value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(0).getVariableValue(
+                                    j) -
+                                    parentSolutions.get(1).getVariableValue(j));
+                        }
+                    } else if (itrCounter < 0.75 * iteration){
+                        value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
+                                j) -
+                                parentSolutions.get(2).getVariableValue(j));
+                    } else {
+                        value = parentSolutions.get(1).getVariableValue(j) + weight[j] * (parentSolutions.get(0).getVariableValue(
+                                j) -
+                                parentSolutions.get(1).getVariableValue(j));
+                    }
                     if (value < child.getLowerBound(j)) {
                         value = child.getLowerBound(j);
                     }
