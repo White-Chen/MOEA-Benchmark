@@ -2,12 +2,11 @@ package org.uma.jmetal.util.pca;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.util.Random;
 
 /**
- * Created by zhoulifa on 17-3-4.
+ * Created by Zhou-LF on 2017/3/20.
  */
 public class PrincipalComponentAnalysis {
     Random rand = new Random();

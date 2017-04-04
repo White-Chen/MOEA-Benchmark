@@ -69,6 +69,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected List<S> population;
     protected List<S> offspringPopulation;
     protected List<S> jointPopulation;
+    protected List<S> extendFront;
     protected int populationSize;
     protected int resultPopulationSize;
     protected int evaluations;
@@ -99,6 +100,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         randomGenerator = JMetalRandom.getInstance();
 
         population = new ArrayList<>(populationSize);
+        extendFront = new ArrayList<>(populationSize);
         indArray = new Solution[problem.getNumberOfObjectives()];
         neighborhood = new int[populationSize][neighborSize];
         idealPoint = new double[problem.getNumberOfObjectives()];

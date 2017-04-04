@@ -54,30 +54,30 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F2";
-            referenceParetoFront = "problem/src/test/resources/pareto_fronts/LZ09_F2.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/DTLZ1.3D.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
 
         double cr = 1.0;
         double f = 0.5;
-        crossover = new DifferentialEvolutionCrossover(cr, f, "rand/1/bin");
+        crossover = new DifferentialEvolutionCrossover(cr, f, "best/1/diff");
 
         double mutationProbability = 1.0 / problem.getNumberOfVariables();
         double mutationDistributionIndex = 20.0;
         mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD)
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD_PCA)
                 .setCrossover(crossover)
                 .setMutation(mutation)
                 .setMaxEvaluations(150000)
-                .setPopulationSize(300)
-                .setResultPopulationSize(300)
+                .setPopulationSize(153)
+                .setResultPopulationSize(153)
                 .setNeighborhoodSelectionProbability(0.9)
                 .setMaximumNumberOfReplacedSolutions(2)
                 .setNeighborSize(20)
-                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                 .setDataDirectory("MOEAD_Weights")
                 .setInProcessDataPath("")
                 .build();

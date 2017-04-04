@@ -38,7 +38,7 @@
 %      		       					|	IGD: 					[runtimex1x1 struct]								|	isdir: 					1											
 %       	  						|	IGDPlus: 				[runtimex1x1 struct]								|	datenum: 				xx											
 %       	   						|	SPREAD: 				[runtimex1x1 struct]								|	Path: 					'..\Experiment Data\xx\data\xx\testproblem\INPROCESSDATAN\ n'
-%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPathï¼š		
+%            						|	Best: 					[numOfIndicatorsx2x1 struct]						|	CIPDEpsOutPutPathï¼?	
 %     		 						|	Median: 				[numOfIndicatorsx2x1 struct]						|	CIPDFigOutPutPath:		
 % 	 								|	InprocessDataPathList: 	[runtimex1x1 struct]								|	AllInCIPDFigOutPutPath:	
 %   								|	IndicatorList: 			{Indicatorsx1 cell}									|	Path:					
@@ -57,12 +57,13 @@ function algorithms = ExperimentData(INPUTexperimentRootDirectory, INPUTexperime
 
 	experimentRootDirectory = INPUTexperimentRootDirectory;
 	experimentDataTag 		= INPUTexperimentDataTag;
-	numOfAlgorithms 		= 8;
-	numOfProblems  			= 16;
-	numOfIPCD 				= 30;
-	selectMatrix 			= {	'ZDT1',	'ZDT2', 'ZDT3',...
-					   			'ZDT4', 'ZDT6', 'UF2' ,...
-					   			'UF7',	'DTLZ1','DTLZ2',...
+	numOfAlgorithms 		= 4;
+	numOfProblems  			= 2;
+	numOfIPCD 				= 5;
+	selectMatrix 			= {	'DTLZ1','DTLZ2'
+%                                 'ZDT1',	'ZDT2', 'ZDT3',...
+% 					   			'ZDT4', 'ZDT6', 'UF2' ,...
+% 					   			'UF7',	'DTLZ1','DTLZ2',...
 					   			 };
 	titleMatrix				= {	'( a )','( b )','( c )','( d )','( e )','( f )',...
     							'( g )','( h )','( i )','( j )','( k )','( l )'};
@@ -937,13 +938,18 @@ function isSuccess = trendPics2One()
 				eval([problemName,'AxeHandle.YLabel.String = ''',indicatorName,''';']);
 				eval([problemName,'AxeHandle.FontSize = ',fontSize,';']);
 				eval([problemName,'AxeHandle.FontName = ''',fontName,''';']);
-				eval(['YLim = ',problemName,'AxeHandle.YLim;']);
+%                 ['YLim = ',problemName,'AxeHandle.ylim;']
+                YLim = get(gca, 'ylim');
+%                 ['YLim = get(',problemName,'AxeHandle, ''ylim'');']
+% 				eval(['YLim = get(',problemName,'AxeHandle, ''ylim'');']);
+%                 eval(['YLim = ',problemName,'AxeHandle.ylim;'])
+                eval([problemName,'AxeHandle.YLim=YLim;'])
 				if (YLim(end) > 2);
 					YLim = [0,2];
-				end
+                end
 				eval([problemName,'AxeHandle.YLim = ',mat2str(YLim),';']);
-				eval([problemName,'Copy = copyobj(',...
-						problemName,'AxeHandle,figOut);']);
+                [problemName,'Copy = copyobj(',problemName,'AxeHandle,figOut);']
+				eval([problemName,'Copy = copyobj(',problemName,'AxeHandle,figOut);']);
 				eval(['subplot(4,3,',num2str(i),',',problemName,'Copy(1));']);
 
 				eval(['close(',problemName,'FigHandle);']);

@@ -1,19 +1,20 @@
 package org.uma.jmetal.util.solutionattribute.impl;
 
+import com.sun.deploy.resources.Deployment_sv;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.Solution;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.comparator.impl.OverallConstraintViolationComparator;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
- * Created by zhoulifa on 17-2-23.
+ * Created by Zhou-LF on 2017/3/20.
  */
-public class ExtendDominationRanking extends DominanceRanking<DoubleSolution> {
+public class ExtendDominationRanking<S extends Solution<?>> extends DominanceRanking<S> {
 
-    private List<List<DoubleSolution>> rankedSubPopulations;
     private int[] hierarchyIndex;
 
     public ExtendDominationRanking(){
@@ -24,19 +25,19 @@ public class ExtendDominationRanking extends DominanceRanking<DoubleSolution> {
         return hierarchyIndex;
     }
 
-    public static void main(String[] args){
-
-    }
-
-    public int[] computeExtendRanking(List<DoubleSolution> solutionSet){
-        List<DoubleSolution> population = solutionSet;
+    public int[] computeExtendRanking(List<S> solutionSet, List<S> extendFront){
+        List<S> population = solutionSet;
         hierarchyIndex = new int[population.size()];
 
-        DominanceRanking<DoubleSolution> dominanceRanking1 = new DominanceRanking();
-        Ranking<DoubleSolution> dominanceRanking = dominanceRanking1.computeRanking(population);
+        DominanceRanking<S> dominanceRanking1 = new DominanceRanking();
+        Ranking<S> dominanceRanking = dominanceRanking1.computeRanking(population);
         hierarchyIndex = dominanceRanking1.getHierarchyIndex();
 
-        List<DoubleSolution> firstFront = dominanceRanking.getSubfront(0);
+        List<S> firstFront = dominanceRanking.getSubfront(0);
+        List<S> firstFrontExtend = new ArrayList<S>(firstFront.size());
+        for (int i = 0; i < firstFront.size(); i++){
+            firstFrontExtend.add(extendFront.get(i));
+        }
 
         double s = 0.34 * Math.PI;
         for (int i = 0; i < firstFront.size(); i++){
@@ -49,11 +50,11 @@ public class ExtendDominationRanking extends DominanceRanking<DoubleSolution> {
             double w;
             for (int j = 0; j < firstFront.get(i).getNumberOfObjectives(); j++){
                 w = Math.acos(firstFront.get(i).getObjective(j) / r);
-                firstFront.get(i).setObjective(j, r * Math.sin(w + s) / Math.sin(s));
+                firstFrontExtend.get(i).setObjective(j, r * Math.sin(w + s) / Math.sin(s));
             }
         }
-        DominanceRanking<DoubleSolution> dominanceRanking2 = new DominanceRanking();
-        Ranking<DoubleSolution> firstFrontDominaceRanking = dominanceRanking2.computeRanking(firstFront);
+        DominanceRanking<S> dominanceRanking2 = new DominanceRanking();
+        Ranking<S> firstFrontDominaceRanking = dominanceRanking2.computeRanking(firstFrontExtend);
 
         int[] hierarchyFirstIndex = dominanceRanking2.getHierarchyIndex();
         int temp = firstFrontDominaceRanking.getNumberOfSubfronts() - 1;
@@ -65,15 +66,6 @@ public class ExtendDominationRanking extends DominanceRanking<DoubleSolution> {
             }else{
                 hierarchyIndex[i] += temp;
             }
-        }
-
-        rankedSubPopulations = new ArrayList<>();
-        //0,1,2,....,i-1 are fronts, then i fronts
-        for (int i = 0; i < firstFrontDominaceRanking.getNumberOfSubfronts(); i++) {
-            rankedSubPopulations.add(i, firstFrontDominaceRanking.getSubfront(i));
-        }
-        for (int i = 1; i < dominanceRanking.getNumberOfSubfronts(); i++) {
-            rankedSubPopulations.add(i + temp, dominanceRanking.getSubfront(i));
         }
         return hierarchyIndex;
     }
