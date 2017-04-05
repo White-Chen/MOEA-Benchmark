@@ -20,13 +20,16 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
 
     private DifferentialEvolutionCrossover differentialEvolutionCrossover;
     private PrincipalComponentAnalysis pca;
+    private Random random;
 
     private double[] weightOfPopulation;
-    int numplieMax;
-    int numplieMin;
-    int[] hierarchy;
-    int numberOfVariables;
-    double[][] weightOfNeighbor;
+    private int numplieMax;
+    private int numplieMin;
+    private int[] hierarchy;
+    private int[] numberOfIndividualUpdate;
+    private int numberOfVariables;
+    private double[][] weightOfNeighbor;
+    private double[][] variablesValue;
 
     public MOEAD_PCA(Problem<DoubleSolution> problem,
                  int populationSize,
@@ -57,6 +60,9 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
 
         numberOfVariables = problem.getNumberOfVariables();
         weightOfNeighbor = new double[populationSize][numberOfVariables];
+        variablesValue = new double[populationSize][numberOfVariables];
+        random = new Random();
+        numberOfIndividualUpdate = new int[maxEvaluations / populationSize];
 
         evaluations = populationSize;
         do {
@@ -65,6 +71,7 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
 
             ifPCA(evaluations/populationSize);
             hierarchy = hierarchySolution();
+            setVariablesValue();
             setWeightOfPopulation();
 
             for (int i = 0; i < populationSize; i++) {
@@ -74,12 +81,7 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
 
                 differentialEvolutionCrossover.setCurrentSolution(population.get(subProblemId));
-                //设置权重
-                if (neighborType == NeighborType.NEIGHBOR){
-                    differentialEvolutionCrossover.setWeight(weightOfNeighbor[numplieMin]);
-                }else {
-                    differentialEvolutionCrossover.setWeight(weightOfPopulation);
-                }
+                setDEWeight(neighborType, evaluations / populationSize, maxEvaluations / populationSize);
                 List<DoubleSolution> children = differentialEvolutionCrossover.execute(parents);
 
                 DoubleSolution child = children.get(0);
@@ -91,9 +93,38 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
+
+            numberOfIndividualUpdate[evaluations/populationSize - 2] = getNumberOfIndividualUpdate();
             saveDataInProcess();
         } while (evaluations < maxEvaluations);
+    }
 
+    public int getNumberOfIndividualUpdate(){
+        int i,j,count = 0;
+        for (i = 0; i < populationSize; i++){
+            for (j = 0; j < problem.getNumberOfVariables(); j++){
+                if (population.get(i).getVariableValue(j) != variablesValue[i][j]){
+                    break;
+                }
+            }
+            if (j != problem.getNumberOfVariables()){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /* setDifferentialEvolutionCrossoverWeight */
+    public void setDEWeight(NeighborType neighborType, int itrCounter, int iteration){
+        if (NeighborType.NEIGHBOR == neighborType){
+            if (itrCounter < 0.5 * maxEvaluations / populationSize) {
+                differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[numplieMax], itrCounter, iteration);
+            } else {
+                differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[numplieMin], itrCounter, iteration);
+            }
+        } else {
+            differentialEvolutionCrossover.setWeightAndItrCounter(weightOfPopulation, itrCounter, iteration);
+        }
     }
 
     public int[] hierarchySolution(){
@@ -104,10 +135,40 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
     }
 
     public void ifPCA(int itrCounter){
-        if ((itrCounter % 18) == 1){
+        System.out.print(itrCounter+" ");
+        if (itrCounter!=1)
+        System.out.println(numberOfIndividualUpdate[itrCounter - 2]);
+
+        int pcaParameter = 3;
+        boolean flat = false;
+        if (itrCounter < 7){
             for (int i = 0; i < populationSize; i++){
                 double[] weight1 = setWeightOfNeighbor(i, numberOfVariables);
                 System.arraycopy(weight1, 0, weightOfNeighbor[i], 0, numberOfVariables);
+            }
+        } else {
+            int j;
+            for (j  = 0; j < pcaParameter; j++){
+                if (0 != numberOfIndividualUpdate[itrCounter - 2 - j]){
+                    break;
+                }
+            }
+            if (j == pcaParameter){
+                for (int i = 0; i < populationSize; i++){
+                    double[] weight1 = setWeightOfNeighbor(i, numberOfVariables);
+                    System.arraycopy(weight1, 0, weightOfNeighbor[i], 0, numberOfVariables);
+                }
+                flat = true;
+            }
+        }
+
+        //保证进行主成分分析
+        if (1 == itrCounter % 10){
+            if (!flat){
+                for (int i = 0; i < populationSize; i++){
+                    double[] weight1 = setWeightOfNeighbor(i, numberOfVariables);
+                    System.arraycopy(weight1, 0, weightOfNeighbor[i], 0, numberOfVariables);
+                }
             }
         }
     }
@@ -152,17 +213,17 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
     }
 
     protected List<Integer> matingSelection(int subproblemId, int numberOfSolutionsToSelect, NeighborType neighbourType) {
-        Random random = new Random();
         int neighbourSize;
         int numplieOfMaxIndex;
         int numplieOfMinIndex;
+        int selectedSolution;
         List<Integer> numplieOfMaxList = new ArrayList<>();
         List<Integer> numplieOfMinList = new ArrayList<>();
 
         List<Integer> listOfSolutions = new ArrayList<>(numberOfSolutionsToSelect);
         neighbourSize = neighborhood[subproblemId].length;
 
-        if(neighbourType == NeighborType.NEIGHBOR){
+        if(random.nextDouble() > 0.2){
             numplieOfMaxIndex = neighborhood[subproblemId][0];
             numplieOfMinIndex = neighborhood[subproblemId][0];
 
@@ -184,44 +245,64 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
                     numplieOfMinList.add(neighborhood[subproblemId][i]);
                 }
             }
+
+            //随机选择最大最小值
+            if (1 != numplieOfMaxList.size()){
+                int randomMax = random.nextInt(numplieOfMaxList.size());
+                numplieOfMaxIndex = numplieOfMaxList.get(randomMax);
+            } else {
+                numplieOfMaxIndex = numplieOfMaxList.get(0);
+            }
+            if (1 != numplieOfMinList.size()){
+                int randomMin = random.nextInt(numplieOfMinList.size());
+                numplieOfMinIndex = numplieOfMinList.get(randomMin);
+            } else {
+                numplieOfMinIndex = numplieOfMinList.get(0);
+            }
+            while (numplieOfMinIndex == numplieOfMaxIndex){
+                numplieOfMinIndex = numplieOfMinList.get(random.nextInt(numplieOfMinList.size()));
+            }
+
+            listOfSolutions.add(numplieOfMaxIndex);
+            listOfSolutions.add(numplieOfMinIndex);
+
+            numplieMax = numplieOfMaxIndex;
+            numplieMin = numplieOfMinIndex;
+//        System.out.println(numplieMax+" "+numplieMin);
         }else {
-            numplieOfMaxIndex = 0;
-            numplieOfMinIndex = 0;
-
-            //寻找最大最小值
-            for (int i = 1; i < populationSize; i++){
-                if (hierarchy[numplieOfMaxIndex] < hierarchy[i]){
-                    numplieOfMaxIndex = i;
+            while (listOfSolutions.size() < numberOfSolutionsToSelect) {
+                int random;
+                if (neighbourType == NeighborType.NEIGHBOR) {
+                    random = randomGenerator.nextInt(0, neighbourSize - 1);
+                    selectedSolution = neighborhood[subproblemId][random];
+                } else {
+                    selectedSolution = randomGenerator.nextInt(0, populationSize - 1);
                 }
-                if (hierarchy[numplieOfMinIndex] > hierarchy[i]){
-                    numplieOfMinIndex = i;
+                boolean flag = true;
+                for (Integer individualId : listOfSolutions) {
+                    if (individualId == selectedSolution) {
+                        flag = false;
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    listOfSolutions.add(selectedSolution);
                 }
             }
-            //找出相同的最大最小值
-            for (int i = 0; i < populationSize; i++){
-                if (hierarchy[numplieOfMaxIndex] == hierarchy[i]){
-                    numplieOfMaxList.add(i);
-                }
-                if (hierarchy[numplieOfMinIndex] == hierarchy[i]){
-                    numplieOfMinList.add(i);
-                }
-            }
+            numplieMax = listOfSolutions.get(0);
+            numplieMin = listOfSolutions.get(1);
         }
 
-        //随机选择最大最小值
-        numplieOfMaxIndex = numplieOfMaxList.get(random.nextInt(numplieOfMaxList.size()));
-        numplieOfMinIndex = numplieOfMinList.get(random.nextInt(numplieOfMinList.size()));
-        while (numplieOfMinIndex == numplieOfMaxIndex){
-            numplieOfMinIndex = numplieOfMinList.get(random.nextInt(numplieOfMinList.size()));
-        }
-
-        listOfSolutions.add(numplieOfMaxIndex);
-        listOfSolutions.add(numplieOfMinIndex);
-
-        numplieMax = numplieOfMaxIndex;
-        numplieMin = numplieOfMinIndex;
-//        System.out.println(numplieMin+" "+numplieMax);
         return listOfSolutions;
+    }
+
+    public void setVariablesValue(){
+        for (int i = 0; i < populationSize; i++){
+            for (int j = 0; j < problem.getNumberOfVariables(); j++){
+                variablesValue[i][j] = population.get(i).getVariableValue(j);
+            }
+        }
     }
 
     protected void initializePopulation() {

@@ -53,7 +53,6 @@ public class ExtendDominationRanking<S extends Solution<?>> extends DominanceRan
                 firstFrontExtend.get(i).setObjective(j, r * Math.sin(w + s) / Math.sin(s));
             }
         }
-        System.out.println(firstFrontExtend.size());
         DominanceRanking<S> dominanceRanking2 = new DominanceRanking();
         Ranking<S> firstFrontDominaceRanking = dominanceRanking2.computeRanking(firstFrontExtend);
 
