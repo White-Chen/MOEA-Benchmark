@@ -182,7 +182,7 @@ public class MOEADStudy {
 
             //MOEA/D-KM初始化
             for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADAKM)
+                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADAS)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
                         .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
@@ -195,13 +195,13 @@ public class MOEADStudy {
                         .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEADStudy/data/MOEADAKM/"
+                                + "/MOEADStudy/data/MOEADAS/"
                                 + problemList.get(i).getName()
                                 + "/INPROCESSDATA"
                                 + run
                                 + "/")
                         .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADAKM", problemList.get(i), run));
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADAS", problemList.get(i), run));
             }
 
             //MOEA/D-KM初始化

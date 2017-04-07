@@ -37,7 +37,7 @@ import java.util.List;
  * @author dyy
  * @version 1.0     2017 3/10  14:25
  */
-public class MOEADAKM extends AbstractMOEAD<DoubleSolution> {
+public class MOEADAS extends AbstractMOEAD<DoubleSolution> {
     private static final long serialVersionUID = 2515198940774839154L;
     JMetalRandom randomGenerator;
     private DifferentialEvolutionCrossover differentialEvolutionCrossover;
@@ -46,7 +46,7 @@ public class MOEADAKM extends AbstractMOEAD<DoubleSolution> {
     private int[] frequency;
     String Method;
 
-    public MOEADAKM(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
+    public MOEADAS(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
                    MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
                    FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
                    int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh,int run) {
@@ -107,7 +107,7 @@ public class MOEADAKM extends AbstractMOEAD<DoubleSolution> {
 
                 offspringPopulation.add(child);
             }
-            String path="F:\\Experiment Data\\MOEADAKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            String path="F:\\Experiment Data(last)\\MOEADAS\\"+problem.getName()+"\\updateAbility"+run+".txt";
             appendToFile(path,generation+"-----------"+problem.getName()+"------------");
             appendToFile(path,updateAbility+"\r\n");
 
@@ -261,7 +261,7 @@ public class MOEADAKM extends AbstractMOEAD<DoubleSolution> {
 
     @Override
     public String getName() {
-        return "MOEADAKM";
+        return "MOEADAS";
     }
 
     @Override

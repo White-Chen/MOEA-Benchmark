@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class MOEADAKMRunner extends AbstractAlgorithmRunner {
+public class MOEADASRunner extends AbstractAlgorithmRunner {
     /**
      * @param args Command line arguments.
      * @throws SecurityException Invoking command:
@@ -68,7 +68,7 @@ public class MOEADAKMRunner extends AbstractAlgorithmRunner {
         double mutationDistributionIndex = 20.0;
         mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADAKM)
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADAS)
                 .setCrossover(crossover)
                 .setMutation(mutation)
                 .setMaxEvaluations(300000)
@@ -80,7 +80,7 @@ public class MOEADAKMRunner extends AbstractAlgorithmRunner {
                 .setRun(0)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEADAKM\\"+problem.getName())
+                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEADAS\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
