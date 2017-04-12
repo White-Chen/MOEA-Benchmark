@@ -35,7 +35,8 @@ public class IEEE_30bus_6gen_UC extends AbstractDoubleProblem{
     };
     private double[] B_i0 = {0.000010731, 0.0017704, -0.0040645, 0.0038453, 0.0013832, 0.0055503};
     private double B_00 = 0.0014;
-    private double Pd = 0.5 + 3.4 * 24 / 24;
+    //private double Pd = 0.5 + 3.4 * 24 / 24;
+    private double Pd = 2.834;
 
     /**
      * Instantiates a new Ieee 30 bus 6 gen uc.
