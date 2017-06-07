@@ -28,6 +28,7 @@ public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<N
     private SolutionListEvaluator<S> evaluator;
     private String varInProcessPath;
     private String funInProcessPath;
+    protected String inProcessDataPath;
 
     /**
      * Builder constructor
@@ -111,6 +112,15 @@ public class NSGAIIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<N
 
     public NSGAIIIBuilder setVarInProcessPath(String varInProcessPath) {
         this.varInProcessPath = varInProcessPath;
+        return this;
+    }
+
+    public String getInProcessDataPath() {
+        return inProcessDataPath;
+    }
+
+    public NSGAIIIBuilder setInProcessDataPath(String inProcessDataPath) {
+        this.inProcessDataPath = inProcessDataPath;
         return this;
     }
 

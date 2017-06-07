@@ -8,6 +8,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.AbstractMOEAD;
 import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.algorithm.multiobjective.mombi.MOMBI2;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
+import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.omopso.OMOPSOBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
@@ -20,19 +21,15 @@ import org.uma.jmetal.operator.impl.mutation.UniformMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.cec2009Competition.UF1;
-import org.uma.jmetal.problem.multiobjective.cec2009Competition.UF2;
-import org.uma.jmetal.problem.multiobjective.cec2009Competition.UF3;
-import org.uma.jmetal.problem.multiobjective.cec2009Competition.UF7;
+import org.uma.jmetal.problem.multiobjective.cec2009Competition.*;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG1;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG2;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG3;
-import org.uma.jmetal.problem.multiobjective.wfg.WFG4;
+import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.util.AlgorithmRunner;
+import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.archive.impl.AdaptiveGridArchiveII;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
@@ -65,10 +62,10 @@ import java.util.List;
  * 6. Generate Latex tables with the ranking obtained by applying the Friedman test
  * 7. Generate R scripts to obtain boxplots
  */
-public class DMOPSOStudy {
+public class MOEADPCAStudy {
 
-    public static final String experimentBaseDirectory = "F:/Experiment DATA/";
-    private static final int INDEPENDENT_RUNS = 5;
+    public static final String experimentBaseDirectory = "E:/Experiment DATA/";
+    private static final int INDEPENDENT_RUNS = 30;
 
     public static void main(String[] args) throws IOException {
         /*
@@ -78,23 +75,22 @@ public class DMOPSOStudy {
         String experimentBaseDirectory = args[0];
         */
 
-        List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(
-//                new ZDT1(), new ZDT2(), new ZDT3(), new ZDT4(), new ZDT6(),
-//                new UF1(), new UF2(), new UF3(), new UF7(),
-                new DTLZ1(), new DTLZ2()
-//                new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7()
-//                new WFG1(), new WFG2(), new WFG3(), new WFG4()
+
+        List<Problem<DoubleSolution>> problemList = Arrays.asList(
+//                new ZDT1(), new ZDT2(), new ZDT3(), new ZDT6(),
+                new DTLZ3(), new DTLZ4(), new DTLZ6(),
+                new WFG3(2,4,3), new WFG8(2,4,3)
+//                new WFG1(2,4,2), new WFG3(2,4,2), new WFG5(2,4,2)
         );
 
 
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);
 
         List<String> referenceFrontFileNames = Arrays.asList(
-//                "ZDT1.pf", "ZDT2_100.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf",
-//                "UF1.pf", "UF2_100.pf", "UF3.pf", "UF7.pf",
-                "DTLZ1.3D.pf", "DTLZ2.3D.pf"
-//                "DTLZ3.3D.pf", "DTLZ4.3D.pf", "DTLZ5.3D.pf", "DTLZ6.3D.pf", "DTLZ7.3D.pf"
-//                "WFG1.2D.pf", "WFG2.2D.pf", "WFG3.2D.pf", "WFG4.2D.pf"
+//                "ZDT1.pf", "ZDT2_100.pf", "ZDT3.pf", "ZDT6.pf",
+                "DTLZ3.3D.pf", "DTLZ4.3D.pf", "DTLZ6.3D.pf",
+                "WFG3.3D.pf","WFG8.3D.pf"
+//                "WFG1.2D.pf","WFG3.2D.pf","WFG5.2D.pf"
         );
 
 
@@ -150,8 +146,8 @@ public class DMOPSOStudy {
                                 , new InvertedGenerationalDistancePlus<DoubleSolution>()
 //                                , new Epsilon<DoubleSolution>()
                                 , new Spread<DoubleSolution>()
-                                , new GenerationalDistance<DoubleSolution>()
-                                , new PISAHypervolume<DoubleSolution>()
+//                                , new GenerationalDistance<DoubleSolution>()
+//                                , new PISAHypervolume<DoubleSolution>()
                                 ,
                                 new ErrorRatioBack<DoubleSolution>()
                         ))
@@ -185,12 +181,29 @@ public class DMOPSOStudy {
 
         for (int run = 0; run < INDEPENDENT_RUNS; run++) {
 
+            for (int i = 0; i < problemList.size(); i++) {
+                Algorithm<List<DoubleSolution>> algorithm = new NSGAIIIBuilder<>(problemList.get(i))
+                        .setCrossoverOperator(new SBXCrossover(0.9, 30.0))
+                        .setMutationOperator(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+                        .setSelectionOperator(new BinaryTournamentSelection<DoubleSolution>())
+                        .setMaxIterations(300)
+                        .setPopulationSize(300)
+                        .setInProcessDataPath(experimentBaseDirectory
+                                + "/MOEAD_PCA/data/NSGAIII/"
+                                + problemList.get(i).getName()
+                                + "/INPROCESSDATA"
+                                + run
+                                + "/")
+                        .build();
+
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "NSGAIII", problemList.get(i), run));
+            }
 
             for (int i = 0; i < problemList.size(); i++) {
                 Algorithm<List<DoubleSolution>> algorithm = new NSGAIIBuilder<>(problemList.get(i), new SBXCrossover(1.0, 20.0),
                         new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
+                        .setMaxEvaluations(90000)
+                        .setPopulationSize(300)
                         .setInProcessDataPath(experimentBaseDirectory
                                 + "/MOEAD_PCA/data/NSGAII/"
                                 + problemList.get(i).getName()
@@ -206,7 +219,7 @@ public class DMOPSOStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new AdMOPSOBuilder(
                         (DoubleProblem) problemList.get(i),
                         new AdaptiveGridArchiveII<>(
-                                problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100, 30, problemList.get(i).getNumberOfObjectives()
+                                300, 30, problemList.get(i).getNumberOfObjectives()
                         ))
                         .setEvaluator(new SequentialSolutionListEvaluator<>())
                         .setDeltaDivision(2)
@@ -214,8 +227,8 @@ public class DMOPSOStudy {
                         .setEliminatePressure(2)
                         .setWeightMax(0.9)
                         .setWeightMin(0.4)
-                        .setSwarmSize(problemList.get(i).getNumberOfObjectives() > 2 ? 150 : 100)
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
+                        .setSwarmSize(300)
+                        .setMaxEvaluations(90000)
                         .setMutation(new RandomizeMutation(0.5))
                         .setInProcessDataPath(experimentBaseDirectory
                                 + "/MOEAD_PCA/data/agMOPSO/"
@@ -232,9 +245,9 @@ public class DMOPSOStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEAD)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+                        .setMaxEvaluations(90000)
+                        .setPopulationSize(300)
+                        .setResultPopulationSize(300)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(2)
                         .setNeighborSize(20)
@@ -250,14 +263,63 @@ public class DMOPSOStudy {
                 algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEAD", problemList.get(i), run));
             }
 
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new SPEA2Builder<>(problemList.get(i), new SBXCrossover(1.0, 20.0),
+//                        new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+//                        .setMaxIterations(1000)
+//                        .setPopulationSize(300)
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEAD_PCA/data/SPEA2/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "SPEA2", problemList.get(i), run));
+//            }
+//
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new OMOPSOBuilder((DoubleProblem) problemList.get(i), new SequentialSolutionListEvaluator<DoubleSolution>())
+//                        .setMaxIterations(630)
+//                        .setSwarmSize(300)
+//                        .setUniformMutation(new UniformMutation(1.0 / problemList.get(i).getNumberOfVariables(), 0.5))
+//                        .setNonUniformMutation(new NonUniformMutation(1.0 / problemList.get(i).getNumberOfVariables(), 0.5, problemList.get(i).getNumberOfObjectives() > 2 ? 333 : 300))
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEAD_PCA/data/OMOPSO/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "OMOPSO", problemList.get(i), run));
+//            }
+
+            for (int i = 0; i < problemList.size(); i++) {
+                Algorithm<List<DoubleSolution>> algorithm = new MOMBI2<>(
+                        problemList.get(i),
+                        300,
+                        new SBXCrossover(1.0, 20.0),
+                        new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0),
+                        new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>()),
+                        new SequentialSolutionListEvaluator<DoubleSolution>(),
+                        problemList.get(i).getNumberOfObjectives() > 2 ? "mombi2-weights/weight/weight_03D_12.sld" : "mombi2-weights/weight/weight_02D_152.sld"
+                        , experimentBaseDirectory
+                        + "/MOEAD_PCA/data/MOMBI2/"
+                        + problemList.get(i).getName()
+                        + "/INPROCESSDATA"
+                        + run
+                        + "/");
+
+                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOMBI2", problemList.get(i), run));
+            }
 
             for (int i = 0; i < problemList.size(); i++) {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEAD_PCA)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "best/1/diff"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 50000 : 30000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+                        .setMaxEvaluations(90000)
+                        .setPopulationSize(300)
+                        .setResultPopulationSize(300)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(2)
                         .setNeighborSize(20)
@@ -272,6 +334,7 @@ public class DMOPSOStudy {
                         .build();
                 algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEAD_PCA", problemList.get(i), run));
             }
+
         }
         return algorithms;
     }

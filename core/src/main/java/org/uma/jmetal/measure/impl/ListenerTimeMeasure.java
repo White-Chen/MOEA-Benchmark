@@ -186,7 +186,7 @@ public class ListenerTimeMeasure extends SimplePullMeasure<Long> implements
                         if (key.equals(measureKey)) {
                             return (PullMeasure<T>) ListenerTimeMeasure.this;
                         } else {
-                            return wrapped.<T>getPullMeasure(key);
+                            return wrapped.getPullMeasure(key);
                         }
                     }
 
@@ -208,7 +208,7 @@ public class ListenerTimeMeasure extends SimplePullMeasure<Long> implements
 
                     @Override
                     public <T> PullMeasure<T> getPullMeasure(Object key) {
-                        return wrapped.<T>getPullMeasure(key);
+                        return wrapped.getPullMeasure(key);
                     }
 
                     @Override

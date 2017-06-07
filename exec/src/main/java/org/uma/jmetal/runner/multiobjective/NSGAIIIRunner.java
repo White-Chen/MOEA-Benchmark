@@ -80,6 +80,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
                 .setMutationOperator(mutation)
                 .setSelectionOperator(selection)
                 .setMaxIterations(500)
+                .setInProcessDataPath("F:\\experimental data")
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

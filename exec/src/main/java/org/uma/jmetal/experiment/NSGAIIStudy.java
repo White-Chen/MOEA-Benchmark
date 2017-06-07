@@ -64,7 +64,7 @@ public class NSGAIIStudy {
         */
 
         String experimentBaseDirectory = "/Experiment DATA/";
-        List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(new ZDT1(), new ZDT2(),
+        List<Problem<DoubleSolution>> problemList = Arrays.asList(new ZDT1(), new ZDT2(),
                 new ZDT3(), new ZDT4(), new ZDT6());
 
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);

@@ -81,7 +81,7 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
 
                 differentialEvolutionCrossover.setCurrentSolution(population.get(subProblemId));
-                setDEWeight(neighborType, evaluations / populationSize, maxEvaluations / populationSize);
+                setDEWeight(neighborType, evaluations / populationSize, maxEvaluations / populationSize, subProblemId);
                 List<DoubleSolution> children = differentialEvolutionCrossover.execute(parents);
 
                 DoubleSolution child = children.get(0);
@@ -115,15 +115,11 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
     }
 
     /* setDifferentialEvolutionCrossoverWeight */
-    public void setDEWeight(NeighborType neighborType, int itrCounter, int iteration){
-        if (NeighborType.NEIGHBOR == neighborType){
-            if (itrCounter < 0.5 * maxEvaluations / populationSize) {
-                differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[numplieMax], itrCounter, iteration);
-            } else {
-                differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[numplieMin], itrCounter, iteration);
-            }
+    public void setDEWeight(NeighborType neighborType, int itrCounter, int iteration, int subProblemId){
+        if (itrCounter < 0.7 * maxEvaluations / populationSize) {
+            differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[numplieMin], itrCounter, iteration);
         } else {
-            differentialEvolutionCrossover.setWeightAndItrCounter(weightOfPopulation, itrCounter, iteration);
+            differentialEvolutionCrossover.setWeightAndItrCounter(weightOfNeighbor[subProblemId], itrCounter, iteration);
         }
     }
 
@@ -135,13 +131,13 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
     }
 
     public void ifPCA(int itrCounter){
-        System.out.print(itrCounter+" ");
-        if (itrCounter!=1)
-        System.out.println(numberOfIndividualUpdate[itrCounter - 2]);
+//        System.out.print(itrCounter+" ");
+//        if (itrCounter!=1)
+//        System.out.println(numberOfIndividualUpdate[itrCounter - 2]);
 
         int pcaParameter = 3;
         boolean flat = false;
-        if (itrCounter < 7){
+        if (itrCounter < 5){
             for (int i = 0; i < populationSize; i++){
                 double[] weight1 = setWeightOfNeighbor(i, numberOfVariables);
                 System.arraycopy(weight1, 0, weightOfNeighbor[i], 0, numberOfVariables);
@@ -163,7 +159,7 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
         }
 
         //保证进行主成分分析
-        if (1 == itrCounter % 10){
+        if (1 == itrCounter % 8){
             if (!flat){
                 for (int i = 0; i < populationSize; i++){
                     double[] weight1 = setWeightOfNeighbor(i, numberOfVariables);
@@ -223,7 +219,7 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
         List<Integer> listOfSolutions = new ArrayList<>(numberOfSolutionsToSelect);
         neighbourSize = neighborhood[subproblemId].length;
 
-        if(random.nextDouble() > 0.2){
+        if(random.nextDouble() > 0.0){
             numplieOfMaxIndex = neighborhood[subproblemId][0];
             numplieOfMinIndex = neighborhood[subproblemId][0];
 

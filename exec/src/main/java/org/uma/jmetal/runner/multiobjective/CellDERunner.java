@@ -63,7 +63,7 @@ public class CellDERunner extends AbstractAlgorithmRunner {
             referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf";
         }
 
-        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = ProblemUtils.loadProblem(problemName);
 
         double cr = 0.5;
         double f = 0.5;

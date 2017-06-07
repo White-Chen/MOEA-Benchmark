@@ -175,17 +175,23 @@ public class DifferentialEvolutionCrossover implements CrossoverOperator<DoubleS
             for (int j = 0; j < numberOfVariables; j++) {
                 if (randomGenerator.nextDouble(0, 1) < cr || j == jrand) {
                     double value;
-                    if (itrCounter < 0.5 * iteration) {
-                        value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
-                                j) -
-                                parentSolutions.get(2).getVariableValue(j));
-                    } else if (itrCounter < 1 * iteration){
-                        if (randomGenerator.nextDouble(0, 1) > 0.5){
-                            value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
+                    if (itrCounter < 0.7 * iteration) {
+                        if (randomGenerator.nextDouble(0, 1) > 0.5) {
+                            value = parentSolutions.get(1).getVariableValue(j) + weight[j] * (parentSolutions.get(1).getVariableValue(
                                     j) -
                                     parentSolutions.get(0).getVariableValue(j));
                         } else {
-                            value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(0).getVariableValue(
+                            value = parentSolutions.get(1).getVariableValue(j) + 0.5 * (parentSolutions.get(1).getVariableValue(
+                                    j) -
+                                    parentSolutions.get(0).getVariableValue(j));
+                        }
+                    } else if (itrCounter < 1 * iteration){
+                        if (randomGenerator.nextDouble(0, 1) > 0.5){
+                            value = parentSolutions.get(2).getVariableValue(j) + weight[j] * (parentSolutions.get(2).getVariableValue(
+                                    j) -
+                                    parentSolutions.get(1).getVariableValue(j));
+                        } else {
+                            value = parentSolutions.get(2).getVariableValue(j) + 0.5 * (parentSolutions.get(2).getVariableValue(
                                     j) -
                                     parentSolutions.get(1).getVariableValue(j));
                         }

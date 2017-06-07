@@ -60,7 +60,7 @@ public class GWASGFARunner extends AbstractAlgorithmRunner {
             referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf";
         }
 
-        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = ProblemUtils.loadProblem(problemName);
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;

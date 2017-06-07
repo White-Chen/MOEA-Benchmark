@@ -77,7 +77,7 @@ public class BinaryProblemsStudy {
         String experimentBaseDirectory = args[0];
         String referenceFrontDirectory = args[1];
 
-        List<Problem<BinarySolution>> problemList = Arrays.<Problem<BinarySolution>>asList(
+        List<Problem<BinarySolution>> problemList = Arrays.asList(
                 new ZDT5(), new OneZeroMax(512));
 
         List<TaggedAlgorithm<List<BinarySolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);

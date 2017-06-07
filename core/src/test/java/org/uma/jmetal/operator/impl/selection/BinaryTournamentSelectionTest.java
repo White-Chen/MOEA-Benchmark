@@ -118,7 +118,7 @@ public class BinaryTournamentSelectionTest {
 
         Mockito.when(comparator.compare(solution1, solution2)).thenReturn(0);
 
-        List<DoubleSolution> population = Arrays.<DoubleSolution>asList(solution1, solution2);
+        List<DoubleSolution> population = Arrays.asList(solution1, solution2);
 
         BinaryTournamentSelection<DoubleSolution> selection = new BinaryTournamentSelection<DoubleSolution>(comparator);
         DoubleSolution result = selection.execute(population);

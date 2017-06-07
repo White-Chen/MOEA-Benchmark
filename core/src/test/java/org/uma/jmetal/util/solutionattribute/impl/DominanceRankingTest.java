@@ -47,7 +47,7 @@ public class DominanceRankingTest {
     @Test
     public void shouldTheRankingOfAnEmptyPopulationReturnOneSubfronts() {
         problem = new DummyProblem(2);
-        List<DoubleSolution> population = Arrays.<DoubleSolution>asList(
+        List<DoubleSolution> population = Arrays.asList(
                 new DefaultDoubleSolution(problem),
                 new DefaultDoubleSolution(problem),
                 new DefaultDoubleSolution(problem));

@@ -62,7 +62,7 @@ public class WASFGARunner extends AbstractAlgorithmRunner {
             referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf";
         }
 
-        problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
+        problem = ProblemUtils.loadProblem(problemName);
 
         referencePoint = new ArrayList<>();
         referencePoint.add(0.0);

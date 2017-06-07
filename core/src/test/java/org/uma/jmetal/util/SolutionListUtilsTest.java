@@ -97,7 +97,7 @@ public class SolutionListUtilsTest {
         IntegerSolution solution2 = mock(IntegerSolution.class);
         list.add(solution2);
 
-        when(comparator.compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject())).thenReturn(1);
+        when(comparator.compare(Matchers.anyObject(), Matchers.anyObject())).thenReturn(1);
 
         assertSame(solution2, SolutionListUtils.findBestSolution(list, comparator));
     }
@@ -111,9 +111,9 @@ public class SolutionListUtilsTest {
             list.add(mock(IntegerSolution.class));
         }
 
-        when(comparator.compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject())).thenReturn(1, 0, 0, 1);
+        when(comparator.compare(Matchers.anyObject(), Matchers.anyObject())).thenReturn(1, 0, 0, 1);
         assertSame(list.get(4), SolutionListUtils.findBestSolution(list, comparator));
-        verify(comparator, times(4)).compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject());
+        verify(comparator, times(4)).compare(Matchers.anyObject(), Matchers.anyObject());
     }
 
     /*****
@@ -174,9 +174,9 @@ public class SolutionListUtilsTest {
         IntegerSolution solution2 = mock(IntegerSolution.class);
         list.add(solution2);
 
-        when(comparator.compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject())).thenReturn(0);
+        when(comparator.compare(Matchers.anyObject(), Matchers.anyObject())).thenReturn(0);
         assertEquals(0, SolutionListUtils.findIndexOfBestSolution(list, comparator));
-        verify(comparator).compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject());
+        verify(comparator).compare(Matchers.anyObject(), Matchers.anyObject());
     }
 
     @Test
@@ -189,9 +189,9 @@ public class SolutionListUtilsTest {
         IntegerSolution solution2 = mock(IntegerSolution.class);
         list.add(solution2);
 
-        when(comparator.compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject())).thenReturn(1);
+        when(comparator.compare(Matchers.anyObject(), Matchers.anyObject())).thenReturn(1);
         assertEquals(1, SolutionListUtils.findIndexOfBestSolution(list, comparator));
-        verify(comparator).compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject());
+        verify(comparator).compare(Matchers.anyObject(), Matchers.anyObject());
     }
 
     @Test
@@ -203,9 +203,9 @@ public class SolutionListUtilsTest {
             list.add(mock(IntegerSolution.class));
         }
 
-        when(comparator.compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject())).thenReturn(1, 0, 0, 1);
+        when(comparator.compare(Matchers.anyObject(), Matchers.anyObject())).thenReturn(1, 0, 0, 1);
         assertEquals(4, SolutionListUtils.findIndexOfBestSolution(list, comparator));
-        verify(comparator, times(4)).compare(Matchers.<IntegerSolution>anyObject(), Matchers.<IntegerSolution>anyObject());
+        verify(comparator, times(4)).compare(Matchers.anyObject(), Matchers.anyObject());
     }
 
     /*****

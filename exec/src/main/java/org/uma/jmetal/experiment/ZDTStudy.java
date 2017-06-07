@@ -68,7 +68,7 @@ public class ZDTStudy {
         }
         String experimentBaseDirectory = args[0];
 
-        List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(new ZDT1(), new ZDT2(),
+        List<Problem<DoubleSolution>> problemList = Arrays.asList(new ZDT1(), new ZDT2(),
                 new ZDT3(), new ZDT4(), new ZDT6());
 
         List<String> referenceFrontFileNames = Arrays.asList("ZDT1.pf", "ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf");

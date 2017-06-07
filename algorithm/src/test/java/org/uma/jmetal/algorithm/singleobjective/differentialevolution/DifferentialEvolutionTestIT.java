@@ -151,10 +151,10 @@ public class DifferentialEvolutionTestIT {
         ReflectionTestUtils.setField(algorithm, "populationSize", populationSize);
 
         List<DoubleSolution> population = Arrays
-                .<DoubleSolution>asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
+                .asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
                         mock(DoubleSolution.class));
         List<DoubleSolution> expectedResult = Arrays
-                .<DoubleSolution>asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
+                .asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
                         mock(DoubleSolution.class));
 
         Mockito.when(evaluator.evaluate(population, problem)).thenReturn(expectedResult);
@@ -167,7 +167,7 @@ public class DifferentialEvolutionTestIT {
     @Test
     public void shouldSelection() {
         List<DoubleSolution> population =
-                Arrays.<DoubleSolution>asList(mock(DoubleSolution.class));
+                Arrays.asList(mock(DoubleSolution.class));
 
         List<DoubleSolution> offspringPopulation = algorithm.selection(population);
         assertEquals(population, offspringPopulation);
@@ -179,13 +179,13 @@ public class DifferentialEvolutionTestIT {
         ReflectionTestUtils.setField(algorithm, "populationSize", populationSize);
 
         List<DoubleSolution> population = Arrays
-                .<DoubleSolution>asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
+                .asList(mock(DoubleSolution.class), mock(DoubleSolution.class),
                         mock(DoubleSolution.class));
         List<DoubleSolution> parents = Arrays
-                .<DoubleSolution>asList(mock(DoubleSolution.class), mock(DoubleSolution.class));
+                .asList(mock(DoubleSolution.class), mock(DoubleSolution.class));
 
         List<DoubleSolution> children = Arrays
-                .<DoubleSolution>asList(mock(DoubleSolution.class), mock(DoubleSolution.class));
+                .asList(mock(DoubleSolution.class), mock(DoubleSolution.class));
 
         Mockito.when(selection.execute(population)).thenReturn(parents);
         Mockito.when(crossover.execute(parents)).thenReturn(children);
@@ -234,12 +234,12 @@ public class DifferentialEvolutionTestIT {
         Mockito.when(solution4.getObjective(0)).thenReturn(0.5);
 
         List<DoubleSolution> population = Arrays
-                .<DoubleSolution>asList(solution1, solution2);
+                .asList(solution1, solution2);
         List<DoubleSolution> offspringPopulation = Arrays
-                .<DoubleSolution>asList(solution3, solution4);
+                .asList(solution3, solution4);
 
         List<DoubleSolution> expectedSolutionList = Arrays
-                .<DoubleSolution>asList(solution4, solution1);
+                .asList(solution4, solution1);
 
         List<DoubleSolution> result = algorithm.replacement(population, offspringPopulation);
         assertEquals("Result size different from expected.", populationSize, result.size());
@@ -268,7 +268,7 @@ public class DifferentialEvolutionTestIT {
         Mockito.when(solution4.getObjective(0)).thenReturn(0.5);
 
         List<DoubleSolution> population = Arrays
-                .<DoubleSolution>asList(solution1, solution2, solution3, solution4);
+                .asList(solution1, solution2, solution3, solution4);
 
         ReflectionTestUtils.setField(algorithm, "population", population);
 

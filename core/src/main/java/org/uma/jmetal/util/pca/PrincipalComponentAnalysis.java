@@ -64,15 +64,16 @@ public class PrincipalComponentAnalysis {
         }
         double[][] evecsArray = evecs.getArray();
         for (int j = 0; j < evecsArray.length; j++){
-            weights[j] = evecsArray[j][flat] * evecsArray[j][flat] + 0.5;
+//            weights[j] = evecsArray[j][flat] * evecsArray[j][flat] + 0.5;
+            weights[j] = evecsArray[j][flat] * evecsArray[j][flat];
         }
 
         //权重范围
-        for (int i = 0; i < col; i++){
-            if (weights[i] > 1.0){
-                weights[i] = 1.0;
-            }
-        }
+//        for (int i = 0; i < col; i++){
+//            if (weights[i] > 1.0){
+//                weights[i] = 1.0;
+//            }
+//        }
 
 //        System.out.println("%%%%%%%%%%%%%");
 //        for (int j = 0;j <col; j++){

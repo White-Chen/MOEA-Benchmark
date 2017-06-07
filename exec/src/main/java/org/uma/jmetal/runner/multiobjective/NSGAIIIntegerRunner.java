@@ -73,7 +73,7 @@ public class NSGAIIIntegerRunner extends AbstractAlgorithmRunner {
             referenceParetoFront = "";
         }
 
-        problem = ProblemUtils.<IntegerSolution>loadProblem(problemName);
+        problem = ProblemUtils.loadProblem(problemName);
 
         double crossoverProbability = 0.9;
         double crossoverDistributionIndex = 20.0;

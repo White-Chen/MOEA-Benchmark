@@ -215,46 +215,46 @@ public class VariableFactoryTest {
     }
 
     private interface DifferentGettersFewSettersSolution {
-        public int getA();
+        int getA();
 
-        public void setA(int a);
+        void setA(int a);
 
-        public Object getB();
+        Object getB();
     }
 
     private interface DifferentGettersAllSettersSolution {
-        public int getA();
+        int getA();
 
-        public void setA(int a);
+        void setA(int a);
 
-        public Object getB();
+        Object getB();
 
-        public void setB(Object b);
+        void setB(Object b);
 
     }
 
     private interface SimilarGettersFewSettersSolution {
-        public int getA();
+        int getA();
 
-        public void setA(int a);
+        void setA(int a);
 
-        public Object getB();
+        Object getB();
 
-        public int getC();
+        int getC();
     }
 
     private interface SimilarGettersAllSettersSolution {
-        public int getA();
+        int getA();
 
-        public void setA(int a);
+        void setA(int a);
 
-        public Object getB();
+        Object getB();
 
-        public void setB(Object b);
+        void setB(Object b);
 
-        public int getC();
+        int getC();
 
-        public void setC(int c);
+        void setC(int c);
     }
 
     private class FakeVariable implements Variable<Object, Object> {

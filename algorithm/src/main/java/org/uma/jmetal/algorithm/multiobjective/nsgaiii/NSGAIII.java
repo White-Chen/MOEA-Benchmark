@@ -47,12 +47,13 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
         selectionOperator = builder.getSelectionOperator();
         varInProcessPath = builder.getVarInProcessPath();
         funInProcessPath = builder.getFunInProcessPath();
+        inProcessDataPath = builder.getInProcessDataPath();
 
         evaluator = builder.getEvaluator();
 
         /// NSGAIII
         numberOfDivisions = new Vector<>(1);
-        numberOfDivisions.add(12); // Default value for 3D problems
+        numberOfDivisions.add(23); // Default value for 3D problems
 
         (new ReferencePoint<S>()).generateReferencePoints(referencePoints, getProblem().getNumberOfObjectives(), numberOfDivisions);
 
@@ -69,11 +70,11 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
 
     @Override
     protected void saveDataInProcess() {
-        if (!funInProcessPath.isEmpty() && !varInProcessPath.isEmpty() && ((iterations % 10 == 0) || iterations == 1)) {
+        if (!inProcessDataPath.isEmpty() && ((iterations % 10 == 0) || iterations == 1)) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
-                    .setVarFileOutputContext(new DefaultFileOutputContext(varInProcessPath))
-                    .setFunFileOutputContext(new DefaultFileOutputContext(funInProcessPath))
+                    .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + iterations / 10 + ".tsv"))
+                    .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + iterations / 10 + ".tsv"))
                     .print();
         }
     }
