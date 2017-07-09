@@ -229,14 +229,14 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
             algorithm = new MOEADKMC(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
                     crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
                     maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath, run);
-        }else if (moeadVariant.equals(Variant.MOEADTest)) {
-            algorithm = new MOEADTest(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
+        }else if (moeadVariant.equals(Variant.MOEADASTest)) {
+            algorithm = new MOEADASTest(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
                     crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
-                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath );
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath , run);
         }
 
         return algorithm;
     }
 
-    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM,MOEADAS,MOEADKMC ,MOEADTest}
+    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM,MOEADAS,MOEADKMC ,MOEADASTest}
 }

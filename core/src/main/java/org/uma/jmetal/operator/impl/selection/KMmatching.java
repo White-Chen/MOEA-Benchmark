@@ -1,11 +1,12 @@
 
-package org.uma.jmetal.algorithm.multiobjective.moead;
+package org.uma.jmetal.operator.impl.selection;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
  * Created by dy on 2016/11/23.
+ * 首用于MOEA/D-AS选择策略
  */
 public class KMmatching {
     private int maxN, n, lenX, lenY;     //lenX和lenY是其矩阵长度

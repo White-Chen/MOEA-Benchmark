@@ -17,6 +17,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.selection.KMmatching;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
@@ -31,27 +32,27 @@ import java.util.List;
 
 /**
  * 进行子问题和个体在不同选择策略下的对比
- *
+ *分别输出三种选择策略的解
  * @author dyy
  * @version 1.0
  */
-public class MOEADTest extends AbstractMOEAD<DoubleSolution> {
+public class MOEADASTest extends AbstractMOEAD<DoubleSolution> {
 
     private static final long serialVersionUID = 1556879137354418923L;
     private DifferentialEvolutionCrossover differentialEvolutionCrossover;
 
-    public MOEADTest(Problem<DoubleSolution> problem,
-                     int populationSize,
-                     int resultPopulationSize,
-                     int maxEvaluations,
-                     MutationOperator<DoubleSolution> mutation,
-                     CrossoverOperator<DoubleSolution> crossover,
-                     FunctionType functionType,
-                     String dataDirectory,
-                     double neighborhoodSelectionProbability,
-                     int maximumNumberOfReplacedSolutions,
-                     int neighborSize,
-                     String inProcessDataPath) {
+    public MOEADASTest(Problem<DoubleSolution> problem,
+                       int populationSize,
+                       int resultPopulationSize,
+                       int maxEvaluations,
+                       MutationOperator<DoubleSolution> mutation,
+                       CrossoverOperator<DoubleSolution> crossover,
+                       FunctionType functionType,
+                       String dataDirectory,
+                       double neighborhoodSelectionProbability,
+                       int maximumNumberOfReplacedSolutions,
+                       int neighborSize,
+                       String inProcessDataPath,int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
                 neighborSize, inProcessDataPath);

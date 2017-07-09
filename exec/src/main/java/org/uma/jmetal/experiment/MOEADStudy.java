@@ -59,7 +59,7 @@ import java.util.List;
  */
 public class MOEADStudy {
     private static final int INDEPENDENT_RUNS =20;   //每个算法跑20次实验
-    public static final String experimentBaseDirectory = "F:/ExperimentData PBI(km2)";
+    public static final String experimentBaseDirectory = "F:/ExperimentData";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*

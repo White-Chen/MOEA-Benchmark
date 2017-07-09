@@ -63,8 +63,8 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOEADASStudy {
-    private static final int INDEPENDENT_RUNS =30;   //每个算法跑20次实验m
-    public static final String experimentBaseDirectory = "F:\\Experiment Data(last3D)";
+    private static final int INDEPENDENT_RUNS =3;   //每个算法跑20次实验m
+    public static final String experimentBaseDirectory = "F:\\Experiment Data-Modify";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*
@@ -75,44 +75,29 @@ public class MOEADASStudy {
         */
 
         List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(
-               // new ZDT1(), new ZDT2(),
-              // new ZDT3(),new ZDT4(), new ZDT6()
-               // new DTLZ1(),
-               // new DTLZ2(),
-
-                new DTLZ1(),
-              //  new DTLZ3(),new DTLZ4(),
-               // new DTLZ5(),
-              new DTLZ6()
-             //   new DTLZ7()
+               // new ZDT1(), new ZDT2(),new ZDT3(),new ZDT4(), new ZDT6()
+               // new DTLZ1(),new DTLZ2(), new DTLZ3(),new DTLZ4(),new DTLZ5(),new DTLZ6() new DTLZ7()
                // new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),new UF7(),new UF8(30),
                 //new UF9(30, 0.1),
               //  new UF10(30)
                // new WFG1(2,4,2),new WFG2(2,4,2),new WFG3(2,4,2),new WFG4(2,4,2),new WFG5(2,4,2),new WFG6(2,4,2),new WFG7(2,4,2),new WFG8(2,4,2),new WFG9(2,4,2)
-              //  new LZ09F1(),new LZ09F2(),new LZ09F3(),new LZ09F4(),new LZ09F5(),
-             //  new LZ09F6(),new LZ09F7(),new LZ09F8(),new LZ09F9()
+              //  new LZ09F1(),new LZ09F2(),new LZ09F3(),new LZ09F4(),new LZ09F5(), new LZ09F6(),new LZ09F7(),new LZ09F8(),new LZ09F9()
              //  new UF6(30, 2, 0.1),new UF7(),new UF1(),new UF3(),new LZ09F3(),new LZ09F9(),new WFG2(2,4,2)
+                new UF1(),new UF2(),new UF3()
         );
 
         List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList, INDEPENDENT_RUNS);
 
         List<String> referenceFrontFileNames = Arrays.asList(
-               // "ZDT1.pf", "ZDT2.pf",
-              //  "ZDT3.pf", "ZDT4.pf", "ZDT6.pf"
-                "DTLZ1.3D.pf",//"DTLZ2.3D.pf"
-                //"DTLZ2.3D.pf","DTLZ4.3D.pf", "DTLZ6.3D.pf", "DTLZ7.3D.pf",
-                "DTLZ6.3D.pf"
-               // "DTLZ3.3D.pf","DTLZ4.3D.pf","DTLZ7.3D.pf"
-
-
-                // "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf",
-               // "UF9.pf", "UF10.pf"
-
+               // "ZDT1.pf", "ZDT2.pf", "ZDT3.pf", "ZDT4.pf", "ZDT6.pf"
+               // "DTLZ1.3D.pf","DTLZ2.3D.pf","DTLZ3.3D.pf","DTLZ4.3D.pf", "DTLZ6.3D.pf", "DTLZ7.3D.pf",
+                // "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf","UF9.pf", "UF10.pf"
                // "WFG1.2D.pf","WFG2.2D.pf","WFG3.2D.pf","WFG4.2D.pf","WFG5.2D.pf","WFG6.2D.pf","WFG7.2D.pf","WFG8.2D.pf","WFG9.2D.pf"
                // "LZ09_F1.pf","LZ09_F2.pf","LZ09_F3.pf","LZ09_F4.pf","LZ09_F5.pf",
                  //"LZ09_F6.pf","LZ09_F7.pf","LZ09_F8.pf","LZ09_F9.pf"
                // "UF6.pf","UF7.pf","UF1.pf","UF3.pf","LZ09_F3.pf","LZ09_F9.pf","WFG2.2D.pf"
                // "UF6.pf","UF3.pf","UF4.pf", "WFG1.2D.pf"
+                "UF1.pf","UF2.pf","UF3.pf"
 
         );
 
