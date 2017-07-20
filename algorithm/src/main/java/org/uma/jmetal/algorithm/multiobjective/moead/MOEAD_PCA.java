@@ -6,6 +6,7 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pca.PrincipalComponentAnalysis;
 import org.uma.jmetal.util.solutionattribute.impl.ExtendDominationRanking;
 
@@ -91,12 +92,143 @@ public class MOEAD_PCA extends AbstractMOEAD<DoubleSolution> {
                 evaluations++;
 
                 updateIdealPoint(child);
-                updateNeighborhood(child, subProblemId, neighborType);
+                updateNeighborhood(child, subProblemId, neighborType, evaluations / populationSize, maxEvaluations / populationSize);
             }
 
             numberOfIndividualUpdate[evaluations/populationSize - 2] = getNumberOfIndividualUpdate();
             saveDataInProcess();
         } while (evaluations < maxEvaluations);
+    }
+
+    /**
+     * Update neighborhood method
+     *
+     * @param individual
+     * @param subProblemId
+     * @param neighborType
+     * @throws JMetalException
+     */
+    protected void updateNeighborhood(DoubleSolution individual, int subProblemId, NeighborType neighborType, int itrCounter, int iteration) throws JMetalException {
+        int size;
+        int time;
+
+        time = 0;
+
+        if (neighborType == NeighborType.NEIGHBOR) {
+            size = neighborhood[subProblemId].length;
+        } else {
+            size = population.size();
+        }
+        int[] perm = new int[size];
+
+        MOEADUtils.randomPermutation(perm, size);
+
+        for (int i = 0; i < size; i++) {
+            int k;
+            if (neighborType == NeighborType.NEIGHBOR) {
+                k = neighborhood[subProblemId][perm[i]];
+            } else {
+                k = perm[i];
+            }
+            double f1, f2;
+
+            if (itrCounter < 3 * iteration) {
+                f1 = fitnessFunction(population.get(k), lambda[k]);
+                f2 = fitnessFunction(individual, lambda[k]);
+            } else {
+                f1 = fitnessFunctionSta(population.get(k), lambda[k]);
+                f2 = fitnessFunctionSta(individual, lambda[k]);
+            }
+
+            if (f2 < f1) {
+                population.set(k, (DoubleSolution) individual.copy());
+                time++;
+            }
+
+            if (time >= maximumNumberOfReplacedSolutions) {
+                return;
+            }
+        }
+    }
+
+    //zlf 修改  对领域更新个体的标准化
+    double fitnessFunctionSta(DoubleSolution individual, double[] lambda) throws JMetalException {
+        double fitness;
+        //对个体与理想点进行标准化
+        double[] StaInd   = new double[problem.getNumberOfObjectives()];    //标准化个体
+        double[] MaxPoint = new double[problem.getNumberOfObjectives()];    //极大点
+        double[] MinPoint = idealPoint;                                     //极小点
+        for (int i = 0; i < problem.getNumberOfObjectives(); i++){
+            MaxPoint[i] = - 1.0e+30;
+        }
+        for (int i = 0; i < populationSize; i++){
+            for (int j = 0; j < problem.getNumberOfObjectives(); j++){
+                if (population.get(i).getObjective(j) > MaxPoint[j]){
+                    MaxPoint[j] = population.get(i).getObjective(j);
+                }
+            }
+        }
+        for (int j = 0; j < problem.getNumberOfObjectives(); j++){
+            if (individual.getObjective(j) > MaxPoint[j]){
+                MaxPoint[j] = individual.getObjective(j);
+            }
+        }
+        for (int i = 0; i < problem.getNumberOfObjectives(); i++){           //标准化
+            StaInd[i] = (individual.getObjective(i) - MinPoint[i]) / (MaxPoint[i] - MinPoint[i]);
+        }
+
+        //聚合函数
+        if (MOEAD.FunctionType.TCHE.equals(functionType)) {
+            double maxFun = -1.0e+30;
+
+            int n = 0;
+            while (n < problem.getNumberOfObjectives()) {
+                double diff = Math.abs(StaInd[n]);
+
+                double feval;
+                if (lambda[n] == 0) {
+                    feval = 0.0001 * diff;
+                } else {
+                    feval = diff * lambda[n];
+                }
+                if (feval > maxFun) {
+                    maxFun = feval;
+                }
+                n++;
+            }
+
+            fitness = maxFun;
+        } else if (MOEAD.FunctionType.AGG.equals(functionType)) {
+            double sum = 0.0;
+            for (int n = 0; n < problem.getNumberOfObjectives(); n++) {
+                sum += (lambda[n]) * StaInd[n];
+            }
+
+            fitness = sum;
+
+        } else if (MOEAD.FunctionType.PBI.equals(functionType)) {
+            double d1, d2, nl;
+            double theta = 5.0;
+
+            d1 = d2 = nl = 0.0;
+
+            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                d1 += (StaInd[i]) * lambda[i];
+                nl += Math.pow(lambda[i], 2.0);
+            }
+            nl = Math.sqrt(nl);
+            d1 = Math.abs(d1) / nl;
+
+            for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                d2 += Math.pow((StaInd[i]) - d1 * (lambda[i] / nl), 2.0);
+            }
+            d2 = Math.sqrt(d2);
+
+            fitness = (d1 + theta * d2);
+        } else {
+            throw new JMetalException(" MOEAD.fitnessFunction: unknown type " + functionType);
+        }
+        return fitness;
     }
 
     public int getNumberOfIndividualUpdate(){
