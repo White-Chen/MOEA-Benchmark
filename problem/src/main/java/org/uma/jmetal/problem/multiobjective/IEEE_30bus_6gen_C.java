@@ -1,7 +1,10 @@
 package org.uma.jmetal.problem.multiobjective;
 
+import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
+import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +18,10 @@ import java.util.List;
  * \* @version 1.0.0
  * \
  */
-public class IEEE_30bus_6gen_UC extends AbstractDoubleProblem{
+public class IEEE_30bus_6gen_C extends AbstractDoubleProblem implements ConstrainedProblem<DoubleSolution>{
+
+    public OverallConstraintViolation<DoubleSolution> overallConstraintViolationDegree;
+    public NumberOfViolatedConstraints<DoubleSolution> numberOfViolatedConstraints;
 
     private double[] a = {10, 10, 20, 10, 20, 10};
     private double[] b = {200, 150, 180, 100, 180, 150};
@@ -41,14 +47,14 @@ public class IEEE_30bus_6gen_UC extends AbstractDoubleProblem{
     /**
      * Instantiates a new Ieee 30 bus 6 gen uc.
      */
-    public IEEE_30bus_6gen_UC(){this(6);}
+    public IEEE_30bus_6gen_C(){this(6);}
 
     /**
      * Instantiates a new Ieee 30 bus 6 gen uc.
      *
      * @param numberOfVariable the number of variable
      */
-    public IEEE_30bus_6gen_UC(Integer numberOfVariable){
+    public IEEE_30bus_6gen_C(Integer numberOfVariable){
         this.setNumberOfVariables(numberOfVariable);
         this.setNumberOfObjectives(2);
         setName("IEEE_30Bus_6Generator");
@@ -71,12 +77,16 @@ public class IEEE_30bus_6gen_UC extends AbstractDoubleProblem{
 
         setLowerLimit(lowerLimit);
         setUpperLimit(upperLimit);
+        setNumberOfConstraints(1);
+
+        overallConstraintViolationDegree = new OverallConstraintViolation<DoubleSolution>();
+        numberOfViolatedConstraints = new NumberOfViolatedConstraints<DoubleSolution>();
     }
 
     @Override
     public void evaluate(DoubleSolution solution) {
-        solution.setObjective(0,evalFuelCost(solution) + evalLoss(solution) + evalBalance(solution));
-        solution.setObjective(1,evalEnvironment(solution) + evalLoss(solution) + evalBalance(solution));
+        solution.setObjective(0,evalFuelCost(solution));
+        solution.setObjective(1,evalEnvironment(solution));
         //solution.setObjective(2,evalBalance(solution) + evalLoss(solution));
     }
 
@@ -124,5 +134,11 @@ public class IEEE_30bus_6gen_UC extends AbstractDoubleProblem{
             balance += solution.getVariableValue(i);
         }
         return Math.abs(balance - Pd - evalLoss(solution));
+    }
+
+    @Override
+    public void evaluateConstraints(DoubleSolution solution) {
+        overallConstraintViolationDegree.setAttribute(solution, evalLoss(solution) + evalBalance(solution));
+        numberOfViolatedConstraints.setAttribute(solution, 1);
     }
 }
