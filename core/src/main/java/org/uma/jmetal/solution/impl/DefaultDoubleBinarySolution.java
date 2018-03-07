@@ -120,6 +120,7 @@ public class DefaultDoubleBinarySolution
         return new DefaultDoubleBinarySolution(this);
     }
 
+
     @Override
     public String getVariableValueString(int index) {
         return getVariableValue(index).toString();

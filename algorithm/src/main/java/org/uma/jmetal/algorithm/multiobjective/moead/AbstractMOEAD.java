@@ -25,9 +25,11 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -67,6 +69,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected FunctionType functionType;
     protected String dataDirectory;
     protected List<S> population;
+    protected List<S> parentPopulation;
     protected List<S> offspringPopulation;
     protected List<S> jointPopulation;
     protected int populationSize;
@@ -77,6 +80,13 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected CrossoverOperator<S> crossoverOperator;
     protected MutationOperator<S> mutationOperator;
     protected String inProcessDataPath;
+    /**
+     * km in dyy
+     */
+    protected double alphe = 2;
+    double[] minAngle;
+    protected int updateAbility=0;
+    protected int run;
 
     public AbstractMOEAD(Problem<S> problem, int populationSize, int resultPopulationSize,
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
@@ -154,14 +164,22 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     protected void initializeNeighborhood() {
         double[] x = new double[populationSize];
         int[] idx = new int[populationSize];
+        minAngle = new double[populationSize];
+        Arrays.fill(minAngle,360);
+        double[][] anglematrix = new double[populationSize][populationSize];
 
         for (int i = 0; i < populationSize; i++) {
             // calculate the distances based on weight vectors
             for (int j = 0; j < populationSize; j++) {
                 x[j] = MOEADUtils.distVector(lambda[i], lambda[j]);
                 idx[j] = j;
+                //求最小角度
+                if (i==j)
+                    anglematrix[i][j] = 360;
+                else
+                    anglematrix[i][j] = MOEADUtils.angle(lambda[i],lambda[j]);
             }
-
+            minAngle[i] = MOEADUtils.min(anglematrix[i]);
             // find 'niche' nearest neighboring subproblems
             MOEADUtils.minFastSort(x, idx, populationSize, neighborSize);
 
@@ -188,7 +206,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     // update the current nadir point
-    void updateNadirPoint(S individual) {
+    protected void updateNadirPoint(S individual) {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             if (individual.getObjective(i) > nadirPoint[i]) {
                 nadirPoint[i] = individual.getObjective(i);
@@ -296,8 +314,8 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             }
             double f1, f2;
 
-            f1 = fitnessFunction(population.get(k), lambda[k]);
-            f2 = fitnessFunction(individual, lambda[k]);
+            f1 = fitnessFunction(population.get(k), lambda[k]); //邻域内其他个体
+            f2 = fitnessFunction(individual, lambda[k]); //当前个体
 
             if (f2 < f1) {
                 population.set(k, (S) individual.copy());
@@ -308,7 +326,10 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                 return;
             }
         }
+        if(time>=populationSize/size)
+            updateAbility++;
     }
+
 
     double fitnessFunction(S individual, double[] lambda) throws JMetalException {
         double fitness;
@@ -360,21 +381,125 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
             d2 = Math.sqrt(d2);
 
             fitness = (d1 + theta * d2);
+        }else if (MOEAD.FunctionType.APD.equals(functionType))
+        {
+            double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+            if(scalingFactor < 0.0)
+                scalingFactor = 0.0;
+            else if(scalingFactor >1.0)
+                scalingFactor = 1.0;
+            double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+            for (int i=0;i<individual.getNumberOfObjectives();i++)
+            {
+                objectiveValue[i] = individual.getObjective(i);
+            }
+            double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                    *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+            fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+            return fitness;
+
         } else {
             throw new JMetalException(" MOEAD.fitnessFunction: unknown type " + functionType);
         }
         return fitness;
     }
 
+    //KM算法的权值---APD
+    double KMfitness(S individual, double[] lambda) throws JMetalException{
+        double fitness;
+        double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+        if(scalingFactor < 0.0)
+            scalingFactor = 0.0;
+        else if(scalingFactor >1.0)
+            scalingFactor = 1.0;
+        double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+        for (int i=0;i<individual.getNumberOfObjectives();i++)
+        {
+            objectiveValue[i] = individual.getObjective(i);
+        }
+        double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+        fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+        return fitness;
+    }
+
+    double Kmfitness(String fitnessType,S individual, double[] lambda) throws JMetalException{
+        double fitness;
+       switch (fitnessType)
+       {
+           case ("APBI"):
+           {
+               double d1, d2, nl;
+               double theta = maxEvaluations/this.evaluations*this.populationSize/neighborSize;
+
+               d1 = d2 = nl = 0.0;
+
+               for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                   d1 += (individual.getObjective(i) - idealPoint[i]) * lambda[i];
+                   nl += Math.pow(lambda[i], 2.0);
+               }
+               nl = Math.sqrt(nl);
+               d1 = Math.abs(d1) / nl;
+               for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
+                   d2 += Math.pow((individual.getObjective(i) - idealPoint[i]) - d1 * (lambda[i] / nl), 2.0);
+               }
+               d2 = Math.sqrt(d2);
+
+               fitness = (d1 + theta * d2);
+           }
+           case ("APD"):
+           {
+               double scalingFactor = (double)this.evaluations/(double)this.maxEvaluations;
+               if(scalingFactor < 0.0)
+                   scalingFactor = 0.0;
+               else if(scalingFactor >1.0)
+                   scalingFactor = 1.0;
+               double[] objectiveValue = new double[individual.getNumberOfObjectives()];
+               for (int i=0;i<individual.getNumberOfObjectives();i++)
+               {
+                   objectiveValue[i] = individual.getObjective(i);
+               }
+               double penalty = problem.getNumberOfObjectives()*Math.pow(scalingFactor,alphe)
+                       *MOEADUtils.acosine(lambda,objectiveValue)/minAngle[getWeightIndex(lambda)];
+               fitness = (1+penalty)*MOEADUtils.normalize(objectiveValue,idealPoint);
+               break;
+           }
+           default:fitness =0;
+
+       }
+        return fitness;
+    }
+
+
+    /**
+     * 获取weight的序号
+     * @param weight 权重
+     * @return 序号
+     */
+    public int getWeightIndex(double[] weight){
+        int index = 0;
+        for (int i=0;i<populationSize;i++)
+        {
+            if(lambda[i] == weight)
+            {
+                index = i;
+                return index;
+            }
+        }
+        return index;
+    }
+
     protected void saveDataInProcess() {
+        File file = new File(inProcessDataPath);
+        file.mkdirs();
         if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+//         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
-                    .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + evaluations / (10 * populationSize) + ".tsv"))
-                    .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + evaluations / (10 * populationSize) + ".tsv"))
+                    .setVarFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/VAR" + evaluations / (populationSize) + ".tsv"))
+                    .setFunFileOutputContext(new DefaultFileOutputContext(inProcessDataPath + "/FUN" + evaluations / (populationSize) + ".tsv"))
                     .print();
         }
-
     }
 
     @Override
@@ -385,7 +510,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
 
     protected enum NeighborType {NEIGHBOR, POPULATION}
 
-    public enum FunctionType {TCHE, PBI, AGG}
+    public enum FunctionType {TCHE, PBI, AGG,APD}
 
 
 }

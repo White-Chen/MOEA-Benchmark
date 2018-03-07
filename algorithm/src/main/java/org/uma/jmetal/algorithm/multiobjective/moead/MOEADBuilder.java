@@ -54,6 +54,11 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
     protected String inProcessDataPath;
 
     /**
+     * KM in dyy
+     */
+    protected int run;
+
+    /**
      * Constructor
      */
     public MOEADBuilder(Problem<DoubleSolution> problem, Variant variant) {
@@ -70,6 +75,12 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
         neighborSize = 20;
         numberOfThreads = 1;
         moeadVariant = variant;
+    }
+
+    public MOEADBuilder setRun(int run) {
+        this.run = run;
+
+        return this;
     }
 
     /* Getters/Setters */
@@ -210,10 +221,26 @@ public class MOEADBuilder implements AlgorithmBuilder<AbstractMOEAD<DoubleSoluti
             algorithm = new MOEADSTM(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
                     crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
                     maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath);
+        }else if (moeadVariant.equals(Variant.MOEADAS)) {
+            algorithm = new MOEADAS(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
+                    crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath ,run);
+        }else if (moeadVariant.equals(Variant.MOEADKM)) {
+            algorithm = new MOEADKM(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
+                    crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath, run);
+        }else if (moeadVariant.equals(Variant.MOEADTest)) {
+            algorithm = new MOEADTest(problem, populationSize, resultPopulationSize, maxEvaluations, mutation,
+                    crossover, functionType, dataDirectory, neighborhoodSelectionProbability,
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath );
+        }else if (moeadVariant.equals(Variant.MOEADD)) {
+            algorithm = new MOEADD(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation,
+                    functionType, dataDirectory, neighborhoodSelectionProbability,
+                    maximumNumberOfReplacedSolutions, neighborSize, inProcessDataPath);
         }
 
         return algorithm;
     }
 
-    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM}
+    public enum Variant {MOEAD, ConstraintMOEAD, MOEADDRA, MOEADSTM,MOEADAS,MOEADKM ,MOEADTest,MOEADD}
 }

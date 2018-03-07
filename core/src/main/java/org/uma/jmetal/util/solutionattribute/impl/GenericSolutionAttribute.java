@@ -25,6 +25,7 @@ import org.uma.jmetal.util.solutionattribute.SolutionAttribute;
  */
 public class GenericSolutionAttribute<S extends Solution<?>, V> implements SolutionAttribute<S, V> {
     private Object id;
+    private Object identifier;
 
     /**
      * Constructor
@@ -56,5 +57,10 @@ public class GenericSolutionAttribute<S extends Solution<?>, V> implements Solut
     @Override
     public Object getAttributeID() {
         return id;
+    }
+
+    @Override
+    public Object getAttributeIdentifier() {
+        return identifier;
     }
 }

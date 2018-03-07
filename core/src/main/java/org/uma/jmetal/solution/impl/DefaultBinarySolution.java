@@ -93,6 +93,7 @@ public class DefaultBinarySolution
         return sum;
     }
 
+
     @Override
     public String getVariableValueString(int index) {
         String result = "";

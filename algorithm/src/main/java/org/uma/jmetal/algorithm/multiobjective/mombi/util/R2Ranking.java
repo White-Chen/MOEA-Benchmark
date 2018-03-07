@@ -100,6 +100,11 @@ public class R2Ranking<S extends Solution<?>> extends GenericSolutionAttribute<S
         return this.attribute.getAttributeID();
     }
 
+    @Override
+    public Object getAttributeIdentifier() {
+        return this.attribute.getAttributeIdentifier();
+    }
+
     public AbstractUtilityFunctionsSet<S> getUtilityFunctions() {
         return this.utilityFunctions;
     }

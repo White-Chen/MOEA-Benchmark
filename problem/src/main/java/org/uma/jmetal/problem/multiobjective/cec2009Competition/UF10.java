@@ -49,7 +49,7 @@ public class UF10 extends AbstractDoubleProblem {
      */
     public UF10(int numberOfVariables) {
         setNumberOfVariables(numberOfVariables);
-        setNumberOfObjectives(2);
+        setNumberOfObjectives(3);
         setNumberOfConstraints(0);
         setName("UF10");
 

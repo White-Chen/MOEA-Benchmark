@@ -313,6 +313,11 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
     }
 
     @Override
+    public Object getAttributeIdentifier() {
+        return this.getClass();
+    }
+
+    @Override
     public Object getAttributeID() {
         return this.getClass();
     }

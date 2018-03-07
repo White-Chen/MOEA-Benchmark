@@ -14,13 +14,11 @@
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU Lesser General Public License for more details.
-// 
+//
 //  You should have received a copy of the GNU Lesser General Public License
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package org.uma.jmetal.util.solutionattribute;
-
-import org.uma.jmetal.solution.Solution;
 
 import java.util.List;
 
@@ -29,10 +27,13 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public interface Ranking<S extends Solution<?>> extends SolutionAttribute<S, Integer> {
+public interface Ranking<S> extends SolutionAttribute<S, Integer> {
     Ranking<S> computeRanking(List<S> solutionList);
 
     List<S> getSubfront(int rank);
 
     int getNumberOfSubfronts();
 }
+
+
+

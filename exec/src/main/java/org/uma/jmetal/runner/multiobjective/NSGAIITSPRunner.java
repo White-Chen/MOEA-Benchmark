@@ -77,7 +77,7 @@ public class NSGAIITSPRunner extends AbstractAlgorithmRunner {
                 .setSelectionOperator(selection)
                 .setMaxEvaluations(10000)
                 .setPopulationSize(100)
-                .setInProcessDataPath("")
+                .setInProcessDataPath("F:\\Experiment Data"+"\\NSGA2\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

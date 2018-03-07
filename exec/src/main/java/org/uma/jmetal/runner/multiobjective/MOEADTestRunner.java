@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class MOEADSTMRunner extends AbstractAlgorithmRunner {
+public class MOEADTestRunner extends AbstractAlgorithmRunner {
     /**
      * @param args Command line arguments.
      * @throws SecurityException Invoking command:
@@ -54,8 +54,8 @@ public class MOEADSTMRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-            referenceParetoFront = "problem/src/test/resources/pareto_fronts/ZDT1.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.lz09.LZ09F3";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/LZ09F3.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -68,18 +68,18 @@ public class MOEADSTMRunner extends AbstractAlgorithmRunner {
         double mutationDistributionIndex = 20.0;
         mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADSTM)
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADTest)
                 .setCrossover(crossover)
                 .setMutation(mutation)
-                .setMaxEvaluations(60000)
-                .setPopulationSize(100)
-                .setResultPopulationSize(100)
+                .setMaxEvaluations(2000)
+                .setPopulationSize(10)
+                .setResultPopulationSize(10)
                 .setNeighborhoodSelectionProbability(0.9)
-                .setMaximumNumberOfReplacedSolutions(2)
-                .setNeighborSize(20)
+                .setMaximumNumberOfReplacedSolutions(3)
+                .setNeighborSize(3)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEADSTM\\"+problem.getName())
+                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEADTest\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

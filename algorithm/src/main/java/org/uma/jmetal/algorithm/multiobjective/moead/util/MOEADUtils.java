@@ -23,6 +23,10 @@ package org.uma.jmetal.algorithm.multiobjective.moead.util;
 
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 /**
  * Utilities methods to used by MOEA/D
  */
@@ -113,4 +117,145 @@ public class MOEADUtils {
             }
         }
     }
+    /**
+     * 计算两个权重间的距离
+     * @param weight1
+     * @param weight2
+     * @return
+     */
+    public static double distance(double[] weight1, double[] weight2) {
+        double sum = 0;
+        for (int i = 0; i < weight1.length; i++) {
+            sum += Math.pow((weight1[i] - weight2[i]), 2);
+        }
+        return Math.sqrt(sum);
+    }
+
+    /**
+     * 计算权重间的角度
+     */
+    public static double angle(double[] weight1, double[] weight2){
+        double sum = 0;
+        return acosine(weight1,weight2);
+
+    }
+
+    /**
+     * Returns the angle between the objective vector and a reference vector.
+     * This method assumes the line is a normalized weight vector; the point
+     * does not need to be normalized.
+     *
+     * @param vector the line originating from the origin
+     * @param point the point
+     * @return the angle (acosine)
+     */
+    public static double acosine(double[] vector, double[] point) {
+        return Math.acos(cosine(vector, point));
+    }
+
+    /**
+     * Returns the cosine between the objective vector and a reference vector.
+     * This method assumes the line is a normalized weight vector; the point
+     * does not need to be normalized.
+     * @param vector the line originating from the origin
+     * @param point the point
+     * @return the cosine
+     */
+    public static double cosine(double[] vector, double[] point) {
+
+        return dot(point, vector) / (magnitude(vector)*magnitude(point));
+    }
+
+    /**
+     * Returns the dot (inner) product of the two specified vectors. The two
+     * vectors must be the same length.
+     *
+     * @param u the first vector
+     * @param v the second vector
+     * @return the dot (inner) product of the two specified vectors
+     * @throws IllegalArgumentException if the two vectors are not the same length
+     */
+    public static double dot(double[] u, double[] v) {
+        int n = length(u, v);
+        double dot = 0.0;
+
+        for (int i = 0; i < n; i++) {
+            dot += u[i] * v[i];
+        }
+
+        return dot;
+    }
+
+    /**
+     * Returns the length of the two specified vectors.
+     *
+     * @param u the first vector
+     * @param v the second vector
+     * @return the length of the two specified vectors
+     * @throws IllegalArgumentException if the two vectors are not the same length
+     */
+    private static int length(double[] u, double[] v) {
+        if (u.length != v.length) {
+            throw new IllegalArgumentException("vectors must have same length");
+        }
+
+        return u.length;
+    }
+
+    /**
+     * Returns the difference between the two specified vectors, {@code u - v}.
+     * The two vectors must be of the same length.
+     *
+     * @param u the first vector
+     * @param v the second vector
+     * @return the difference between the two specified vectors, {@code u - v}
+     * @throws IllegalArgumentException if the two vectors are not the same length
+     */
+    public static double[] subtract(double[] u, double[] v) {
+        int n = length(u, v);
+        double[] w = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            w[i] = u[i] - v[i];
+        }
+
+        return w;
+    }
+
+    /**
+     * Returns the magnitude (Euclidean norm) of the specified vector.
+     *
+     * @param u the vector
+     * @return the magnitude (Euclidean norm) of the specified vector
+     */
+    public static double magnitude(double[] u) {
+        return Math.sqrt(dot(u, u));
+    }
+
+    /**
+     * 求数组U最小的值
+     * @param u
+     * @return
+     */
+    public static double min(double[] u){
+        double tMin = u[0];
+        for (int i=0;i<u.length;i++)
+        {
+            tMin = (u[i]<tMin)?u[i]:tMin;
+        }
+        return tMin;
+    }
+
+    /**
+     * 标准化目标值，并返回标准化后的模值
+     * @param u 目标值
+     * @param idealPoint 理想点
+     * @return
+     */
+    public static double normalize (double[] u,double[] idealPoint){
+        double[] normalObjectiveValue = subtract(u,idealPoint);
+        return magnitude(normalObjectiveValue);
+    }
+
+
 }

@@ -31,6 +31,16 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
     private NSGAIIVariant variant;
     private String inProcessDataPath;
 
+    public NSGAIIBuilder setCrossoverOperator(CrossoverOperator<S> crossoverOperator) {
+        this.crossoverOperator = crossoverOperator;
+        return this;
+    }
+
+    public NSGAIIBuilder setMutationOperator(MutationOperator<S> mutationOperator) {
+        this.mutationOperator = mutationOperator;
+        return this;
+    }
+
     /**
      * NSGAIIBuilder constructor
      */
@@ -41,6 +51,16 @@ public class NSGAIIBuilder<S extends Solution<?>> implements AlgorithmBuilder<NS
         populationSize = 100;
         this.crossoverOperator = crossoverOperator;
         this.mutationOperator = mutationOperator;
+        selectionOperator = new BinaryTournamentSelection<S>(new RankingAndCrowdingDistanceComparator<S>());
+        evaluator = new SequentialSolutionListEvaluator<S>();
+
+        this.variant = NSGAIIVariant.NSGAII;
+    }
+
+    public NSGAIIBuilder(Problem<S> problem) {
+        this.problem = problem;
+        maxEvaluations = 25000;
+        populationSize = 100;
         selectionOperator = new BinaryTournamentSelection<S>(new RankingAndCrowdingDistanceComparator<S>());
         evaluator = new SequentialSolutionListEvaluator<S>();
 

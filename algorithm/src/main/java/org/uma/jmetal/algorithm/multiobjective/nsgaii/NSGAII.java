@@ -15,6 +15,7 @@ import org.uma.jmetal.util.solutionattribute.Ranking;
 import org.uma.jmetal.util.solutionattribute.impl.CrowdingDistance;
 import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -53,6 +54,8 @@ public class NSGAII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, L
 
     @Override
     protected void saveDataInProcess() {
+        File file = new File(inProcessDataPath);
+        file.mkdirs();
         if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * getMaxPopulationSize()) == 0) || evaluations == 2 * getMaxPopulationSize())) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
