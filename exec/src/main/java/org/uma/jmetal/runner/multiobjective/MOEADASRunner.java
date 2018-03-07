@@ -80,7 +80,7 @@ public class MOEADASRunner extends AbstractAlgorithmRunner {
                 .setRun(0)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("F:\\Experiment Data"+"\\MOEADAS\\"+problem.getName())
+                .setInProcessDataPath("\\\\Dy-pc\\f\\Experiment Data(lw)"+"\\MOEADAS\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

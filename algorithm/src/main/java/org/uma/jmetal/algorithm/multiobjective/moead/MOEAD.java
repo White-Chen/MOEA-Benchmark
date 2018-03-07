@@ -20,6 +20,9 @@ import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -61,9 +64,11 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
         initializeUniformWeight();
         initializeNeighborhood();
         initializeIdealPoint();
+        int generation = 0;
 
         evaluations = populationSize;
         do {
+            updateAbility = 0;
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
 
@@ -85,7 +90,11 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
+            String path="\\\\Dy-pc\\f\\Experiment Data(lw)\\"+getName()+"\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            appendToFile(path,generation+"-----------"+problem.getName()+"------------");
+            appendToFile(path,updateAbility+"\r\n");
             saveDataInProcess();
+            generation++;
         } while (evaluations < maxEvaluations);
 
     }
@@ -102,6 +111,29 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
     @Override
     public String getName() {
         return "MOEAD";
+    }
+
+    /**
+     * 向文件写字符串
+     */
+    public static void appendToFile(String path,String word){
+        try
+        {
+            File file=new File(path);
+            if(!file.getParentFile().exists())
+                file.getParentFile().mkdirs();
+            if(!file.exists())
+                file.createNewFile();
+            FileOutputStream out=new FileOutputStream(file,true); //如果追加方式用true
+            StringBuffer sb=new StringBuffer();
+            sb.append(word);
+            out.write(sb.toString().getBytes("utf-8"));//注意需要转换对应的字符集
+            out.close();
+        }
+        catch(IOException ex)
+        {
+            System.out.println(ex.getStackTrace());
+        }
     }
 
     @Override

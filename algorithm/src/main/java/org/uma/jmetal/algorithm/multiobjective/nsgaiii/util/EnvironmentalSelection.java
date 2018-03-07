@@ -303,22 +303,17 @@ public class EnvironmentalSelection<S extends Solution<?>> implements SelectionO
 
     @Override
     public void setAttribute(S solution, List<Double> value) {
-        solution.setAttribute(getAttributeID(), value);
+        solution.setAttribute(getAttributeIdentifier(), value);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public List<Double> getAttribute(S solution) {
-        return (List<Double>) solution.getAttribute(getAttributeID());
+        return (List<Double>) solution.getAttribute(getAttributeIdentifier());
     }
 
     @Override
     public Object getAttributeIdentifier() {
-        return this.getClass();
-    }
-
-    @Override
-    public Object getAttributeID() {
         return this.getClass();
     }
 

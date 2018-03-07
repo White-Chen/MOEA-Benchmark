@@ -490,9 +490,10 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void saveDataInProcess() {
+        int interval = 1;    //输出代数间隔数
         File file = new File(inProcessDataPath);
         file.mkdirs();
-        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
+        if (!inProcessDataPath.isEmpty() && ((evaluations % (interval * populationSize) == 0) || evaluations == interval * populationSize)) {
 //         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")

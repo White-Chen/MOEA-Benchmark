@@ -2,8 +2,8 @@
 <!DOCTYPE log SYSTEM "logger.dtd">
 <log>
 <record>
-  <date>2018-03-07T15:23:36</date>
-  <millis>1520407416136</millis>
+  <date>2018-03-07T17:25:42</date>
+  <millis>1520414742848</millis>
   <sequence>0</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -13,30 +13,30 @@
   <message>Loggers configured with null</message>
 </record>
 <record>
-  <date>2018-03-07T15:23:36</date>
-  <millis>1520407416171</millis>
+  <date>2018-03-07T17:25:42</date>
+  <millis>1520414742892</millis>
   <sequence>1</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
-  <class>org.uma.jmetal.runner.multiobjective.MOEADDRunner</class>
+  <class>org.uma.jmetal.runner.multiobjective.MOEADRunner</class>
   <method>main</method>
   <thread>1</thread>
-  <message>Total execution time: 16049ms</message>
+  <message>Total execution time: 77817ms</message>
 </record>
 <record>
-  <date>2018-03-07T15:23:36</date>
-  <millis>1520407416199</millis>
+  <date>2018-03-07T17:25:42</date>
+  <millis>1520414742897</millis>
   <sequence>2</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
   <class>org.uma.jmetal.runner.AbstractAlgorithmRunner</class>
   <method>printFinalSolutionSet</method>
   <thread>1</thread>
-  <message>Random seed: 1520407400057</message>
+  <message>Random seed: 1520414664996</message>
 </record>
 <record>
-  <date>2018-03-07T15:23:36</date>
-  <millis>1520407416201</millis>
+  <date>2018-03-07T17:25:42</date>
+  <millis>1520414742898</millis>
   <sequence>3</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -46,8 +46,8 @@
   <message>Objectives values have been written to file FUN.tsv</message>
 </record>
 <record>
-  <date>2018-03-07T15:23:36</date>
-  <millis>1520407416201</millis>
+  <date>2018-03-07T17:25:42</date>
+  <millis>1520414742898</millis>
   <sequence>4</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -57,8 +57,8 @@
   <message>Variables values have been written to file VAR.tsv</message>
 </record>
 <record>
-  <date>2018-03-07T15:23:37</date>
-  <millis>1520407417303</millis>
+  <date>2018-03-07T17:25:43</date>
+  <millis>1520414743005</millis>
   <sequence>5</sequence>
   <logger>org.uma.jmetal.util.JMetalLogger</logger>
   <level>INFO</level>
@@ -66,19 +66,19 @@
   <method>printQualityIndicators</method>
   <thread>1</thread>
   <message>
-Hypervolume (N) : 0.04531425482014979
-Hypervolume     : 0.16425302414308557
-Epsilon (N)     : 0.10046659017270465
-Epsilon         : 0.08791688109129359
-GD (N)          : 2.9420528598282023
-GD              : 2.313850053148073
-IGD (N)         : 0.08043938952584287
-IGD             : 0.06698015390674822
-IGD+ (N)        : 0.07814426618251187
-IGD+            : 0.06601848784894002
-Spread (N)      : 0.8654651241026947
-Spread          : 0.8663818419537413
-Error ratio     : 1.0
+Hypervolume (N) : 0.5247084897257306
+Hypervolume     : 0.5247084897257306
+Epsilon (N)     : 0.32412176465499926
+Epsilon         : 0.32412176465499926
+GD (N)          : 0.01236698372426965
+GD              : 0.01236698372426965
+IGD (N)         : 0.11629598298086997
+IGD             : 0.11629598298086997
+IGD+ (N)        : 0.1105132716083363
+IGD+            : 0.1105132716083363
+Spread (N)      : 1.212899022515298
+Spread          : 1.212899022515298
+Error ratio     : 0.51
 </message>
 </record>
 </log>

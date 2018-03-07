@@ -29,6 +29,4 @@ public interface SolutionAttribute<S , V> extends Serializable {
     public V getAttribute(S solution);
 
     public Object getAttributeIdentifier() ;
-
-    public Object getAttributeID();
 }
