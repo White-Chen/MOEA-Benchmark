@@ -14,6 +14,7 @@
 
 package org.uma.jmetal.util.experiment.component;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.JMetalLogger;
@@ -56,10 +57,10 @@ public class ExecuteAlgorithms<S extends Solution<?>, Result> implements Experim
         parallelExecutor.start(this);
 
         for (TaggedAlgorithm<Result> algorithm : experiment.getAlgorithmList()) {
-            //for (int i = 0; i < experiment.getIndependentRuns(); i++) {
-            //TaggedAlgorithm<Result> clonedAlgorithm = SerializationUtils.clone(algorithm) ;
+           // for (int i = 0; i < experiment.getIndependentRuns(); i++) {
+//            TaggedAlgorithm<Result> clonedAlgorithm = SerializationUtils.clone(algorithm) ;
             parallelExecutor.addTask(new Object[]{algorithm, algorithm.getRunId(), experiment});
-            //}
+           // }
         }
         parallelExecutor.parallelExecution();
         parallelExecutor.stop();

@@ -55,7 +55,7 @@ public class MOEADASTest extends AbstractMOEAD<DoubleSolution> {
                        String inProcessDataPath,int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize, inProcessDataPath);
+                neighborSize, inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
     }

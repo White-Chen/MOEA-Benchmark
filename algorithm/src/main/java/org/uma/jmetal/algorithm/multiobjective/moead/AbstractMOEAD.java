@@ -92,7 +92,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
                          FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
                          int maximumNumberOfReplacedSolutions, int neighborSize,
-                         String inProcessDataPath) {
+                         String inProcessDataPath,int run) {
         this.problem = problem;
         this.populationSize = populationSize;
         this.resultPopulationSize = resultPopulationSize;
@@ -105,6 +105,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
         this.neighborSize = neighborSize;
         this.inProcessDataPath = inProcessDataPath;
+        this.run = run;
 
         randomGenerator = JMetalRandom.getInstance();
 

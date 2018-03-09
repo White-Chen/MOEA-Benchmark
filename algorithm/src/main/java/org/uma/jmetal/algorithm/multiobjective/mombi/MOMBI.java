@@ -1,6 +1,10 @@
 package org.uma.jmetal.algorithm.multiobjective.mombi;
 
-import org.uma.jmetal.algorithm.multiobjective.mombi.util.*;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.AbstractUtilityFunctionsSet;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.R2Ranking;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.R2RankingAttribute;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.R2SolutionData;
+import org.uma.jmetal.algorithm.multiobjective.mombi.util.TchebycheffUtilityFunctionsSet;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
@@ -12,12 +16,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S> {
+@SuppressWarnings("serial")
+public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S>{
 
-    private static final long serialVersionUID = 8613186179589592343L;
-    private final AbstractUtilityFunctionsSet<S> utilityFunctions;
+    protected final AbstractUtilityFunctionsSet<S> utilityFunctions;
 
     public MOMBI(Problem<S> problem,
                  int maxIterations,
@@ -25,14 +28,13 @@ public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S> {
                  MutationOperator<S> mutation,
                  SelectionOperator<List<S>, S> selection,
                  SolutionListEvaluator<S> evaluator,
-                 String pathWeights,
-                 String inProcessDataPath) {
+                 String pathWeights,String inProcessDataPath) {
         super(problem, maxIterations, crossover, mutation, selection, evaluator, inProcessDataPath);
         utilityFunctions = this.createUtilityFunction(pathWeights);
     }
 
     public AbstractUtilityFunctionsSet<S> createUtilityFunction(String pathWeights) {
-        return new TchebycheffUtilityFunctionsSet<>(pathWeights, this.getReferencePoint());
+        return  new TchebycheffUtilityFunctionsSet<>(pathWeights,this.getReferencePoint());
     }
 
     public int getMaxPopulationSize() {
@@ -67,13 +69,13 @@ public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S> {
             population.add(solution);
     }
 
-    protected void addLastRankedSolutionsToPopulation(R2Ranking<S> ranking, int index, List<S> population) {
+    protected void addLastRankedSolutionsToPopulation(R2Ranking<S> ranking,int index, List<S>population) {
         List<S> front = ranking.getSubfront(index);
         Collections.sort(front, new Comparator<S>() {
             @Override
             public int compare(S arg0, S arg1) {
                 R2RankingAttribute<S> attribute = new R2RankingAttribute<>();
-                R2SolutionData dataFirst = attribute.getAttribute(arg0);
+                R2SolutionData dataFirst  = attribute.getAttribute(arg0);
                 R2SolutionData dataSecond = attribute.getAttribute(arg1);
                 if (dataFirst.utility > dataSecond.utility)
                     return -1;
@@ -85,7 +87,8 @@ public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S> {
 
         });
         int remain = this.getMaxPopulationSize() - population.size();
-        population.addAll(front.subList(0, remain).stream().collect(Collectors.toList()));
+        for (S solution : front.subList(0, remain))
+            population.add(solution);
     }
 
     protected List<S> selectBest(R2Ranking<S> ranking) {
@@ -104,20 +107,17 @@ public class MOMBI<S extends Solution<?>> extends AbstractMOMBI<S> {
     }
 
     private boolean subfrontFillsIntoThePopulation(R2Ranking<S> ranking, int index, List<S> population) {
-        return (population.size() + ranking.getSubfront(index).size() < this.getMaxPopulationSize());
+        return (population.size()+ranking.getSubfront(index).size() < this.getMaxPopulationSize());
     }
-
     protected AbstractUtilityFunctionsSet<S> getUtilityFunctions() {
         return this.utilityFunctions;
     }
 
-    @Override
-    public String getName() {
-        return "MOMBI";
+    @Override public String getName() {
+        return "MOMBI" ;
     }
 
-    @Override
-    public String getDescription() {
-        return "Many-Objective Metaheuristic Based on the R2 Indicator";
+    @Override public String getDescription() {
+        return "Many-Objective Metaheuristic Based on the R2 Indicator" ;
     }
 }

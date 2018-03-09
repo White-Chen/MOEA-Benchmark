@@ -49,10 +49,10 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution> {
                            double neighborhoodSelectionProbability,
                            int maximumNumberOfReplacedSolutions,
                            int neighborSize,
-                           String inProcessDataPath) {
+                           String inProcessDataPath,int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize, inProcessDataPath);
+                neighborSize, inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
         violationThresholdComparator = new ViolationThresholdComparator<DoubleSolution>();

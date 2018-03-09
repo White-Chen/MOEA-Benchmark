@@ -48,10 +48,10 @@ public class MOEADDRA extends AbstractMOEAD<DoubleSolution> {
                     MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover, FunctionType functionType,
                     String dataDirectory, double neighborhoodSelectionProbability,
                     int maximumNumberOfReplacedSolutions, int neighborSize,
-                    String inProcessDataPathh) {
+                    String inProcessDataPath, int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize, inProcessDataPathh);
+                neighborSize, inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
 
