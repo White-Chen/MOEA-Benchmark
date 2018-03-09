@@ -50,10 +50,10 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                  double neighborhoodSelectionProbability,
                  int maximumNumberOfReplacedSolutions,
                  int neighborSize,
-                 String inProcessDataPath) {
+                 String inProcessDataPath, int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize, inProcessDataPath);
+                neighborSize, inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
     }
@@ -90,7 +90,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-            String path="\\\\Dy-pc\\f\\Experiment Data(lw)\\"+getName()+"\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            String path="\\\\Dy-pc\\f\\ExperimentData(lw)\\"+getName()+"\\"+problem.getName()+"\\updateAbility"+run+".txt";
             appendToFile(path,generation+"-----------"+problem.getName()+"------------");
             appendToFile(path,updateAbility+"\r\n");
             saveDataInProcess();

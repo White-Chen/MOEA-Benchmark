@@ -1,28 +1,17 @@
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU Lesser General Public License for more details.
-// 
-//  You should have received a copy of the GNU Lesser General Public License
-//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package org.uma.jmetal.operator.impl.selection;
 
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.comparator.CrowdingDistanceComparator;
+import org.uma.jmetal.util.comparator.DominanceComparator;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 import org.uma.jmetal.util.solutionattribute.impl.CrowdingDistance;
 import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -34,46 +23,51 @@ import java.util.List;
  */
 @SuppressWarnings("serial")
 public class RankingAndCrowdingSelection<S extends Solution<?>>
-        implements SelectionOperator<List<S>, List<S>> {
-    private int solutionsToSelect = 0;
+        implements SelectionOperator<List<S>,List<S>> {
+    private final int solutionsToSelect ;
+    private Comparator<S> dominanceComparator ;
 
-    /**
-     * Constructor
-     */
+
+    /** Constructor */
+    public RankingAndCrowdingSelection(int solutionsToSelect, Comparator<S> dominanceComparator) {
+        this.dominanceComparator = dominanceComparator ;
+        this.solutionsToSelect = solutionsToSelect ;
+    }
+
+    /** Constructor */
     public RankingAndCrowdingSelection(int solutionsToSelect) {
-        this.solutionsToSelect = solutionsToSelect;
+        this(solutionsToSelect, new DominanceComparator<S>()) ;
     }
 
     /* Getter */
-    public int getSolutionsToSelect() {
+    public int getNumberOfSolutionsToSelect() {
         return solutionsToSelect;
     }
 
-    /**
-     * Execute() method
-     */
+    /** Execute() method */
     public List<S> execute(List<S> solutionList) throws JMetalException {
         if (null == solutionList) {
             throw new JMetalException("The solution list is null");
         } else if (solutionList.isEmpty()) {
-            throw new JMetalException("The solution list is empty");
-        } else if (solutionList.size() < solutionsToSelect) {
-            throw new JMetalException("The population size (" + solutionList.size() + ") is smaller than" +
-                    "the solutions to selected (" + solutionsToSelect + ")");
+            throw new JMetalException("The solution list is empty") ;
+        }  else if (solutionList.size() < solutionsToSelect) {
+            throw new JMetalException("The population size ("+solutionList.size()+") is smaller than" +
+                    "the solutions to selected ("+solutionsToSelect+")")  ;
         }
 
-        Ranking<S> ranking = new DominanceRanking<S>();
-        ranking.computeRanking(solutionList);
+        Ranking<S> ranking = new DominanceRanking<S>(dominanceComparator);
+        ranking.computeRanking(solutionList) ;
 
         return crowdingDistanceSelection(ranking);
     }
 
     protected List<S> crowdingDistanceSelection(Ranking<S> ranking) {
-        CrowdingDistance<S> crowdingDistance = new CrowdingDistance<S>();
-        List<S> population = new ArrayList<>(solutionsToSelect);
+        CrowdingDistance<S> crowdingDistance = new CrowdingDistance<S>() ;
+        List<S> population = new ArrayList<>(solutionsToSelect) ;
         int rankingIndex = 0;
         while (population.size() < solutionsToSelect) {
             if (subfrontFillsIntoThePopulation(ranking, rankingIndex, population)) {
+                crowdingDistance.computeDensityEstimator(ranking.getSubfront(rankingIndex));
                 addRankedSolutionsToPopulation(ranking, rankingIndex, population);
                 rankingIndex++;
             } else {
@@ -82,32 +76,32 @@ public class RankingAndCrowdingSelection<S extends Solution<?>>
             }
         }
 
-        return population;
+        return population ;
     }
 
     protected boolean subfrontFillsIntoThePopulation(Ranking<S> ranking, int rank, List<S> population) {
-        return ranking.getSubfront(rank).size() < (solutionsToSelect - population.size());
+        return ranking.getSubfront(rank).size() < (solutionsToSelect - population.size()) ;
     }
 
     protected void addRankedSolutionsToPopulation(Ranking<S> ranking, int rank, List<S> population) {
-        List<S> front;
+        List<S> front ;
 
         front = ranking.getSubfront(rank);
 
-        for (int i = 0; i < front.size(); i++) {
+        for (int i = 0 ; i < front.size(); i++) {
             population.add(front.get(i));
         }
     }
 
-    protected void addLastRankedSolutionsToPopulation(Ranking<S> ranking, int rank, List<S> population) {
-        List<S> currentRankedFront = ranking.getSubfront(rank);
+    protected void addLastRankedSolutionsToPopulation(Ranking<S> ranking, int rank, List<S>population) {
+        List<S> currentRankedFront = ranking.getSubfront(rank) ;
 
-        Collections.sort(currentRankedFront, new CrowdingDistanceComparator<S>());
+        Collections.sort(currentRankedFront, new CrowdingDistanceComparator<S>()) ;
 
-        int i = 0;
+        int i = 0 ;
         while (population.size() < solutionsToSelect) {
-            population.add(currentRankedFront.get(i));
-            i++;
+            population.add(currentRankedFront.get(i)) ;
+            i++ ;
         }
     }
 }

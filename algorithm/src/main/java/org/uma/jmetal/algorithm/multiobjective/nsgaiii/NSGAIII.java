@@ -12,6 +12,7 @@ import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.solutionattribute.Ranking;
 import org.uma.jmetal.util.solutionattribute.impl.DominanceRanking;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -69,11 +70,13 @@ public class NSGAIII<S extends Solution<?>> extends AbstractGeneticAlgorithm<S, 
 
     @Override
     protected void saveDataInProcess() {
-        if (!funInProcessPath.isEmpty() && !varInProcessPath.isEmpty() && ((iterations % 10 == 0) || iterations == 1)) {
+        File file = new File(funInProcessPath);
+        file.mkdirs();
+        if (!funInProcessPath.isEmpty() && ((iterations % 10 == 0) || iterations == 1)) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
-                    .setVarFileOutputContext(new DefaultFileOutputContext(varInProcessPath))
-                    .setFunFileOutputContext(new DefaultFileOutputContext(funInProcessPath))
+                    .setVarFileOutputContext(new DefaultFileOutputContext(funInProcessPath + "/VAR" + iterations  + ".tsv"))
+                    .setFunFileOutputContext(new DefaultFileOutputContext(funInProcessPath + "/FUN" + iterations  + ".tsv"))
                     .print();
         }
     }

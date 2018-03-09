@@ -1,3 +1,16 @@
+//  This program is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU Lesser General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU Lesser General Public License for more details.
+//
+//  You should have received a copy of the GNU Lesser General Public License
+//  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 package org.uma.jmetal.algorithm.multiobjective.moead;
 
 import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
@@ -13,17 +26,17 @@ import java.util.List;
 
 /**
  * This class implements a constrained version of the MOEAD algorithm based on the one presented in
- the paper: "An adaptive constraint handling approach embedded MOEA/D". DOI: 10.1109/CEC.2012.6252868
-
+ * the paper: "An adaptive constraint handling approach embedded MOEA/D". DOI: 10.1109/CEC.2012.6252868
+ *
  * @author Antonio J. Nebro
  * @author Juan J. Durillo
  * @version 1.0
  */
-@SuppressWarnings("serial")
-public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
+public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution> {
 
-    private DifferentialEvolutionCrossover differentialEvolutionCrossover ;
-    private ViolationThresholdComparator<DoubleSolution> violationThresholdComparator ;
+    private static final long serialVersionUID = 286653755514482382L;
+    private DifferentialEvolutionCrossover differentialEvolutionCrossover;
+    private ViolationThresholdComparator<DoubleSolution> violationThresholdComparator;
 
     public ConstraintMOEAD(Problem<DoubleSolution> problem,
                            int populationSize,
@@ -35,16 +48,18 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
                            String dataDirectory,
                            double neighborhoodSelectionProbability,
                            int maximumNumberOfReplacedSolutions,
-                           int neighborSize,String inProcessDataPath) {
+                           int neighborSize,
+                           String inProcessDataPath,int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize,inProcessDataPath);
+                neighborSize, inProcessDataPath,run);
 
-        differentialEvolutionCrossover = (DifferentialEvolutionCrossover)crossoverOperator ;
-        violationThresholdComparator = new ViolationThresholdComparator<DoubleSolution>() ;
+        differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
+        violationThresholdComparator = new ViolationThresholdComparator<DoubleSolution>();
     }
 
-    @Override public void run() {
+    @Override
+    public void run() {
         initializeUniformWeight();
         initializeNeighborhood();
         initializePopulation();
@@ -52,7 +67,7 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
 
         violationThresholdComparator.updateThreshold(population);
 
-        evaluations = populationSize ;
+        evaluations = populationSize;
 
         do {
             int[] permutation = new int[populationSize];
@@ -61,13 +76,13 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
 
-                NeighborType neighborType = chooseNeighborType() ;
-                List<DoubleSolution> parents = parentSelection(subProblemId, neighborType) ;
+                NeighborType neighborType = chooseNeighborType();
+                List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
 
                 differentialEvolutionCrossover.setCurrentSolution(population.get(subProblemId));
                 List<DoubleSolution> children = differentialEvolutionCrossover.execute(parents);
 
-                DoubleSolution child = children.get(0) ;
+                DoubleSolution child = children.get(0);
                 mutationOperator.execute(child);
                 problem.evaluate(child);
                 if (problem instanceof ConstrainedProblem) {
@@ -80,13 +95,14 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
             }
 
             violationThresholdComparator.updateThreshold(population);
+            saveDataInProcess();
 
         } while (evaluations < maxEvaluations);
     }
 
     public void initializePopulation() {
         for (int i = 0; i < populationSize; i++) {
-            DoubleSolution newSolution = (DoubleSolution)problem.createSolution() ;
+            DoubleSolution newSolution = problem.createSolution();
 
             problem.evaluate(newSolution);
             if (problem instanceof ConstrainedProblem) {
@@ -147,11 +163,13 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
         }
     }
 
-    @Override public String getName() {
-        return "cMOEAD" ;
+    @Override
+    public String getName() {
+        return "cMOEAD";
     }
 
-    @Override public String getDescription() {
-        return "Multi-Objective Evolutionary Algorithm based on Decomposition with constraints support" ;
+    @Override
+    public String getDescription() {
+        return "Multi-Objective Evolutionary Algorithm based on Decomposition with constraints support";
     }
 }

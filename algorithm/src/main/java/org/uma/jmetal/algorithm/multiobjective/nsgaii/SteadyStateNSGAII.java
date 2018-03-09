@@ -5,36 +5,34 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.Solution;
+import org.uma.jmetal.util.comparator.StrengthFitnessComparator;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
+@SuppressWarnings("serial")
 public class SteadyStateNSGAII<S extends Solution<?>> extends NSGAII<S> {
-    private static final long serialVersionUID = -2623650932672647177L;
-
     /**
      * Constructor
      */
     public SteadyStateNSGAII(Problem<S> problem, int maxEvaluations, int populationSize,
                              CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutationOperator,
-                             SelectionOperator<List<S>, S> selectionOperator, SolutionListEvaluator<S> evaluator,
-                             String inProcessDataPath) {
+                             SelectionOperator<List<S>, S> selectionOperator, Comparator<S> dominanceComparator, SolutionListEvaluator<S> evaluator, String inProcessDataPath) {
         super(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator,
-                selectionOperator, evaluator, inProcessDataPath);
+                selectionOperator, dominanceComparator, evaluator,inProcessDataPath);
     }
 
-    @Override
-    protected void updateProgress() {
-        evaluations++;
+    @Override protected void updateProgress() {
+        evaluations ++ ;
     }
 
 
-    @Override
-    protected List<S> selection(List<S> population) {
+    @Override protected List<S> selection(List<S> population) {
         List<S> matingPopulation = new ArrayList<>(2);
 
         matingPopulation.add(selectionOperator.execute(population));
@@ -43,8 +41,7 @@ public class SteadyStateNSGAII<S extends Solution<?>> extends NSGAII<S> {
         return matingPopulation;
     }
 
-    @Override
-    protected List<S> reproduction(List<S> population) {
+    @Override protected List<S> reproduction(List<S> population) {
         List<S> offspringPopulation = new ArrayList<>(1);
 
         List<S> parents = new ArrayList<>(2);
@@ -59,13 +56,13 @@ public class SteadyStateNSGAII<S extends Solution<?>> extends NSGAII<S> {
         return offspringPopulation;
     }
 
-    @Override
-    public String getName() {
-        return "ssNSGAII";
+    @Override public String getName() {
+        return "ssNSGAII" ;
     }
 
-    @Override
-    public String getDescription() {
-        return "Nondominated Sorting Genetic Algorithm version II. Steady-state version";
+    @Override public String getDescription() {
+        return "Nondominated Sorting Genetic Algorithm version II. Steady-state version" ;
     }
+
+
 }

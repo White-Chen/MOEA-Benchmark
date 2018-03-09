@@ -61,7 +61,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
         String referenceParetoFront = "";
 
-        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+        String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ4";
 
         problem = ProblemUtils.loadProblem(problemName);
 
@@ -79,7 +79,8 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
                 .setCrossoverOperator(crossover)
                 .setMutationOperator(mutation)
                 .setSelectionOperator(selection)
-                .setMaxIterations(500)
+                .setMaxIterations(1000)
+                .setFunInProcessPath("F:\\Experiment Data-Modify"+"\\NSGA3\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

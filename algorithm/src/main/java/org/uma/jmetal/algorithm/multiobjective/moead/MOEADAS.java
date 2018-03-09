@@ -17,6 +17,7 @@ import org.uma.jmetal.algorithm.multiobjective.moead.util.MOEADUtils;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
+import org.uma.jmetal.operator.impl.selection.KMmatching;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
@@ -29,10 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Class implementing the MOEA/D-AKM algorithm described in :
+ * Class implementing the MOEA/D-AS algorithm described in :
  * Create by dyy
  * "Optimal  Matching-Based Selection in Evolutionary Multiobjective Optimization",
- * 自适应KM选择策略 MOEAD-AKM，在紊乱判断后自适应选择选择策略；
+ * 自适应KM选择策略 MOEAD-AS，在紊乱判断后自适应选择选择策略；
  *加入ParentPopulation存放差分进化前的种群，避免使用邻域更新后的population
  * @author dyy
  * @version 1.0     2017 3/10  14:25
@@ -44,18 +45,19 @@ public class MOEADAS extends AbstractMOEAD<DoubleSolution> {
     private DoubleSolution[] savedValues;
     private double[] utility;
     private int[] frequency;
-    String Method;
+    int run;
 
     public MOEADAS(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
                    MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
                    FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
-                   int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh,int run) {
+                   int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPath ,int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborSize
-                , inProcessDataPathh);
+                , inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
 
+        this.run = run;
         savedValues = new DoubleSolution[populationSize];
         utility = new double[populationSize];
         frequency = new int[populationSize];
@@ -107,7 +109,7 @@ public class MOEADAS extends AbstractMOEAD<DoubleSolution> {
 
                 offspringPopulation.add(child);
             }
-            String path="F:\\Experiment Data(last)\\MOEADAS\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            String path="F:\\Experiment Data(last)\\MOEADAS\\"+problem.getName()+"\\updateAbility"+this.run+".txt";
             appendToFile(path,generation+"-----------"+problem.getName()+"------------");
             appendToFile(path,updateAbility+"\r\n");
 

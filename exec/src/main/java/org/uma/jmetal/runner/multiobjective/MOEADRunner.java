@@ -54,8 +54,8 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.UF.UF1";
-            referenceParetoFront = "problem/src/test/resources/pareto_fronts/UF1.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/ZDT1.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -71,16 +71,15 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
         algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD)
                 .setCrossover(crossover)
                 .setMutation(mutation)
-                .setMaxEvaluations(100000)
+                .setMaxEvaluations(1000000)
                 .setPopulationSize(100)
                 .setResultPopulationSize(100)
                 .setNeighborhoodSelectionProbability(0.9)
-                .setMaximumNumberOfReplacedSolutions(30)
+                .setMaximumNumberOfReplacedSolutions(20)
                 .setNeighborSize(20)
-                .setRun(0)
-                .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
+                .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("\\\\Dy-pc\\f\\Experiment Data(lw)\\MOEAD\\"+problemName)
+                .setInProcessDataPath("F:\\Experiment Data-Modify"+"\\MOEAD\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

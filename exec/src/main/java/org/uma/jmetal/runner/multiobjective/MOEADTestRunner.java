@@ -68,7 +68,7 @@ public class MOEADTestRunner extends AbstractAlgorithmRunner {
         double mutationDistributionIndex = 20.0;
         mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex);
 
-        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADTest)
+        algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADASTest)
                 .setCrossover(crossover)
                 .setMutation(mutation)
                 .setMaxEvaluations(2000)

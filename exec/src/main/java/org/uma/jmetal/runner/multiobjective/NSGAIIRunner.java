@@ -60,8 +60,8 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.IEEE_30bus_6gen_UC";
-            //referenceParetoFront = "problem/src/test/resources/pareto_fronts/ZDT1.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/ZDT1.pf";
         }
 
         problem = ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -78,10 +78,9 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
 
         algorithm = new NSGAIIBuilder<DoubleSolution>(problem, crossover, mutation)
                 .setSelectionOperator(selection)
-                .setVariant(NSGAIIBuilder.NSGAIIVariant.NSGAII)
-                .setMaxEvaluations(300000)
+                .setMaxEvaluations(25000)
                 .setPopulationSize(100)
-                .setInProcessDataPath("")
+                .setInProcessDataPath("\\\\Dy-pc\\f\\Experiment Data"+"\\NSGA2\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

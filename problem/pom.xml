@@ -68,6 +68,7 @@
         <dependency>
             <groupId>org.uma.jmetal</groupId>
             <artifactId>core</artifactId>
+            <version>5.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

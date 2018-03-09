@@ -19,10 +19,9 @@ import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.Problem;
-import org.uma.jmetal.problem.multiobjective.UF.*;
+import org.uma.jmetal.problem.multiobjective.cec2009Competition.*;
 import org.uma.jmetal.problem.multiobjective.dtlz.*;
 import org.uma.jmetal.problem.multiobjective.lz09.*;
-import org.uma.jmetal.problem.multiobjective.wfg.*;
 import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
@@ -58,8 +57,8 @@ import java.util.List;
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
 public class MOEADStudy {
-    private static final int INDEPENDENT_RUNS =20;   //每个算法跑20次实验
-    public static final String experimentBaseDirectory = "F:/ExperimentData PBI(km2)";
+    private static final int INDEPENDENT_RUNS =10;   //每个算法跑20次实验
+    public static final String experimentBaseDirectory = "F://ExperimentData(lw)";
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         /*
@@ -74,7 +73,7 @@ public class MOEADStudy {
                 new DTLZ1(), new DTLZ2(), new DTLZ3(), new DTLZ4(), new DTLZ5(), new DTLZ6(), new DTLZ7(),
                 new UF1(),new UF2(),new UF3(),new UF4("Real",30),new UF5(30, 10, 0.1),new UF6(30, 2, 0.1),new UF7(),new UF8(30),
                 // new UF9(),new UF10(),
-                new WFG1(2,4,2),new WFG2(2,4,2),new WFG3(2,4,2),new WFG4(2,4,2),new WFG5(2,4,2),new WFG6(2,4,2),new WFG7(2,4,2),new WFG8(2,4,2),new WFG9(2,4,2),
+            //    new WFG1(2,4,2),new WFG2(2,4,2),new WFG3(2,4,2),new WFG4(2,4,2),new WFG5(2,4,2),new WFG6(2,4,2),new WFG7(2,4,2),new WFG8(2,4,2),new WFG9(2,4,2),
                 new LZ09F1(),new LZ09F2(),new LZ09F3(),new LZ09F4(),new LZ09F5()
                 //new LZ09F6(),new LZ09F7(),new LZ09F8(),new LZ09F9()
         );
@@ -86,7 +85,7 @@ public class MOEADStudy {
                 "DTLZ1.3D.pf","DTLZ2.3D.pf","DTLZ3.3D.pf","DTLZ4.3D.pf","DTLZ5.3D.pf","DTLZ6.3D.pf","DTLZ7.3D.pf",
                 "UF1.pf","UF2.pf","UF3.pf","UF4.pf","UF5.pf","UF6.pf","UF7.pf","UF8.pf",
                 //  "UF9.pf","UF10.pf",
-                "WFG1.2D.pf","WFG2.2D.pf","WFG3.2D.pf","WFG4.2D.pf","WFG5.2D.pf","WFG6.2D.pf","WFG7.2D.pf","WFG8.2D.pf","WFG9.2D.pf",
+            //    "WFG1.2D.pf","WFG2.2D.pf","WFG3.2D.pf","WFG4.2D.pf","WFG5.2D.pf","WFG6.2D.pf","WFG7.2D.pf","WFG8.2D.pf","WFG9.2D.pf",
                 "LZ09_F1.pf","LZ09_F2.pf","LZ09_F3.pf","LZ09_F4.pf","LZ09_F5.pf"
                 // "LZ09_F6.pf","LZ09_F7.pf","LZ09_F8.pf","LZ09_F9.pf"
         );
@@ -110,10 +109,10 @@ public class MOEADStudy {
         new ExecuteAlgorithms<>(experiment).run();
 
         new ComputeQualityIndicators<>(experiment).run();
-        new GenerateLatexTablesWithStatistics(experiment).run();
-        new GenerateWilcoxonTestTablesWithR<>(experiment).run();
-        new GenerateFriedmanTestTables<>(experiment).run();
-        new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
+//        new GenerateLatexTablesWithStatistics(experiment).run();
+//        new GenerateWilcoxonTestTablesWithR<>(experiment).run();
+//        new GenerateFriedmanTestTables<>(experiment).run();
+//        new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(3).run();
 
         System.out.println("------------All Experiments Completed!!!!!!!!----------");
     }
@@ -138,12 +137,13 @@ public class MOEADStudy {
                 Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEAD)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
+                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 75000 : 50000)
                         .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
                         .setNeighborhoodSelectionProbability(0.9)
                         .setMaximumNumberOfReplacedSolutions(20)
-                        .setNeighborSize(20)
+                        .setNeighborSize(problemList.get(i).getNumberOfObjectives() > 2 ? 30 : 20)
+                        .setRun(run)
                         .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                         .setDataDirectory("MOEAD_Weights")
                         .setInProcessDataPath(experimentBaseDirectory
@@ -156,101 +156,101 @@ public class MOEADStudy {
                 algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEAD", problemList.get(i), run));
             }
 
-            //MOEA/D-STM初始化
-            for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADSTM)
-                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
-                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(20)
-                        .setNeighborSize(20)
-                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
-                        .setDataDirectory("MOEAD_Weights")
-                        .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEADStudy/data/MOEADSTM/"
-                                + problemList.get(i).getName()
-                                + "/INPROCESSDATA"
-                                + run
-                                + "/")
-                        .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADSTM", problemList.get(i), run));
-            }
-
-
-            //MOEA/D-KM初始化
-            for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADAS)
-                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
-                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(20)
-                        .setNeighborSize(20)
-                        .setRun(run)
-                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
-                        .setDataDirectory("MOEAD_Weights")
-                        .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEADStudy/data/MOEADAS/"
-                                + problemList.get(i).getName()
-                                + "/INPROCESSDATA"
-                                + run
-                                + "/")
-                        .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADAS", problemList.get(i), run));
-            }
-
-            //MOEA/D-KM初始化
-            for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKM)
-                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
-                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(20)
-                        .setNeighborSize(20)
-                        .setRun(run)
-                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
-                        .setDataDirectory("MOEAD_Weights")
-                        .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEADStudy/data/MOEADKM/"
-                                + problemList.get(i).getName()
-                                + "/INPROCESSDATA"
-                                + run
-                                + "/")
-                        .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADKMC", problemList.get(i), run));
-            }
-
-            //MOEA/D-DRA初始化
-            for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADDRA)
-                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
-                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
-                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
-                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
-                        .setNeighborhoodSelectionProbability(0.9)
-                        .setMaximumNumberOfReplacedSolutions(20)
-                        .setNeighborSize(20)
-                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
-                        .setDataDirectory("MOEAD_Weights")
-                        .setInProcessDataPath(experimentBaseDirectory
-                                + "/MOEADStudy/data/MOEADDRA/"
-                                + problemList.get(i).getName()
-                                + "/INPROCESSDATA"
-                                + run
-                                + "/")
-                        .build();
-                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADDRA", problemList.get(i), run));
-            }
-
+//            //MOEA/D-STM初始化
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADSTM)
+//                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
+//                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+//                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
+//                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setNeighborhoodSelectionProbability(0.9)
+//                        .setMaximumNumberOfReplacedSolutions(20)
+//                        .setNeighborSize(20)
+//                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
+//                        .setDataDirectory("MOEAD_Weights")
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEADStudy/data/MOEADSTM/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADSTM", problemList.get(i), run));
+//            }
+//
+//
+//            //MOEA/D-KM初始化
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADAS)
+//                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
+//                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+//                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
+//                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setNeighborhoodSelectionProbability(0.9)
+//                        .setMaximumNumberOfReplacedSolutions(20)
+//                        .setNeighborSize(20)
+//                        .setRun(run)
+//                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
+//                        .setDataDirectory("MOEAD_Weights")
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEADStudy/data/MOEADAS/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADAS", problemList.get(i), run));
+//            }
+//
+//            //MOEA/D-KM初始化
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKMC)
+//                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
+//                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+//                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
+//                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setNeighborhoodSelectionProbability(0.9)
+//                        .setMaximumNumberOfReplacedSolutions(20)
+//                        .setNeighborSize(20)
+//                        .setRun(run)
+//                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
+//                        .setDataDirectory("MOEAD_Weights")
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEADStudy/data/MOEADKMC/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADKMC", problemList.get(i), run));
+//            }
+//
+//            //MOEA/D-DRA初始化
+//            for (int i = 0; i < problemList.size(); i++) {
+//                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADDRA)
+//                        .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
+//                        .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
+//                        .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 150000 : 100000)
+//                        .setPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setResultPopulationSize(problemList.get(i).getNumberOfObjectives() > 2 ? 153 : 100)
+//                        .setNeighborhoodSelectionProbability(0.9)
+//                        .setMaximumNumberOfReplacedSolutions(20)
+//                        .setNeighborSize(20)
+//                        .setFunctionType(AbstractMOEAD.FunctionType.PBI)
+//                        .setDataDirectory("MOEAD_Weights")
+//                        .setInProcessDataPath(experimentBaseDirectory
+//                                + "/MOEADStudy/data/MOEADDRA/"
+//                                + problemList.get(i).getName()
+//                                + "/INPROCESSDATA"
+//                                + run
+//                                + "/")
+//                        .build();
+//                algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, "MOEADDRA", problemList.get(i), run));
+//            }
+//
 
 
         }

@@ -54,8 +54,8 @@ public class MOEADASRunner extends AbstractAlgorithmRunner {
             problemName = args[0];
             referenceParetoFront = args[1];
         } else {
-            problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ6";
-            referenceParetoFront = "problem/src/test/resources/pareto_fronts/DTLZ6.3D.pf";
+            problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1";
+            referenceParetoFront = "problem/src/test/resources/pareto_fronts/DTLZ1.3D.pf";
         }
 
         problem = (DoubleProblem) ProblemUtils.<DoubleSolution>loadProblem(problemName);
@@ -71,16 +71,16 @@ public class MOEADASRunner extends AbstractAlgorithmRunner {
         algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEADAS)
                 .setCrossover(crossover)
                 .setMutation(mutation)
-                .setMaxEvaluations(100000)
-                .setPopulationSize(100)
-                .setResultPopulationSize(100)
+                .setMaxEvaluations(300000)
+                .setPopulationSize(300)
+                .setResultPopulationSize(300)
                 .setNeighborhoodSelectionProbability(0.9)
                 .setMaximumNumberOfReplacedSolutions(30)
                 .setNeighborSize(30)
                 .setRun(0)
                 .setFunctionType(AbstractMOEAD.FunctionType.TCHE)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("\\\\Dy-pc\\f\\Experiment Data(lw)"+"\\MOEADAS\\"+problem.getName())
+                .setInProcessDataPath("F:\\Experiment Data-Modify"+"\\MOEADAS\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

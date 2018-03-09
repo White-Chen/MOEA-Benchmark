@@ -92,7 +92,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
                          int maxEvaluations, CrossoverOperator<S> crossoverOperator, MutationOperator<S> mutation,
                          FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
                          int maximumNumberOfReplacedSolutions, int neighborSize,
-                         String inProcessDataPath) {
+                         String inProcessDataPath,int run) {
         this.problem = problem;
         this.populationSize = populationSize;
         this.resultPopulationSize = resultPopulationSize;
@@ -105,6 +105,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
         this.maximumNumberOfReplacedSolutions = maximumNumberOfReplacedSolutions;
         this.neighborSize = neighborSize;
         this.inProcessDataPath = inProcessDataPath;
+        this.run = run;
 
         randomGenerator = JMetalRandom.getInstance();
 
@@ -206,7 +207,7 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     // update the current nadir point
-    protected void updateNadirPoint(S individual) {
+    void updateNadirPoint(S individual) {
         for (int i = 0; i < problem.getNumberOfObjectives(); i++) {
             if (individual.getObjective(i) > nadirPoint[i]) {
                 nadirPoint[i] = individual.getObjective(i);
@@ -490,10 +491,9 @@ public abstract class AbstractMOEAD<S extends Solution<?>> implements Algorithm<
     }
 
     protected void saveDataInProcess() {
-        int interval = 1;    //输出代数间隔数
         File file = new File(inProcessDataPath);
         file.mkdirs();
-        if (!inProcessDataPath.isEmpty() && ((evaluations % (interval * populationSize) == 0) || evaluations == interval * populationSize)) {
+        if (!inProcessDataPath.isEmpty() && ((evaluations % (10 * populationSize) == 0) || evaluations == 2 * populationSize)) {
 //         if (!inProcessDataPath.isEmpty()) {
             new SolutionListOutput(getResult())
                     .setSeparator("\t")
