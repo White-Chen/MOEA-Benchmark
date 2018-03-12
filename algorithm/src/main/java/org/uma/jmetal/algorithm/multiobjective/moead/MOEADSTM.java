@@ -110,9 +110,9 @@ public class MOEADSTM extends AbstractMOEAD<DoubleSolution> {
             stmSelection();
 
             generation++;
-            if (generation % 30 == 0) {
-                utilityFunction();
-            }
+//            if (generation % 30 == 0) {
+//                utilityFunction();
+//            }
             saveDataInProcess();
 
         } while (evaluations < maxEvaluations);

@@ -164,7 +164,7 @@ public class MOEADKMStudy {
 
             //MOEA/D-KM初始化
             for (int i = 0; i < problemList.size(); i++) {
-                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKM)
+                Algorithm<List<DoubleSolution>> algorithm = new MOEADBuilder(problemList.get(i), MOEADBuilder.Variant.MOEADKMC)
                         .setCrossover(new DifferentialEvolutionCrossover(0.9, 0.5, "rand/1/bin"))
                         .setMutation(new PolynomialMutation(1.0 / problemList.get(i).getNumberOfVariables(), 20.0))
                         .setMaxEvaluations(problemList.get(i).getNumberOfObjectives() > 2 ? 300000 : 100000)

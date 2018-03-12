@@ -71,7 +71,7 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
         algorithm = new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD)
                 .setCrossover(crossover)
                 .setMutation(mutation)
-                .setMaxEvaluations(1000000)
+                .setMaxEvaluations(100000)
                 .setPopulationSize(100)
                 .setResultPopulationSize(100)
                 .setNeighborhoodSelectionProbability(0.9)
@@ -79,7 +79,8 @@ public class MOEADRunner extends AbstractAlgorithmRunner {
                 .setNeighborSize(20)
                 .setFunctionType(AbstractMOEAD.FunctionType.PBI)
                 .setDataDirectory("MOEAD_Weights")
-                .setInProcessDataPath("F:\\Experiment Data-Modify"+"\\MOEAD\\"+problem.getName())
+                .setRun(0)
+                .setInProcessDataPath("F:\\Experiment Data(lw)"+"\\MOEAD\\"+problem.getName())
                 .build();
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

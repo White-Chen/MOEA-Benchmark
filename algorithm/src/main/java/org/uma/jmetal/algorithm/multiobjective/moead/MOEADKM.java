@@ -48,10 +48,10 @@ public class MOEADKM extends AbstractMOEAD<DoubleSolution> {
     public MOEADKM(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
                     MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
                     FunctionType functionType, String dataDirectory, double neighborhoodSelectionProbability,
-                    int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPathh, int run) {
+                    int maximumNumberOfReplacedSolutions, int neighborSize, String inProcessDataPath, int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborSize
-                , inProcessDataPathh);
+                , inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
 

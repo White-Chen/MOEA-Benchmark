@@ -90,7 +90,7 @@ public class MOEAD extends AbstractMOEAD<DoubleSolution> {
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
             }
-            String path="\\\\Dy-pc\\f\\ExperimentData(lw)\\"+getName()+"\\"+problem.getName()+"\\updateAbility"+run+".txt";
+            String path="F:\\Experiment Data(lw)\\"+getName()+"\\"+problem.getName()+"\\updateAbility"+run+".txt";
             appendToFile(path,generation+"-----------"+problem.getName()+"------------");
             appendToFile(path,updateAbility+"\r\n");
             saveDataInProcess();

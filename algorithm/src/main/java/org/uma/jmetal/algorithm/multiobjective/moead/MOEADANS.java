@@ -19,8 +19,10 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.crossover.DifferentialEvolutionCrossover;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,28 +37,43 @@ import java.util.List;
  * @author dyy
  * @version 1.0
  */
-public class MOEADTest extends AbstractMOEAD<DoubleSolution> {
+public class MOEADANS extends AbstractMOEAD<DoubleSolution> {
 
     private static final long serialVersionUID = 1556879137354418923L;
-    private DifferentialEvolutionCrossover differentialEvolutionCrossover;
 
-    public MOEADTest(Problem<DoubleSolution> problem,
-                     int populationSize,
-                     int resultPopulationSize,
-                     int maxEvaluations,
-                     MutationOperator<DoubleSolution> mutation,
-                     CrossoverOperator<DoubleSolution> crossover,
-                     FunctionType functionType,
-                     String dataDirectory,
-                     double neighborhoodSelectionProbability,
-                     int maximumNumberOfReplacedSolutions,
-                     int neighborSize,
-                     String inProcessDataPath) {
+    JMetalRandom randomGenerator;
+    private DifferentialEvolutionCrossover differentialEvolutionCrossover;
+    private DoubleSolution[] savedValues;
+    private double[] utility;
+    private int[] frequency;
+
+    public MOEADANS(Problem<DoubleSolution> problem,
+                    int populationSize,
+                    int resultPopulationSize,
+                    int maxEvaluations,
+                    MutationOperator<DoubleSolution> mutation,
+                    CrossoverOperator<DoubleSolution> crossover,
+                    FunctionType functionType,
+                    String dataDirectory,
+                    double neighborhoodSelectionProbability,
+                    int maximumNumberOfReplacedSolutions,
+                    int neighborSize,
+                    String inProcessDataPath, int run) {
         super(problem, populationSize, resultPopulationSize, maxEvaluations, crossover, mutation, functionType,
                 dataDirectory, neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions,
-                neighborSize, inProcessDataPath);
+                neighborSize, inProcessDataPath,run);
 
         differentialEvolutionCrossover = (DifferentialEvolutionCrossover) crossoverOperator;
+
+        savedValues = new DoubleSolution[populationSize];
+        utility = new double[populationSize];
+        frequency = new int[populationSize];
+        for (int i = 0; i < utility.length; i++) {
+            utility[i] = 1.0;
+            frequency[i] = 0;
+        }
+
+        randomGenerator = JMetalRandom.getInstance();
     }
 
     @Override
@@ -66,20 +83,19 @@ public class MOEADTest extends AbstractMOEAD<DoubleSolution> {
         initializeNeighborhood();
         initializeIdealPoint();
         int generation = 0;
+        List list = new ArrayList<Integer>(20);
 
 
+        int neighborSizeTeamp = neighborSize;
         evaluations = populationSize;
         do {
             updateAbility = 0;
             int[] permutation = new int[populationSize];
             MOEADUtils.randomPermutation(permutation, populationSize);
 
-            offspringPopulation.clear();
-            parentPopulation.clear();
-            parentPopulation.addAll(population);
-
             for (int i = 0; i < populationSize; i++) {
                 int subProblemId = permutation[i];
+                frequency[subProblemId]++;
 
                 NeighborType neighborType = chooseNeighborType();
                 List<DoubleSolution> parents = parentSelection(subProblemId, neighborType);
@@ -95,31 +111,52 @@ public class MOEADTest extends AbstractMOEAD<DoubleSolution> {
 
                 updateIdealPoint(child);
                 updateNeighborhood(child, subProblemId, neighborType);
-                offspringPopulation.add(child);
             }
-            _saveDataInProcess(population,inProcessDataPath+"/MOEAD");
-            String path="F:\\Experiment Data\\MOEADKM\\"+problem.getName()+"\\updateAbility"+run+".txt";
-            appendToFile(path,generation+"-----------"+problem.getName()+"------------");
-            appendToFile(path,updateAbility+"\r\n");
-
-            jointPopulation.clear();
-            jointPopulation.addAll(offspringPopulation);
-            jointPopulation.addAll(parentPopulation);      //保证KM之前未进行邻域更新
-            offspringPopulation.clear();
-            offspringPopulation.addAll(population);        //offspring作为临时变量，存放邻域更新后选择的解
-            stmSelection();
-            _saveDataInProcess(population,inProcessDataPath+"/MOEAD-STM");
-
-            KMSelection();
-            _saveDataInProcess(population,inProcessDataPath+"/MOEAD-KM");
-
-
-//            population.clear();
-//            population.addAll(offspringPopulation);
             generation++;
-            System.out.println("-------generation"+generation+"---------");
+
+//            if (generation % 30 == 0) {
+//                utilityFunction();
+//            }
+            saveDataInProcess();
+
+
+            if(list.size() == 20){
+                list.remove(0);
+                list.add(updateAbility>populationSize/neighborSizeTeamp ? 1:0);
+            }else {
+                list.add(updateAbility>populationSize/neighborSizeTeamp ? 1:0);
+            }
+
+            int sumList = 0;
+            for(int i=0;i<list.size();i++){
+                sumList += (int)list.get(i);
+            }
+
+            if (updateAbility>populationSize/neighborSizeTeamp || sumList==0){
+
+                neighborSize = neighborSizeTeamp - updateAbility/populationSize*neighborSizeTeamp;
+            }else {
+                neighborSize = neighborSizeTeamp + updateAbility/populationSize*neighborSizeTeamp;
+            }
+            initializeNeighborhood();
         } while (evaluations < maxEvaluations);
 
+    }
+
+    public void utilityFunction() throws JMetalException {
+        double f1, f2, uti, delta;
+        for (int n = 0; n < populationSize; n++) {
+            f1 = fitnessFunction(population.get(n), lambda[n]);
+            f2 = fitnessFunction(savedValues[n], lambda[n]);
+            delta = f2 - f1;
+            if (delta > 0.001) {
+                utility[n] = 1.0;
+            } else {
+                uti = (0.95 + (0.05 * delta / 0.001)) * utility[n];
+                utility[n] = uti < 1.0 ? uti : 1.0;
+            }
+            savedValues[n] = (DoubleSolution) population.get(n).copy();
+        }
     }
 
     protected void _saveDataInProcess( List<DoubleSolution> population,String filepath) {
